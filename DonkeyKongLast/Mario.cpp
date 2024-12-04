@@ -3,27 +3,39 @@
 void Mario::keyPressed(char key) {
 	for (size_t k = 0; k < numKeys; k++) {
 		if (std::tolower(key) == keys[k]) {
-			setDir(getDir(k));
 			if (k == 0) {
 				handleUp();
-			}
-			else if (k == 1) {
-				handleDown();
+				return;
 			}
 			else {
-				move();
+				setDir(findDir(k));
+				return;
 			}
 		}
 	}
 }
 
+void Mario::move() {
+	if (isClimbing) {
+		climb();
+	}
+	else if (isJumping) {
+		setDirY(up);
+		jump();
+	}
+	else if (isFalling) {
+		fall();
+	}
+	Point::move();
+}
+
 void Mario::handleUp() {
 	if (!isJumping && !isFalling && !isClimbing) {
 		if (isOnLadder()) {
-			climb();
+			isClimbing = true;
 		}
 		else {
-			jump();
+			isJumping = true;
 		}
 	}
 }
@@ -33,7 +45,15 @@ void Mario::handleDown() {
 }
 
 void Mario::jump() {
-	return;
+	if (jumpCounter < jumpHeight && isNextPositionValid()) {
+		jumpCounter++;
+	}
+	else {
+		jumpCounter = 0;
+		isJumping = false;
+		isFalling = true;
+		setDirY(down);
+	}
 }
 
 void Mario::climb() {
@@ -42,5 +62,12 @@ void Mario::climb() {
 
 
 void Mario::fall() {
-	return;
+	if (!isOnFloor()) {
+		fallingCounter++;
+	}
+	else {
+		fallingCounter = 0;
+		isFalling = false;
+		setDirY(0);
+	}
 }

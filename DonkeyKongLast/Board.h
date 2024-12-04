@@ -56,8 +56,8 @@ public:
     bool isLadder(int x, int y) const {
         return getChar(x, y) == 'H';
     }
-    bool isFloorBellow(int x, int y) const {
-        char ch = getChar(x, y - 1);
+    bool isFloorBelow(int x, int y) const {
+        char ch = getChar(x, y + 1);
         return ch == '=' || ch == '>' || ch == '<';
     }
 
