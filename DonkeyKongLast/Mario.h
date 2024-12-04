@@ -9,18 +9,20 @@ class Mario : public Point {
 
 	bool isJumping;
 	bool isFalling;
-	bool isClimbing;
+	bool isClimbingUp;
+	bool isClimbingDown;
 	int jumpCounter;
 	int fallingCounter;
 
 public:
-	Mario(Board* pBoard) : Point('@', 4, 23, pBoard), isJumping(false), isFalling(false), isClimbing(false), jumpCounter(0), fallingCounter(0) {}	
+	Mario(Board* pBoard) : Point('@', 4, 23, pBoard), isJumping(false), isFalling(false), isClimbingUp(false), isClimbingDown(false), jumpCounter(0), fallingCounter(0) {}
 
 	void keyPressed(char key);
 	void move();
 	void handleUp();
 	void handleDown();
 	void jump();
-	void climb();
+	void climbUp();
+	void climbDown();
 	void fall();
 };

@@ -7,6 +7,10 @@ void Mario::keyPressed(char key) {
 				handleUp();
 				return;
 			}
+			else if (k == 1) {
+				handleDown();
+				return;
+			}
 			else {
 				setDir(findDir(k));
 				return;
@@ -16,8 +20,11 @@ void Mario::keyPressed(char key) {
 }
 
 void Mario::move() {
-	if (isClimbing) {
-		climb();
+	if (isClimbingUp) {
+		climbUp();
+	}
+	if (isClimbingDown) {
+		climbDown();
 	}
 	else if (isJumping) {
 		setDirY(up);
@@ -30,9 +37,9 @@ void Mario::move() {
 }
 
 void Mario::handleUp() {
-	if (!isJumping && !isFalling && !isClimbing) {
+	if (!isJumping && !isFalling && !isClimbingUp && !isClimbingDown) {
 		if (isOnLadder()) {
-			isClimbing = true;
+			isClimbingUp = true;
 		}
 		else {
 			isJumping = true;
@@ -56,8 +63,10 @@ void Mario::jump() {
 	}
 }
 
-void Mario::climb() {
-	
+void Mario::climbUp() {
+	if (isLadder(getX(), getY())) {
+
+	}
 }
 
 
