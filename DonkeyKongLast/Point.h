@@ -49,17 +49,26 @@ public:
 	bool isOnLadder() const {
 		return pBoard->getChar(x, y) == 'H';
 	}
-	bool isLadderAbove() const {
-		return pBoard->getChar(x, y-1) == 'H';
-	}
-	bool isOnLadderBelow() const {
-		return pBoard->getChar(x, y+1) == 'H';
+	bool isLadder(int x, int y) const {
+		return pBoard->getChar(x, y) == 'H';
 	}
 	bool isNextPositionValid() const {
 		return pBoard->isValidPosition(x + dir.x, y + dir.y);
 	}
 	Direction getDir() const{
 		return dir;
+	}
+	int getX() const{
+		return x;
+	}
+	int getY() const{
+		return y;
+	}
+	void setX(int newX) {
+		x = newX;
+	}
+	void setY(int newY) {
+		y = newY;
 	}
 	int getDirX() const{
 		return dir.x;

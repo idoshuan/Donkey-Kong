@@ -57,7 +57,7 @@ void Mario::jump() {
 }
 
 void Mario::climb() {
-	return;
+	
 }
 
 
