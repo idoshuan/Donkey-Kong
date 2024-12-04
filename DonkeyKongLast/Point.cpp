@@ -5,4 +5,7 @@ void Point::move() {
 		x += dir.x;
 		y += dir.y;
 	}
+	else {
+		stop();
+	}
 }

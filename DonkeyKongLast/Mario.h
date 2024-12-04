@@ -12,7 +12,12 @@ class Mario : public Point {
 	bool isClimbing;
 
 public:
-	Mario(Board* pBoard) : Point('@', 4, 23), isJumping(false), isFalling(false), isClimbing(false) {}	
+	Mario(Board* pBoard) : Point('@', 4, 23, pBoard), isJumping(false), isFalling(false), isClimbing(false) {}	
 
 	void keyPressed(char key);
+	void handleUp();
+	void handleDown();
+	void jump();
+	void climb();
+	void fall();
 };
