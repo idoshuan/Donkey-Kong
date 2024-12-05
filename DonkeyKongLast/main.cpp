@@ -17,7 +17,7 @@ int main() {
 	Mario mario(&board);
 	mario.draw();
 	while (true) {
-		Sleep(50);
+		Sleep(90);
 		mario.erase();
 		if (_kbhit()) {
 			char key = _getch();

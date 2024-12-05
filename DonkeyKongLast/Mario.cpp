@@ -17,6 +17,7 @@ void Mario::keyPressed(char key) {
 			handleHorizontal(keyPressed);
 			return;
 		case 's':
+			isClimbingUp = isClimbingDown = false;
 			setDir(Point::NONE);
 			return;
 		default:
@@ -39,7 +40,7 @@ void Mario::move() {
 }
 
 void Mario::handleUp() {
-	if (!isJumping && !isFalling && !isClimbingDown) {
+	if (!isJumping && !isFalling) {
 		setDirY(up);
 		if (isOnLadder()) {
 			setDirX(0);
@@ -52,11 +53,13 @@ void Mario::handleUp() {
 }
 
 void Mario::handleDown() {
-	if (!isJumping && !isFalling && !isClimbingUp && !isClimbingDown) {
+	if (!isJumping && !isFalling) {
 		setDir(Point::DOWN);
-		if (isLadder(getX(), getY() + 2)) {
+		if (isLadder(getX(), getY() + 2) && !isOnLadder()) {
 			setY(getY() + 1);
 		}
+		setDirX(0);
+		isClimbingDown = true;
 	}
 }
 
