@@ -1,20 +1,26 @@
 #include "Mario.h"
 
 void Mario::keyPressed(char key) {
-	for (size_t k = 0; k < numKeys; k++) {
-		if (std::tolower(key) == keys[k]) {
-			if (k == 0) {
-				handleUp();
-				return;
-			}
-			else if (k == 1) {
-				handleDown();
-				return;
-			}
-			else {
-				setDir(findDir(k));
-				return;
-			}
+	char keyPressed = std::tolower(key);
+	if (isValidKey(key)) {
+		switch (keyPressed) {
+		case 'w':
+			handleUp();
+			return;
+		case 'x':
+			handleDown();
+			return;
+		case 'a':
+			handleHorizontal(keyPressed);
+			return;
+		case 'd':
+			handleHorizontal(keyPressed);
+			return;
+		case 's':
+			setDir(Point::NONE);
+			return;
+		default:
+			return;
 		}
 	}
 }
@@ -26,14 +32,14 @@ void Mario::move() {
 	else if (isJumping) {
 		jump();
 	}
-	else if (isFalling) {
+	else if (isFalling || !isOnFloor()) {
 		fall();
 	}
 	Point::move();
 }
 
 void Mario::handleUp() {
-	if (!isJumping && !isFalling && !isClimbingUp && !isClimbingDown) {
+	if (!isJumping && !isFalling && !isClimbingDown) {
 		setDirY(up);
 		if (isOnLadder()) {
 			setDirX(0);
@@ -47,9 +53,29 @@ void Mario::handleUp() {
 
 void Mario::handleDown() {
 	if (!isJumping && !isFalling && !isClimbingUp && !isClimbingDown) {
-		setDirY(down);
+		setDir(Point::DOWN);
 		if (isLadder(getX(), getY() + 2)) {
 			setY(getY() + 1);
+		}
+	}
+}
+
+void Mario::handleHorizontal(char keyPressed) {
+	if (!isClimbingDown && !isClimbingUp) {
+		if (!isOnFloor()) {
+			isFalling = true;
+		}
+		else {
+			switch (keyPressed) {
+			case 'a':
+				setDir(Point::LEFT);
+				break;
+			case 'd':
+				setDir(Point::RIGHT);
+				break;
+			default:
+				return;
+			}
 		}
 	}
 }
@@ -68,6 +94,8 @@ void Mario::jump() {
 
 
 void Mario::fall() {
+	isFalling = true;
+	setDirY(down);
 	if (!isOnFloor()) {
 		fallingCounter++;
 	}
@@ -79,7 +107,10 @@ void Mario::fall() {
 }
 
 void Mario::climb() {
-	if (!isLadder(getX(), getY() + getDirY())) {
+	if (isLadder(getX(), getY() + getDirY())) {
+		return;
+	}
+	else {
 		if (isClimbingUp) {
 			setY(getY() - 2);
 			isClimbingUp = false;
@@ -88,8 +119,5 @@ void Mario::climb() {
 			isClimbingDown = false;
 		}
 		setDirY(0);
-	}
-	else {
-		return;
 	}
 }

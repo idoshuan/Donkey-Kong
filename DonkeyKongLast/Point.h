@@ -26,7 +26,6 @@ public:
 	static constexpr Direction LEFT = { -1, 0 };
 	static constexpr Direction RIGHT = { 1, 0 };
 	static constexpr Direction NONE = { 0, 0 };
-	static constexpr Direction directions[] = { UP, DOWN, LEFT, RIGHT, NONE };
 	static constexpr int up = -1;
 	static constexpr int down = 1;
 
@@ -84,14 +83,6 @@ public:
 	}
 	void setDirY(int newY) {
 		dir.y = newY;
-	}
-	const Direction& findDir(size_t index) {
-		if (index < sizeof(directions) / sizeof(Direction)) {
-			return directions[index];
-		}
-		else {
-			return NONE;
-		}
 	}
 	void stop() {
 		dir.x = 0;

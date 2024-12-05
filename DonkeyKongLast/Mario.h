@@ -17,10 +17,15 @@ class Mario : public Point {
 public:
 	Mario(Board* pBoard) : Point('@', 4, 23, pBoard), isJumping(false), isFalling(false), isClimbingUp(false), isClimbingDown(false), jumpCounter(0), fallingCounter(0) {}
 
+	bool isValidKey(char k) {
+		char key = std::tolower(k);
+		return (key == 'w' || key == 'a' || key == 's' || key == 'd' || key == 'x');
+	}
 	void keyPressed(char key);
 	void move();
 	void handleUp();
 	void handleDown();
+	void handleHorizontal(char keyPressed);
 	void jump();
 	void climb();
 	void fall();
