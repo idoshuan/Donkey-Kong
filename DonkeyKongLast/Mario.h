@@ -22,7 +22,6 @@ public:
 	void handleUp();
 	void handleDown();
 	void jump();
-	void climbUp();
-	void climbDown();
+	void climb();
 	void fall();
 };

@@ -20,14 +20,10 @@ void Mario::keyPressed(char key) {
 }
 
 void Mario::move() {
-	if (isClimbingUp) {
-		climbUp();
-	}
-	if (isClimbingDown) {
-		climbDown();
+	if (isClimbingUp || isClimbingDown) {
+		climb();
 	}
 	else if (isJumping) {
-		setDirY(up);
 		jump();
 	}
 	else if (isFalling) {
@@ -38,7 +34,9 @@ void Mario::move() {
 
 void Mario::handleUp() {
 	if (!isJumping && !isFalling && !isClimbingUp && !isClimbingDown) {
+		setDirY(up);
 		if (isOnLadder()) {
+			setDirX(0);
 			isClimbingUp = true;
 		}
 		else {
@@ -48,7 +46,12 @@ void Mario::handleUp() {
 }
 
 void Mario::handleDown() {
-	return;
+	if (!isJumping && !isFalling && !isClimbingUp && !isClimbingDown) {
+		setDirY(down);
+		if (isLadder(getX(), getY() + 2)) {
+			setY(getY() + 1);
+		}
+	}
 }
 
 void Mario::jump() {
@@ -63,12 +66,6 @@ void Mario::jump() {
 	}
 }
 
-void Mario::climbUp() {
-	if (isLadder(getX(), getY())) {
-
-	}
-}
-
 
 void Mario::fall() {
 	if (!isOnFloor()) {
@@ -78,5 +75,21 @@ void Mario::fall() {
 		fallingCounter = 0;
 		isFalling = false;
 		setDirY(0);
+	}
+}
+
+void Mario::climb() {
+	if (!isLadder(getX(), getY() + getDirY())) {
+		if (isClimbingUp) {
+			setY(getY() - 2);
+			isClimbingUp = false;
+		}
+		else {
+			isClimbingDown = false;
+		}
+		setDirY(0);
+	}
+	else {
+		return;
 	}
 }

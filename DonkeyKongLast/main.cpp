@@ -15,15 +15,16 @@ int main() {
 	board.reset();
 	board.print();
 	Mario mario(&board);
+	mario.draw();
 	while (true) {
-		mario.draw();
+		Sleep(50);
+		mario.erase();
 		if (_kbhit()) {
 			char key = _getch();
 			if (key == ESC) break;
 			mario.keyPressed(key);
 		}
-		Sleep(50);
-		mario.erase();
 		mario.move();
+		mario.draw();
 	}
 }
