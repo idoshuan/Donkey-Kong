@@ -182,13 +182,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Barrel.h" />
     <ClInclude Include="Board.h" />
+    <ClInclude Include="Game.h" />
     <ClInclude Include="Mario.h" />
     <ClInclude Include="Point.h" />
     <ClInclude Include="Utils.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Barrel.cpp" />
     <ClCompile Include="Board.cpp" />
+    <ClCompile Include="Game.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mario.cpp" />
     <ClCompile Include="Point.cpp" />

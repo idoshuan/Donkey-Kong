@@ -1,5 +1,7 @@
 #include "Mario.h"
 
+// fix stay while falling
+
 void Mario::keyPressed(char key) {
 	char keyPressed = std::tolower(key);
 	if (isValidKey(key)) {
@@ -17,7 +19,6 @@ void Mario::keyPressed(char key) {
 			handleHorizontal(keyPressed);
 			return;
 		case 's':
-			isClimbingUp = isClimbingDown = false;
 			setDir(Point::NONE);
 			return;
 		default:
@@ -55,10 +56,10 @@ void Mario::handleUp() {
 void Mario::handleDown() {
 	if (!isJumping && !isFalling) {
 		setDir(Point::DOWN);
+		isClimbingUp = false;
 		if (isLadder(getX(), getY() + 2) && !isOnLadder()) {
 			setY(getY() + 1);
 		}
-		setDirX(0);
 		isClimbingDown = true;
 	}
 }

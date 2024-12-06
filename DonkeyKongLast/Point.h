@@ -28,6 +28,8 @@ public:
 	static constexpr Direction NONE = { 0, 0 };
 	static constexpr int up = -1;
 	static constexpr int down = 1;
+	static constexpr int left = -1;
+	static constexpr int right = 1;
 
 	Point(char ch, int x, int y, Board* pBoard = nullptr, Direction dir = NONE) : ch(ch), x(x), y(y), dir(dir), pBoard(pBoard) {}
 
@@ -54,9 +56,6 @@ public:
 	bool isNextPositionValid() const {
 		return pBoard->isValidPosition(x + dir.x, y + dir.y);
 	}
-	Direction getDir() const{
-		return dir;
-	}
 	int getX() const{
 		return x;
 	}
@@ -75,6 +74,9 @@ public:
 	int getDirY() const{
 		return dir.y;
 	}
+	Direction getDir() const {
+		return dir;
+	}
 	void setDir(Direction newDir) {
 		dir = newDir;
 	}
@@ -83,6 +85,9 @@ public:
 	}
 	void setDirY(int newY) {
 		dir.y = newY;
+	}
+	char floorDir() {
+		return pBoard->getChar(x,y+1);
 	}
 	void stop() {
 		dir.x = 0;
