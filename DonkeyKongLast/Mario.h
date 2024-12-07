@@ -5,7 +5,9 @@ class Mario : public Point {
 	
 	static constexpr char keys[] = { 'w', 'x', 'a', 'd', 's'};
 	static constexpr size_t numKeys = sizeof(keys) / sizeof(char);
+	static constexpr char character = '@';
 	static constexpr int jumpHeight = 2;
+	
 
 	bool isJumping;
 	bool isFalling;
@@ -13,9 +15,10 @@ class Mario : public Point {
 	bool isClimbingDown;
 	int jumpCounter;
 	int fallingCounter;
+	int lives;
 
 public:
-	Mario(Board* pBoard) : Point('@', 4, 23, pBoard), isJumping(false), isFalling(false), isClimbingUp(false), isClimbingDown(false), jumpCounter(0), fallingCounter(0) {}
+	Mario(int x, int y, Board* pBoard) : Point(character, x, y, pBoard), isJumping(false), isFalling(false), isClimbingUp(false), isClimbingDown(false), jumpCounter(0), fallingCounter(0), lives(3) {}
 
 	bool isValidKey(char k) {
 		char key = std::tolower(k);
