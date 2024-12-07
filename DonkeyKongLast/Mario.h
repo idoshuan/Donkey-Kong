@@ -31,7 +31,7 @@ public:
 	void jump();
 	void climb();
 	void fall();
-	void updateFallingCounter();
+	void resetFallingCounterIfNeeded();
 	int getFallingCounter() const{
 		return fallingCounter;
 	}

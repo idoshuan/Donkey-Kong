@@ -1,6 +1,7 @@
 #include "Mario.h"
 
 // fix stay while falling
+// ask amir about line 62
 
 void Mario::keyPressed(char key) {
 	char keyPressed = std::tolower(key);
@@ -58,6 +59,7 @@ void Mario::handleDown() {
 		setDir(Point::DOWN);
 		isClimbingUp = false;
 		if (isLadder(getX(), getY() + 2) && !isOnLadder()) {
+			this->erase(); //Ask amir if thers a better solution
 			setY(getY() + 1);
 		}
 		isClimbingDown = true;
@@ -126,7 +128,7 @@ void Mario::climb() {
 	}
 }
 
-void Mario::updateFallingCounter() {
+void Mario::resetFallingCounterIfNeeded() {
 	if (resetFallingCounter) {
 		fallingCounter = 0;
 		resetFallingCounter = false;

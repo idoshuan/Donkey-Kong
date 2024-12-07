@@ -1,34 +1,38 @@
-#include "Game.h"
+#include "Game.h"\
 
 void Game::startGame() {
     gameStartTime = clock::now();
     ShowConsoleCursor(false);
     while (lives > 0) {
+        drawAndMoveCharacters();
         Sleep(100);
-        eraseCharacters();
         checkForKeyPress();
         trySpawnBarrel();
-        drawAndMoveCharacters();
         if (checkMarioDeath()) {
             lives--;
             resetGame();
         }
+        eraseCharacters();
     }
 }
 
 void Game::resetGame() {
+        for (int i = 0; i < 6; i++) {
+            mario.draw();
+            Sleep(200);
+            mario.erase();
+            Sleep(200);
+        }
+        eraseCharacters();
+
+        for (int i = 0; i < numBarrels; i++) {
+            barrelArr[i] = Barrel(); 
+        }
         mario = Mario(marioInitX, marioInitY, &board);
         barrelCount = 0;
         firstBarrelSpawned = false;
         gameStartTime = clock::now();
         lastBarrelTime = gameStartTime;
-
-        for (int i = 0; i < numBarrels; i++) {
-            barrelArr[i] = Barrel(); 
-        }
-
-        board.reset();
-        board.print();
 }
 
 void Game::checkForKeyPress() {
@@ -92,7 +96,7 @@ bool Game::checkMarioDeathFromFall() {
         return true;
     }
     else {
-        mario.updateFallingCounter();
+        mario.resetFallingCounterIfNeeded();
         return false;
     }
 }
