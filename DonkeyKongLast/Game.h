@@ -45,6 +45,7 @@ public:
 
 	void startGame();
 	void resetGame();
+	void marioBlink();
 	void checkForKeyPress();
 	void eraseCharacters();
 	void drawAndMoveCharacters();
@@ -52,5 +53,6 @@ public:
 	bool checkMarioDeath();
 	bool checkMarioDeathFromBarrel();
 	bool checkMarioDeathFromFall();
+	bool checkBarrelExplode(Barrel& barrel);
 };
 

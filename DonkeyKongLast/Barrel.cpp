@@ -20,8 +20,15 @@ void Barrel::fall() {
 		fallingCounter++;
 	}
 	else {
-		fallingCounter = 0;
+		resetFallingCounter = true;
 		isFalling = false;
 		setDirY(0);
+	}
+}
+
+void Barrel::resetFallingCounterIfNeeded() {
+	if (resetFallingCounter) {
+		fallingCounter = 0;
+		resetFallingCounter = false;
 	}
 }

@@ -1,4 +1,4 @@
-#include "Game.h"\
+#include "Game.h"
 
 void Game::startGame() {
     gameStartTime = clock::now();
@@ -17,16 +17,12 @@ void Game::startGame() {
 }
 
 void Game::resetGame() {
-        for (int i = 0; i < 6; i++) {
-            mario.draw();
-            Sleep(200);
-            mario.erase();
-            Sleep(200);
-        }
+        marioBlink();
         eraseCharacters();
 
         for (int i = 0; i < numBarrels; i++) {
             barrelArr[i] = Barrel(); 
+            barrelArr[i].deactivate();
         }
         mario = Mario(marioInitX, marioInitY, &board);
         barrelCount = 0;
@@ -35,6 +31,14 @@ void Game::resetGame() {
         lastBarrelTime = gameStartTime;
 }
 
+void Game::marioBlink() {
+    for (int i = 0; i < 6; i++) {
+        mario.draw();
+        Sleep(200);
+        mario.erase();
+        Sleep(200);
+    }
+}
 void Game::checkForKeyPress() {
     if (_kbhit()) {
         char key = _getch();
@@ -56,8 +60,15 @@ void Game::drawAndMoveCharacters() {
     mario.move();
     mario.draw();
     for (int i = 0; i < barrelCount; i++) {
-        barrelArr[i].move();
-        barrelArr[i].draw();
+        if (barrelArr[i].getIsActive()) {
+          barrelArr[i].move();
+          barrelArr[i].draw();
+        }
+    }
+    for (int i = 0; i < barrelCount; i++) {
+        if (checkBarrelExplode(barrelArr[i])) {
+            barrelArr[i].deactivate();
+      }
     }
 }
 
@@ -74,11 +85,14 @@ void Game::trySpawnBarrel() {
 
     if (firstBarrelSpawned && timeSinceLastBarrelSpawn >= barrelSpawnInterval && barrelCount < numBarrels) {
         if (barrelCount % 2 == 0) {
-            barrelArr[barrelCount++] = Barrel(leftBarrelInitX, barrelInitY, &board);
+            barrelArr[barrelCount] = Barrel(leftBarrelInitX, barrelInitY, &board);
+            barrelArr[barrelCount].activate();
         }
         else {
-            barrelArr[barrelCount++] = Barrel(rightBarrelInitX, barrelInitY, &board);
+            barrelArr[barrelCount] = Barrel(rightBarrelInitX, barrelInitY, &board);
+            barrelArr[barrelCount].activate();
         }
+        barrelCount++;
         lastBarrelTime = now;
     }
 }
@@ -99,4 +113,14 @@ bool Game::checkMarioDeathFromFall() {
         mario.resetFallingCounterIfNeeded();
         return false;
     }
+}
+
+bool Game::checkBarrelExplode(Barrel &barrel) {
+        if (barrel.getFallingCounter() >= barrelMaxFallHeight && !barrel.isCurrentlyFalling()) {
+            return true;
+        }
+        else {
+            barrel.resetFallingCounterIfNeeded();
+            return false;
+        }
 }
