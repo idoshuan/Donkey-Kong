@@ -8,9 +8,21 @@ void Game::startGame() {
         Sleep(100);
         checkForKeyPress();
         trySpawnBarrel();
+
+        for (int i = 0; i < barrelCount; i++) {
+            if (checkBarrelExplode(barrelArr[i])) {
+                barrelArr[i].explode();
+            }
+        }
+
         if (checkMarioDeath()) {
             lives--;
             resetGame();
+        }
+        for (int i = 0; i < barrelCount; i++) {
+            if (checkBarrelExplode(barrelArr[i])) {
+                barrelArr[i].deactivate();
+            }
         }
         eraseCharacters();
     }
@@ -60,16 +72,12 @@ void Game::drawAndMoveCharacters() {
     mario.move();
     mario.draw();
     for (int i = 0; i < barrelCount; i++) {
-        if (barrelArr[i].getIsActive()) {
+        if (barrelArr[i].isCurrentlyActive()) {
           barrelArr[i].move();
           barrelArr[i].draw();
         }
     }
-    for (int i = 0; i < barrelCount; i++) {
-        if (checkBarrelExplode(barrelArr[i])) {
-            barrelArr[i].deactivate();
-      }
-    }
+    
 }
 
 void Game::trySpawnBarrel() {
@@ -100,8 +108,40 @@ void Game::trySpawnBarrel() {
 bool Game::checkMarioDeath() {
     return checkMarioDeathFromBarrel() || checkMarioDeathFromFall();
 }
+bool Game::isInExplosiobRadius(Barrel &barrel) {
+    int y = barrel.getY();
+    int x = barrel.getX();
+
+    for (int i = 0; i < 3; i++)
+    {
+        if (y - i < 24 && y - i>0) {
+            for (int j = 0; j < 5; j++)
+            {
+                if (x + j < 80 && y + j>0) {
+                    if (mario.getX() == x + j && mario.getY() == y - i) {
+                        return true;
+                      }
+                }
+            }
+        }
+    }
+    
+    return false;
+}
 
 bool Game::checkMarioDeathFromBarrel() {
+    for (int i = 0; i < barrelCount; i++)
+    {
+        if (barrelArr[i].isCurrentlyActive())
+        {
+            if (mario.getX() == barrelArr[i].getX() && mario.getY() == barrelArr[i].getY()) {
+                return true;
+            }
+            if (barrelArr[i].didExplode() && isInExplosiobRadius(barrelArr[i])) {
+                return true;
+            }
+        }
+    }
     return false;
 }
 

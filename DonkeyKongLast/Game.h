@@ -52,7 +52,9 @@ public:
 	void trySpawnBarrel();
 	bool checkMarioDeath();
 	bool checkMarioDeathFromBarrel();
+	bool isInExplosiobRadius(Barrel& barrel);
 	bool checkMarioDeathFromFall();
 	bool checkBarrelExplode(Barrel& barrel);
+
 };
 
