@@ -8,17 +8,16 @@ class Mario : public Point {
 	static constexpr char character = '@';
 	static constexpr int jumpHeight = 2;
 	
-
 	bool isJumping;
 	bool isFalling;
 	bool isClimbingUp;
 	bool isClimbingDown;
 	int jumpCounter;
 	int fallingCounter;
-	int lives;
+	bool resetFallingCounter;
 
 public:
-	Mario(int x, int y, Board* pBoard) : Point(character, x, y, pBoard), isJumping(false), isFalling(false), isClimbingUp(false), isClimbingDown(false), jumpCounter(0), fallingCounter(0), lives(3) {}
+	Mario(int x, int y, Board* pBoard) : Point(character, x, y, pBoard), isJumping(false), isFalling(false), isClimbingUp(false), isClimbingDown(false), jumpCounter(0), fallingCounter(0), resetFallingCounter(false){}
 
 	bool isValidKey(char k) {
 		char key = std::tolower(k);
@@ -32,4 +31,11 @@ public:
 	void jump();
 	void climb();
 	void fall();
+	void updateFallingCounter();
+	int getFallingCounter() const{
+		return fallingCounter;
+	}
+	bool isCurrentlyFalling() const {
+		return isFalling;
+	}
 };

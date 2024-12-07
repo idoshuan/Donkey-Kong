@@ -7,35 +7,50 @@
 #include <iostream>
 #include <windows.h>
 #include <conio.h>
-
+#include <chrono>
+#include <thread>
+ 
 
 class Game {
+	static constexpr int marioInitX = 4;
+	static constexpr int marioInitY = 23;
+	static constexpr int marioMaxFallHeight = 5;
+	static constexpr int initLives = 3;
+
 	static constexpr int numBarrels =10;
-	static constexpr int initMarioX = 4;
-	static constexpr int initMarioY = 23;
-	static constexpr int initLeftBarrelX = 37;
-	static constexpr int initRightBarrelX = 39;
-	static constexpr int initBarrelY = 3;
+	static constexpr int leftBarrelInitX = 37;
+	static constexpr int rightBarrelInitX = 39;
+	static constexpr int barrelInitY = 2;
+	static constexpr int barrelSpawnInterval = 5000;
+	static constexpr int firstBarrelSpawnDelay = 4000;
+	static constexpr int barrelMaxFallHeight = 8;
+
+
 	static constexpr int ESC = 27;
+	using clock = std::chrono::steady_clock;
+	using milliseconds = std::chrono::milliseconds;
+	using time = std::chrono::time_point<clock>;
 
 	Mario mario;
-	Board pBoard;
+	Board board;
 	Barrel barrelArr[numBarrels];
+	int lives;
+	int barrelCount;
+	bool firstBarrelSpawned;
+	time lastBarrelTime;
+	time gameStartTime;
 
 public:
-	Game() : mario(initMarioX, initMarioY, &pBoard) {
-		initBarrels();
-	}
+	Game() : mario(marioInitX, marioInitY, &board), lives(initLives), barrelCount(0), firstBarrelSpawned(false) {}
 
 	void startGame();
-	void initBarrels() {
-		for (int i = 0; i < numBarrels; i++) {
-			if (i % 2 == 0) {
-				barrelArr[i] = Barrel(initLeftBarrelX, initBarrelY, &pBoard);  
-			}
-			else {
-				barrelArr[i] = Barrel(initRightBarrelX, initBarrelY, &pBoard);  
-			}
-		}
+	void resetGame();
+	void checkForKeyPress();
+	void eraseCharacters();
+	void drawAndMoveCharacters();
+	void trySpawnBarrel();
+	bool checkMarioDeath();
+	bool checkMarioDeathFromBarrel();
+	bool checkMarioDeathFromFall();
 };
 

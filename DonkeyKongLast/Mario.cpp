@@ -104,7 +104,7 @@ void Mario::fall() {
 		fallingCounter++;
 	}
 	else {
-		fallingCounter = 0;
+		resetFallingCounter = true;
 		isFalling = false;
 		setDirY(0);
 	}
@@ -123,5 +123,12 @@ void Mario::climb() {
 			isClimbingDown = false;
 		}
 		setDirY(0);
+	}
+}
+
+void Mario::updateFallingCounter() {
+	if (resetFallingCounter) {
+		fallingCounter = 0;
+		resetFallingCounter = false;
 	}
 }
