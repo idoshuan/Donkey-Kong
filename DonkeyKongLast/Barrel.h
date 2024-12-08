@@ -9,9 +9,10 @@ class Barrel: public Point{
 	bool resetFallingCounter;
 	bool isActive;
 	bool isExplode;
+	int prevDirX;
 
 public:
-	Barrel(int x = 0, int y = 0, Board* pBoard = nullptr) : Point(character, x, y, pBoard), fallingCounter(0), isFalling(false), resetFallingCounter(false), isActive(false), isExplode(false){}
+	Barrel(int x = 0, int y = 0, Board* pBoard = nullptr) : Point(character, x, y, pBoard), fallingCounter(0), isFalling(false), resetFallingCounter(false), isActive(false), isExplode(false), prevDirX(0){}
 	
 	void move();
 	void fall();

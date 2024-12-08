@@ -10,47 +10,27 @@ void Game::startGame() {
         trySpawnBarrel();
 
         for (int i = 0; i < barrelCount; i++) {
-            if (checkBarrelExplode(barrelArr[i])) {
+            if (hasBarrelExploded(barrelArr[i])) {
                 barrelArr[i].explode();
             }
         }
 
-        if (checkMarioDeath()) {
-            lives--;
+        if (checkMarioDeath()) {          
+            lives--;                      
             resetGame();
+            break;
         }
 
         for (int i = 0; i < barrelCount; i++) {
-            if (checkBarrelExplode(barrelArr[i])) {
+            if (shouldDeactivateBarrel(barrelArr[i])) {
                 barrelArr[i].deactivate();
             }
         }
+
         eraseCharacters();
     }
 }
 
-void Game::resetGame() {
-        marioBlink();
-        eraseCharacters();
-
-        for (int i = 0; i < numBarrels; i++) {
-            barrelArr[i] = Barrel(); 
-        }
-        mario = Mario(marioInitX, marioInitY, &board);
-        barrelCount = 0;
-        firstBarrelSpawned = false;
-        gameStartTime = clock::now();
-        lastBarrelTime = gameStartTime;
-}
-
-void Game::marioBlink() {
-    for (int i = 0; i < 6; i++) {
-        mario.draw();
-        Sleep(200);
-        mario.erase();
-        Sleep(200);
-    }
-}
 void Game::checkForKeyPress() {
     if (_kbhit()) {
         char key = _getch();
@@ -61,23 +41,22 @@ void Game::checkForKeyPress() {
     }
 }
 
-void Game::eraseCharacters() {
-    mario.erase();
-    for (int i = 0; i < barrelCount; i++) {
-        barrelArr[i].erase();
-    }
-}
-
 void Game::drawAndMoveCharacters() {
     mario.move();
     mario.draw();
     for (int i = 0; i < barrelCount; i++) {
         if (barrelArr[i].isCurrentlyActive()) {
-          barrelArr[i].move();
-          barrelArr[i].draw();
+            barrelArr[i].move();
+            barrelArr[i].draw();
         }
     }
-    
+}
+
+void Game::eraseCharacters() {
+    mario.erase();
+    for (int i = 0; i < barrelCount; i++) {
+        barrelArr[i].erase();
+    }
 }
 
 void Game::trySpawnBarrel() {
@@ -103,7 +82,7 @@ void Game::trySpawnBarrel() {
         barrelCount++;
         lastBarrelTime = now;
     }
-}
+}                       
 
 bool Game::checkMarioDeath() {
     return checkMarioDeathFromBarrel() || checkMarioDeathFromFall();
@@ -117,12 +96,25 @@ bool Game::checkMarioDeathFromBarrel() {
             if (mario.getX() == barrelArr[i].getX() && mario.getY() == barrelArr[i].getY()) {
                 return true;
             }
+            else if (mario.getX() - mario.getDirX() == barrelArr[i].getX() && mario.getY() == barrelArr[i].getY()) {
+                return true;
+            }
             if (barrelArr[i].didExplode() && isInExplosionRadius(barrelArr[i])) {
                return true;
             }
         }
     }
     return false;
+}
+
+bool Game::checkMarioDeathFromFall() {
+    if (mario.getFallingCounter() >= marioMaxFallHeight && !mario.isCurrentlyFalling()) {
+        return true;
+    }
+    else {
+        mario.resetFallingCounterIfNeeded();
+        return false;
+    }
 }
 
 bool Game::isInExplosionRadius(Barrel& barrel) {
@@ -138,17 +130,11 @@ bool Game::isInExplosionRadius(Barrel& barrel) {
     return (difX <= explosionRadius && difY <=0 && difY <= explosionRadius);
 }
 
-bool Game::checkMarioDeathFromFall() {
-    if (mario.getFallingCounter() >= marioMaxFallHeight && !mario.isCurrentlyFalling()) {
-        return true;
-    }
-    else {
-        mario.resetFallingCounterIfNeeded();
-        return false;
-    }
+bool Game::shouldDeactivateBarrel(Barrel& barrel)  {
+    return hasBarrelExploded(barrel) || barrel.getX() == board.getMinX() || barrel.getX() == board.getMaxX();
 }
 
-bool Game::checkBarrelExplode(Barrel &barrel) {
+bool Game::hasBarrelExploded(Barrel &barrel) {
         if (barrel.getFallingCounter() >= barrelMaxFallHeight && !barrel.isCurrentlyFalling()) {
             return true;
         }
@@ -156,4 +142,28 @@ bool Game::checkBarrelExplode(Barrel &barrel) {
             barrel.resetFallingCounterIfNeeded();
             return false;
         }
+}
+
+
+void Game::resetGame() {
+    marioBlink();
+    eraseCharacters();
+
+    for (int i = 0; i < numBarrels; i++) {
+        barrelArr[i] = Barrel();
+    }
+    mario = Mario(marioInitX, marioInitY, &board);
+    barrelCount = 0;
+    firstBarrelSpawned = false;
+    gameStartTime = clock::now();
+    lastBarrelTime = gameStartTime;
+}
+
+void Game::marioBlink() {
+    for (int i = 0; i < 6; i++) {
+        mario.draw();
+        Sleep(200);
+        mario.erase();
+        Sleep(200);
+    }
 }

@@ -5,9 +5,14 @@
 void Barrel::move() {
 	if (floorDir() == '<') {
 		setDirX(-1);
+		prevDirX = -1;
 	}
 	else if (floorDir() == '>') {
 		setDirX(1);
+		prevDirX = 1;
+	}
+	else if (floorDir() == '=') {
+		setDirX(prevDirX);
 	}
 	if (!isOnFloor() || isFalling) {
 		fall();
@@ -17,7 +22,7 @@ void Barrel::move() {
 
 void Barrel::fall() {
 	isFalling = true;
-	setDirY(down);
+	setDir(Point::DOWN);
 	if (!isOnFloor()) {
 		fallingCounter++;
 	}

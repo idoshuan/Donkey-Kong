@@ -55,7 +55,7 @@ public:
 	bool checkMarioDeathFromBarrel();
 	bool isInExplosionRadius(Barrel& barrel);
 	bool checkMarioDeathFromFall();
-	bool checkBarrelExplode(Barrel& barrel);
-
+	bool hasBarrelExploded(Barrel& barrel);
+	bool shouldDeactivateBarrel(Barrel& barrel);
 };
 

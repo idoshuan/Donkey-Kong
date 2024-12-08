@@ -65,6 +65,11 @@ public:
         char ch = getChar(x, y + 1);
         return ch == '=' || ch == '>' || ch == '<';
     }
-
+    int getMaxX(){
+        return MAX_X;
+    }
+    int getMinX(){
+        return MIN_X;
+    }
 };
 
