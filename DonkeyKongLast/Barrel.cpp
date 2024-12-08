@@ -1,4 +1,6 @@
 #include "Barrel.h"
+// TODO change magic numbers
+
 
 void Barrel::move() {
 	if (floorDir() == '<') {

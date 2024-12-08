@@ -19,6 +19,7 @@ void Game::startGame() {
             lives--;
             resetGame();
         }
+
         for (int i = 0; i < barrelCount; i++) {
             if (checkBarrelExplode(barrelArr[i])) {
                 barrelArr[i].deactivate();
@@ -34,7 +35,6 @@ void Game::resetGame() {
 
         for (int i = 0; i < numBarrels; i++) {
             barrelArr[i] = Barrel(); 
-            barrelArr[i].deactivate();
         }
         mario = Mario(marioInitX, marioInitY, &board);
         barrelCount = 0;
@@ -108,22 +108,6 @@ void Game::trySpawnBarrel() {
 bool Game::checkMarioDeath() {
     return checkMarioDeathFromBarrel() || checkMarioDeathFromFall();
 }
-bool Game::isInExplosionRadius(Barrel& barrel) {
-    const int explosionRadiusX = 5; // Horizontal radius (left and right)
-    const int explosionRadiusY = 3; // Vertical radius (above)
-
-    int barrelX = barrel.getX();
-    int barrelY = barrel.getY();
-
-    int marioX = mario.getX();
-    int marioY = mario.getY();
-
-    // Check if Mario's position is within the explosion radius
-    return (marioX >= barrelX - explosionRadiusX && marioX <= barrelX + explosionRadiusX &&
-        marioY >= barrelY - explosionRadiusY && marioY <= barrelY);
-}
-
-
 
 bool Game::checkMarioDeathFromBarrel() {
     for (int i = 0; i < barrelCount; i++)
@@ -139,6 +123,19 @@ bool Game::checkMarioDeathFromBarrel() {
         }
     }
     return false;
+}
+
+bool Game::isInExplosionRadius(Barrel& barrel) {
+    int barrelX = barrel.getX();
+    int barrelY = barrel.getY();
+
+    int marioX = mario.getX();
+    int marioY = mario.getY();
+
+    int difX = std::abs(marioX - barrelX);
+    int difY = marioY - barrelY;
+
+    return (difX <= explosionRadius && difY <=0 && difY <= explosionRadius);
 }
 
 bool Game::checkMarioDeathFromFall() {

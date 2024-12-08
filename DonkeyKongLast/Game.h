@@ -25,6 +25,7 @@ class Game {
 	static constexpr int firstBarrelSpawnDelay = 4000;
 	static constexpr int barrelMaxFallHeight = 8;
 
+	const int explosionRadius = 2;
 
 	static constexpr int ESC = 27;
 	using clock = std::chrono::steady_clock;
