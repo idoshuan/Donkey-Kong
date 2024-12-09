@@ -65,10 +65,10 @@ public:
         char ch = getChar(x, y + 1);
         return ch == '=' || ch == '>' || ch == '<';
     }
-    int getMaxX(){
+    int getMaxX() const{
         return MAX_X;
     }
-    int getMinX(){
+    int getMinX() const{
         return MIN_X;
     }
 };

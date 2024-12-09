@@ -17,17 +17,17 @@ public:
 	void move();
 	void fall();
 	void resetFallingCounterIfNeeded();
-	bool didExplode() {
-		return isExplode;
-	}
 	void explode() {
 		isExplode = true;
 	}
-	bool isCurrentlyActive() {
-		return isActive;
+	bool didExplode() const{
+		return isExplode;
 	}
 	void deactivate() {
 		isActive = false;
+	}
+	bool isCurrentlyActive() const{
+		return isActive;
 	}
 	void activate() {
 		isActive = true;
