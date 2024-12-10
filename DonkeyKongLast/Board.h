@@ -46,7 +46,6 @@ class Board {
 public:
     Board() {
         reset();
-        print();
     }
 
     void reset();

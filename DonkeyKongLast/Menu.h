@@ -1,3 +1,5 @@
+#pragma once
+#include "Game.h"
 #include <iostream>
 #include <string>
 
@@ -15,10 +17,10 @@ public:
 		std::cout << "Enter your choice: ";
 	}
 
-	void getChoice() {
+	void getChoice(Game &game) {
 		int choice;
 		std::cin >> choice;
-		handleChoice(choice);
+		handleChoice(game, choice);
 	}
 
 private:
@@ -30,13 +32,14 @@ private:
 #endif
 	}
 
-	void handleChoice(int choice) {
+	void handleChoice(Game &game, int choice) {
 		switch (choice) {
 		case 1:
+			game.setGameState(GameState::START);
 			break;
 		case 2:
 			displayInstructions();
-			break;\
+			break;
 		case 3:
 			std::cout << "Exiting the game. Goodbye!\n";
 			break;

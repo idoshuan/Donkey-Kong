@@ -11,49 +11,22 @@ Game::Game()
 
 // ------------------- Game Loop -------------------
 void Game::startGame() {
-	gameStartTime = clock::now();
-	ShowConsoleCursor(false);
-
-	while (lives > 0) {
-		drawAndMoveCharacters();
-		Sleep(100);
-		checkForKeyPress();
-		trySpawnBarrel();
-
-		for (int i = 0; i < barrelCount; i++) {
-			if (hasBarrelExploded(barrelArr[i])) {
-				barrelArr[i].explode();
-			}
-		}
-
-		if (checkMarioDeath()) {
-			lives--;
-			resetGame();
-			continue;
-		}
-
-		for (int i = 0; i < barrelCount; i++) {
-			if (shouldDeactivateBarrel(barrelArr[i])) {
-				barrelArr[i].deactivate();
-			}
-		}
-
-		eraseCharacters();
-	}
-}
-
-void Game::startGame2() {
 	ShowConsoleCursor(false);
 
 	while (true) {
 		switch (gameState) {
 		case GameState::MENU:
 			menu.displayMenu();
-			menu.getChoice();
+			menu.getChoice(*this);
 			break;
-
-		case GameState::RUNNING:
+		case GameState::START:
+			gameStartTime = clock::now();
+			board.print();
+			gameState = GameState::PLAYING;
+			break;
+		case GameState::PLAYING:
 			if (lives > 0) {
+				checkForKeyPress();
 				update();
 			}
 			else {
@@ -62,7 +35,7 @@ void Game::startGame2() {
 			break;
 
 		case GameState::PAUSED:
-			displayPauseMenu();
+			displayPauseScreen();
 			break;
 
 		case GameState::GAME_OVER:
@@ -76,8 +49,30 @@ void Game::startGame2() {
 	}
 }
 
-void Game::update()
-{
+void Game::update() {
+	drawAndMoveCharacters();
+	Sleep(100);
+	trySpawnBarrel();
+
+	for (int i = 0; i < barrelCount; i++) {
+		if (hasBarrelExploded(barrelArr[i])) {
+			barrelArr[i].explode();
+		}
+	}
+
+	if (checkMarioDeath()) {
+		lives--;
+		resetGame();
+		return;
+	}
+
+	for (int i = 0; i < barrelCount; i++) {
+		if (shouldDeactivateBarrel(barrelArr[i])) {
+			barrelArr[i].deactivate();
+		}
+	}
+
+	eraseCharacters();
 }
 
 void Game::resetGame() {

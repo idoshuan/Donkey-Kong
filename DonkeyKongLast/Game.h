@@ -14,8 +14,8 @@
 
 enum class GameState {
     MENU,
-    READY,
-    RUNNING,
+    START,
+    PLAYING,
     PAUSED,
     GAME_OVER
 };
@@ -75,13 +75,21 @@ public:
 
     // Main game functions
     void startGame();
-    void startGame2();
     void update();
     void resetGame();
+    void setGameState(GameState newGameState) {
+        gameState = newGameState;
+    }
+    void displayPauseScreen() {
+        return;
+    }
 
     // Mario-related functions
     void marioBlink();
     bool checkMarioDeath();
+    void handleGameOver() {
+        return;
+    }
 
     // Barrel-related functions
     void trySpawnBarrel();
