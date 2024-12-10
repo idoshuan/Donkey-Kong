@@ -30,8 +30,8 @@ void Game::handleGameState() {
 		break;
 	case GameState::PLAYING:
 		if (lives > 0) {
-			checkForKeyPress();
 			updateGameLogic();
+			checkForKeyPress();
 		}
 		else {
 			gameState = GameState::GAME_OVER;
