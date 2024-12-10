@@ -1,6 +1,6 @@
 #include "Barrel.h"
 // TODO change magic numbers
-
+// Is resetfalling counter if needed a good option or is better to handle explosion logic inside class
 
 void Barrel::move() {
 	if (floorDir() == '<') {

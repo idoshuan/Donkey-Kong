@@ -11,7 +11,7 @@
 #include <chrono>
 #include <thread>
 
-
+// ------------------- Enums -------------------
 enum class GameState {
     MENU,
     START,
@@ -20,8 +20,10 @@ enum class GameState {
     GAME_OVER
 };
 
+// ------------------- Class Declaration -------------------
 class Game {
 private:
+    // ------------------- Constants -------------------
     // Mario-related constants
     static constexpr int marioInitX = 4;
     static constexpr int marioInitY = 23;
@@ -36,15 +38,16 @@ private:
     static constexpr int barrelSpawnInterval = 5000;
     static constexpr int firstBarrelSpawnDelay = 4000;
     static constexpr int barrelMaxFallHeight = 8;
-    const int explosionRadius = 2;
 
     // General constants
+    const int explosionRadius = 2;
     static constexpr int ESC = 27;
+
     using clock = std::chrono::steady_clock;
     using milliseconds = std::chrono::milliseconds;
     using time = std::chrono::time_point<clock>;
 
-    // Game entities and state
+    // ------------------- Game State Variables -------------------
     GameState gameState;
     Menu menu;
     Mario mario;
@@ -56,48 +59,54 @@ private:
     time lastBarrelTime;
     time gameStartTime;
 
-    // Helper functions
-    bool checkMarioDeathFromBarrel();
-    bool checkMarioDeathFromFall();
-    bool isInExplosionRadius(const Barrel& barrel) const;
-    bool hasBarrelExploded(Barrel& barrel) const;
-    bool shouldDeactivateBarrel(Barrel& barrel) const;
-    bool isDirectCollision(const Barrel& barrel) const;
-    bool isMissedCollision(const Barrel& barrel) const;
-    bool isExplosionFatal(const Barrel& barrel) const;
-    bool shouldSpawnFirstBarrel(const time& now) const;
-    bool canSpawnBarrel(const time& now) const;
-    void spawnBarrel();
-
-public:
-    // Constructor
-    Game();
-
-    // Main game functions
-    void startGame();
-    void update();
+    // ------------------- Private Game Loop Functions -------------------
+    void handleGameState();
+    void updateGameLogic();
     void resetGame();
-    void setGameState(GameState newGameState) {
-        gameState = newGameState;
-    }
-    void displayPauseScreen() {
-        return;
-    }
-
-    // Mario-related functions
-    void marioBlink();
-    bool checkMarioDeath();
     void handleGameOver() {
         return;
     }
 
-    // Barrel-related functions
-    void trySpawnBarrel();
+    // ------------------- Private Menu-Related Functions -------------------
+    void handleMenuState(MenuAction action);
 
-    // Input handling
+    // ------------------- Private Mario-Related Functions -------------------
+    void marioBlink();
+    bool checkMarioDeath();
+    bool checkMarioDeathFromBarrel();
+    bool checkMarioDeathFromFall();
+
+    // ------------------- Private Barrel-Related Functions -------------------
+    void trySpawnBarrel();
+    void spawnBarrel();
+    bool shouldSpawnFirstBarrel(const time& now) const;
+    bool canSpawnBarrel(const time& now) const;
+    bool hasBarrelExploded(Barrel& barrel) const;
+    bool shouldDeactivateBarrel(Barrel& barrel) const;
+
+    // Collision and explosion checks
+    bool isDirectCollision(const Barrel& barrel) const;
+    bool isMissedCollision(const Barrel& barrel) const;
+    bool isExplosionFatal(const Barrel& barrel) const;
+    bool isInExplosionRadius(const Barrel& barrel) const;
+
+    // ------------------- Private Input Handling -------------------
     void checkForKeyPress();
 
-    // Utility
+    // ------------------- Private Pause-Related Functions -------------------
+    void displayPauseScreen();
+    void handlePauseInput();
+
+    // ------------------- Private Utility Functions -------------------
     void eraseCharacters();
     void drawAndMoveCharacters();
+
+public:
+    // ------------------- Constructor -------------------
+    Game();
+
+    // ------------------- Public Main Game Functions -------------------
+    void startGame();
+    
+    
 };
