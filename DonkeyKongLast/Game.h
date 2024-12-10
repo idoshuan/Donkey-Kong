@@ -3,12 +3,22 @@
 #include "Board.h"
 #include "Point.h"
 #include "Barrel.h"
+#include "Menu.h"
 
 #include <iostream>
 #include <windows.h>
 #include <conio.h>
 #include <chrono>
 #include <thread>
+
+
+enum class GameState {
+    MENU,
+    READY,
+    RUNNING,
+    PAUSED,
+    GAME_OVER
+};
 
 class Game {
 private:
@@ -35,6 +45,8 @@ private:
     using time = std::chrono::time_point<clock>;
 
     // Game entities and state
+    GameState gameState;
+    Menu menu;
     Mario mario;
     Board board;
     Barrel barrelArr[numBarrels];
@@ -63,6 +75,8 @@ public:
 
     // Main game functions
     void startGame();
+    void startGame2();
+    void update();
     void resetGame();
 
     // Mario-related functions

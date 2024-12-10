@@ -2,7 +2,8 @@
 
 // ------------------- Constructor -------------------
 Game::Game()
-	: mario(marioInitX, marioInitY, &board),
+	: gameState(GameState::MENU),
+	mario(marioInitX, marioInitY, &board),
 	lives(initLives),
 	barrelCount(0),
 	firstBarrelSpawned(false) {
@@ -28,7 +29,7 @@ void Game::startGame() {
 		if (checkMarioDeath()) {
 			lives--;
 			resetGame();
-			break;
+			continue;
 		}
 
 		for (int i = 0; i < barrelCount; i++) {
@@ -39,6 +40,44 @@ void Game::startGame() {
 
 		eraseCharacters();
 	}
+}
+
+void Game::startGame2() {
+	ShowConsoleCursor(false);
+
+	while (true) {
+		switch (gameState) {
+		case GameState::MENU:
+			menu.displayMenu();
+			menu.getChoice();
+			break;
+
+		case GameState::RUNNING:
+			if (lives > 0) {
+				update();
+			}
+			else {
+				gameState = GameState::GAME_OVER;
+			}
+			break;
+
+		case GameState::PAUSED:
+			displayPauseMenu();
+			break;
+
+		case GameState::GAME_OVER:
+			handleGameOver();
+			return; // Exit the game loop entirely
+
+		default:
+			std::cerr << "Unknown game state!" << std::endl;
+			return;
+		}
+	}
+}
+
+void Game::update()
+{
 }
 
 void Game::resetGame() {
