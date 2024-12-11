@@ -20,7 +20,7 @@ void Mario::keyPressed(char key) {
 			handleHorizontal(keyPressed);
 			return;
 		case 's':
-			setDir(Point::NONE);
+			setDir(Entity::NONE);
 			return;
 		default:
 			return;
@@ -38,7 +38,7 @@ void Mario::move() {
 	else if (isFalling || !isOnFloor()) {
 		fall();
 	}
-	Point::move();
+	Entity::move();
 }
 
 void Mario::handleUp() {
@@ -56,9 +56,9 @@ void Mario::handleUp() {
 
 void Mario::handleDown() {
 	if (!isJumping && !isFalling) {
-		setDir(Point::DOWN);
+		setDir(Entity::DOWN);
 		isClimbingUp = false;
-		if (isLadder(getX(), getY() + 2) && !isOnLadder()) {
+		if (getBoard()->isLadder(getX(), getY() + 2) && !isOnLadder()) {
 			this->erase(); //Ask amir if thers a better solution
 			setY(getY() + 1);
 		}
@@ -74,10 +74,10 @@ void Mario::handleHorizontal(char keyPressed) {
 		else {
 			switch (keyPressed) {
 			case 'a':
-				setDir(Point::LEFT);
+				setDir(Entity::LEFT);
 				break;
 			case 'd':
-				setDir(Point::RIGHT);
+				setDir(Entity::RIGHT);
 				break;
 			default:
 				return;
@@ -113,7 +113,7 @@ void Mario::fall() {
 }
 
 void Mario::climb() {
-	if (isLadder(getX(), getY() + getDirY())) {
+	if (getBoard()->isLadder(getX(), getY() + getDirY())) {
 		return;
 	}
 	else {

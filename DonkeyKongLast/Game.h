@@ -1,7 +1,7 @@
 #pragma once
 #include "Mario.h"
 #include "Board.h"
-#include "Point.h"
+#include "Entity.h"
 #include "Barrel.h"
 #include "Menu.h"
 

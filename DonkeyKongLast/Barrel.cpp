@@ -17,12 +17,12 @@ void Barrel::move() {
 	if (!isOnFloor() || isFalling) {
 		fall();
 	}
-	Point::move();
+	Entity::move();
 }
 
 void Barrel::fall() {
 	isFalling = true;
-	setDir(Point::DOWN);
+	setDir(Entity::DOWN);
 	if (!isOnFloor()) {
 		fallingCounter++;
 	}

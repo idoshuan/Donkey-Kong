@@ -1,7 +1,7 @@
 #pragma once
-#include "Point.h"
+#include "Entity.h"
 
-class Mario : public Point {
+class Mario : public Entity {
 	
 	static constexpr char keys[] = { 'w', 'x', 'a', 'd', 's'};
 	static constexpr size_t numKeys = sizeof(keys) / sizeof(char);
@@ -17,7 +17,7 @@ class Mario : public Point {
 	bool resetFallingCounter;
 
 public:
-	Mario(int x, int y, Board* pBoard) : Point(character, x, y, pBoard), isJumping(false), isFalling(false), isClimbingUp(false), isClimbingDown(false), jumpCounter(0), fallingCounter(0), resetFallingCounter(false){}
+	Mario(int x, int y, Board* pBoard) : Entity(character, x, y, pBoard), isJumping(false), isFalling(false), isClimbingUp(false), isClimbingDown(false), jumpCounter(0), fallingCounter(0), resetFallingCounter(false){}
 
 	bool isValidKey(char k) {
 		char key = std::tolower(k);
