@@ -17,7 +17,8 @@ enum class GameState {
     START,
     PLAYING,
     PAUSED,
-    GAME_OVER
+    GAME_OVER,
+    WON
 };
 
 // ------------------- Class Declaration -------------------
@@ -25,15 +26,15 @@ class Game {
 private:
     // ------------------- Constants -------------------
     // Mario-related constants
-    static constexpr int marioInitX = 4;
-    static constexpr int marioInitY = 23;
+    static constexpr int marioInitX = 20;
+    static constexpr int marioInitY = 0;
     static constexpr int marioMaxFallHeight = 5;
     static constexpr int initLives = 3;
 
     // Barrel-related constants
     static constexpr int numBarrels = 10;
-    static constexpr int leftBarrelInitX = 37;
-    static constexpr int rightBarrelInitX = 39;
+    static constexpr int leftBarrelInitX = 38;
+    static constexpr int rightBarrelInitX = 40;
     static constexpr int barrelInitY = 2;
     static constexpr int barrelSpawnInterval = 5000;
     static constexpr int firstBarrelSpawnDelay = 4000;
@@ -61,6 +62,7 @@ private:
 
     // ------------------- Private Game Loop Functions -------------------
     void handleGameState();
+    void handleGameWin();
     void updateGameLogic();
     void resetGame();
     void handleGameOver() {
@@ -73,6 +75,7 @@ private:
     // ------------------- Private Mario-Related Functions -------------------
     void marioBlink();
     bool checkMarioDeath();
+    bool checkMarioWon();
     bool checkMarioDeathFromBarrel();
     bool checkMarioDeathFromFall();
 
@@ -99,7 +102,8 @@ private:
 
     // ------------------- Private Utility Functions -------------------
     void eraseCharacters();
-    void drawAndMoveCharacters();
+    void moveCharacters();
+    void drawCharacters();
 
 public:
     // ------------------- Constructor -------------------

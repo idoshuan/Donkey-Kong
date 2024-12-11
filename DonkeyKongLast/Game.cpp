@@ -1,4 +1,4 @@
-#include "Game.h"
+﻿#include "Game.h"
 
 // ------------------- Constructor -------------------
 Game::Game()
@@ -39,22 +39,31 @@ void Game::handleGameState() {
 		break;
 	case GameState::PAUSED:
 		handlePauseInput();
-
 		break;
 
 	case GameState::GAME_OVER:
 		handleGameOver();
 		return;
-
+	case GameState::WON:
+		handleGameWin();
+		return;
 	default:
 		std::cerr << "Unknown game state!" << std::endl;
 		return startGame();
 	}
 }
 
+void Game::handleGameWin(){
+	std::cout << "YOU WON!!!" << std::endl; 
+	Sleep(1900);
+	gameState = GameState::MENU;
+}
+
 void Game::updateGameLogic() {
-	drawAndMoveCharacters();
+	drawCharacters();
 	Sleep(100);
+	eraseCharacters();
+
 	trySpawnBarrel();
 
 	for (int i = 0; i < barrelCount; i++) {
@@ -68,14 +77,16 @@ void Game::updateGameLogic() {
 		resetGame();
 		return;
 	}
-
+	if (checkMarioWon()) {
+		gameState = GameState::WON;
+	}
 	for (int i = 0; i < barrelCount; i++) {
 		if (shouldDeactivateBarrel(barrelArr[i])) {
 			barrelArr[i].deactivate();
 		}
 	}
+	moveCharacters();
 
-	eraseCharacters();
 }
 
 void Game::resetGame() {
@@ -98,14 +109,15 @@ void Game::checkForKeyPress() {
 		char key = _getch();
 		if (key == ESC) {
 			gameState = GameState::PAUSED;
+			drawCharacters();
+			return;
 		}
 		mario.keyPressed(key);
 	}
 }
 
 void Game::handleMenuState(MenuAction action) {
-	MenuAction menuAction = menu.getAction();
-	switch (menuAction) {
+	switch (action) {
 	case MenuAction::START_GAME:
 		gameState = GameState::START;
 		break;
@@ -120,6 +132,9 @@ void Game::handleMenuState(MenuAction action) {
 // ------------------- Mario-related Functions -------------------
 bool Game::checkMarioDeath() {
 	return checkMarioDeathFromBarrel() || checkMarioDeathFromFall();
+}
+bool Game::checkMarioWon() {
+	return mario.getX() == 38 && mario.getY() == 0;
 }
 
 void Game::marioBlink() {
@@ -224,7 +239,8 @@ bool Game::isDirectCollision(const Barrel& barrel) const {
 
 bool Game::isMissedCollision(const Barrel& barrel) const {
 	int marioPreviousX = mario.getX() - mario.getDirX();
-	return marioPreviousX == barrel.getX() && mario.getY() == barrel.getY();
+	int marioPreviousY = mario.getY() - mario.getDirY();
+	return marioPreviousX == barrel.getX() && marioPreviousY == barrel.getY();
 }
 
 bool Game::isExplosionFatal(const Barrel& barrel) const {
@@ -250,18 +266,24 @@ void Game::displayPauseScreen() {
 }
 
 // ------------------- Utility Functions -------------------
-void Game::drawAndMoveCharacters() {
-	mario.move();
-	mario.draw();
 
+void Game::moveCharacters() {
+	mario.move();
 	for (int i = 0; i < barrelCount; i++) {
 		if (barrelArr[i].isCurrentlyActive()) {
 			barrelArr[i].move();
-			barrelArr[i].draw();
 		}
 	}
 }
 
+void Game::drawCharacters() {
+	mario.draw();
+	for (int i = 0; i < barrelCount; i++) {
+		if (barrelArr[i].isCurrentlyActive()) {
+		   	barrelArr[i].draw();
+		}
+	}
+}
 void Game::eraseCharacters() {
 	mario.erase();
 	for (int i = 0; i < barrelCount; i++) {
