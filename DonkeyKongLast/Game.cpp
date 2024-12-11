@@ -30,9 +30,8 @@ void Game::handleGameState() {
 		gameState = GameState::PLAYING;
 		break;
 	case GameState::PLAYING:
-		if (lives > 2) {
+		if (lives > 0) {
 			updateGameLogic();
-			checkForKeyPress();
 		}
 		else {
 			gameState = GameState::GAME_OVER;
@@ -89,6 +88,7 @@ void Game::handleGameOver()
 void Game::updateGameLogic() {
 	drawCharacters();
 	Sleep(70);
+	checkForKeyPress();
 	eraseCharacters();
 	trySpawnBarrel();
 
@@ -289,22 +289,6 @@ void Game::displayPauseScreen() {
 	std::cout << "        GAME PAUSED         \n";
 	std::cout << " Press ESC again to resume  \n";
 	std::cout << "----------------------------\n";
-}
-
-void Game::handleGameWin() {
-	clearScreen();
-	std::cout << R"(
- __   __  _______  __   __    _     _  ___   __    _  __   
-|  | |  ||       ||  | |  |  | | _ | ||   | |  |  | ||  |  
-|  |_|  ||   _   ||  | |  |  | || || ||   | |   |_| ||  |  
-|       ||  | |  ||  |_|  |  |       ||   | |       ||  |  
-|_     _||  |_|  ||       |  |       ||   | |  _    ||__|  
-  |   |  |       ||       |  |   _   ||   | | | |   | __   
-  |___|  |_______||_______|  |__| |__||___| |_|  |__||__|  
-                                                           
-)" << std::endl;
-	Sleep(1900);
-	gameState = GameState::MENU;
 }
 
 // ------------------- Utility Functions -------------------
