@@ -30,7 +30,7 @@ void Game::handleGameState() {
 		gameState = GameState::PLAYING;
 		break;
 	case GameState::PLAYING:
-		if (lives > 0) {
+		if (lives > 2) {
 			updateGameLogic();
 			checkForKeyPress();
 		}
@@ -54,6 +54,38 @@ void Game::handleGameState() {
 	}
 }
 
+void Game::handleGameWin(){
+	clearScreen();
+
+	std::cout << R"(
+  __     ______  _    _   ___         _______  _   _ 
+  \ \   / / __ \| |  | |  \ \        / /_   _|| \ | |
+   \ \_/ / |  | | |  | |   \ \  /\  / /  | |  |  \| |
+    \   /| |  | | |  | |    \ \/  \/ /   | |  | . ` |
+     | | | |__| | |__| |     \  /\  /   _| |_ | |\  |
+     |_|  \____/ \____/       \/  \/   |_____||_| \_|
+                                                    
+    )";	Sleep(1000);
+	gameState = GameState::MENU;
+}
+
+void Game::handleGameOver()
+{
+	marioBlink();
+
+	clearScreen(); 
+	std::cout << R"(
+  __     ______  _    _   _      ____   _____ ______ 
+  \ \   / / __ \| |  | | | |    / __ \ / ____|  ____|
+   \ \_/ / |  | | |  | | | |   | |  | | (___ | |__   
+    \   /| |  | | |  | | | |   | |  | |\___ \|  __|  
+     | | | |__| | |__| | | |___| |__| |____) | |____ 
+     |_|  \____/ \____/  |______\____/|_____/|______|
+                                                    
+)" << std::endl;
+	Sleep(1000);
+	gameState = GameState::MENU;
+}
 void Game::updateGameLogic() {
 	drawCharacters();
 	Sleep(70);
@@ -95,6 +127,8 @@ void Game::resetGame() {
 	gameStartTime = clock::now();
 	lastBarrelTime = gameStartTime;
 }
+
+
 
 // ------------------- Input Handling -------------------
 void Game::checkForKeyPress() {

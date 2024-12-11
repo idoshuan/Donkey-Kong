@@ -66,9 +66,7 @@ private:
     void handleGameWin();
     void updateGameLogic();
     void resetGame();
-    void handleGameOver() {
-        return;
-    }
+    void handleGameOver();
 
     // ------------------- Private Menu-Related Functions -------------------
     void handleMenuState(MenuAction action);
