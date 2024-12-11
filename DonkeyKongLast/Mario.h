@@ -1,11 +1,9 @@
 #pragma once
 #include "Entity.h"
+#include "GameConfig.h"
 
 class Mario : public Entity {
 	
-	static constexpr char keys[] = { 'w', 'x', 'a', 'd', 's'};
-	static constexpr size_t numKeys = sizeof(keys) / sizeof(char);
-	static constexpr char character = '@';
 	static constexpr int jumpHeight = 2;
 	
 	bool isJumping;
@@ -17,17 +15,17 @@ class Mario : public Entity {
 	bool resetFallingCounter;
 
 public:
-	Mario(int x, int y, Board* pBoard) : Entity(character, x, y, pBoard), isJumping(false), isFalling(false), isClimbingUp(false), isClimbingDown(false), jumpCounter(0), fallingCounter(0), resetFallingCounter(false){}
+	Mario(int x, int y, Board* pBoard) : Entity(ENTITIES_CHARACTERS::MARIO, x, y, pBoard), isJumping(false), isFalling(false), isClimbingUp(false), isClimbingDown(false), jumpCounter(0), fallingCounter(0), resetFallingCounter(false){}
+	enum { UP = -1, DOWN = 1, RIGHT = 1, LEFT = -1, STAY = 0 };
 
-	bool isValidKey(char k) {
-		char key = std::tolower(k);
-		return (key == 'w' || key == 'a' || key == 's' || key == 'd' || key == 'x');
+	bool isValidKey(KEYS key) {
+		return (key == KEYS::UP || key == KEYS::DOWN || key == KEYS::LEFT || key == KEYS::RIGHT || key == KEYS::STAY);
 	}
-	void keyPressed(char key);
+	void keyPressed(KEYS key);
 	void move();
 	void handleUp();
 	void handleDown();
-	void handleHorizontal(char keyPressed);
+	void handleHorizontal(KEYS keyPressed);
 	void jump();
 	void climb();
 	void fall();

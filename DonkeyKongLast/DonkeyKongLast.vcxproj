@@ -185,6 +185,7 @@
     <ClInclude Include="Barrel.h" />
     <ClInclude Include="Board.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="GameConfig.h" />
     <ClInclude Include="Mario.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="Entity.h" />

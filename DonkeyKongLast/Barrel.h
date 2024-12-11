@@ -2,7 +2,6 @@
 #include "Entity.h"
 
 class Barrel: public Entity{
-	static constexpr char character = 'O';
 
 	int fallingCounter;
 	bool isFalling;
@@ -12,7 +11,7 @@ class Barrel: public Entity{
 	int prevDirX;
 
 public:
-	Barrel(int x = 0, int y = 0, Board* pBoard = nullptr) : Entity(character, x, y, pBoard), fallingCounter(0), isFalling(false), resetFallingCounter(false), isActive(false), isExplode(false), prevDirX(0){}
+	Barrel(int x = 0, int y = 0, Board* pBoard = nullptr) : Entity(ENTITIES_CHARACTERS::BARREL, x, y, pBoard), fallingCounter(0), isFalling(false), resetFallingCounter(false), isActive(false), isExplode(false), prevDirX(0){}
 	
 	void move();
 	void fall();

@@ -3,23 +3,20 @@
 // fix stay while falling
 // ask amir about line 62
 
-void Mario::keyPressed(char key) {
-	char keyPressed = std::tolower(key);
-	if (isValidKey(key)) {
+void Mario::keyPressed(KEYS keyPressed) {
+	if (isValidKey(keyPressed)) {
 		switch (keyPressed) {
-		case 'w':
+		case KEYS::UP:
 			handleUp();
 			return;
-		case 'x':
+		case KEYS::DOWN:
 			handleDown();
 			return;
-		case 'a':
+		case KEYS::LEFT:
+		case KEYS::RIGHT:
 			handleHorizontal(keyPressed);
 			return;
-		case 'd':
-			handleHorizontal(keyPressed);
-			return;
-		case 's':
+		case KEYS::STAY:
 			setDir(Entity::NONE);
 			return;
 		default:
@@ -43,9 +40,9 @@ void Mario::move() {
 
 void Mario::handleUp() {
 	if (!isJumping && !isFalling) {
-		setDirY(up);
+		setDirY(UP);
 		if (isOnLadder()) {
-			setDirX(0);
+			setDirX(STAY);
 			isClimbingUp = true;
 		}
 		else {
@@ -58,25 +55,25 @@ void Mario::handleDown() {
 	if (!isJumping && !isFalling) {
 		setDir(Entity::DOWN);
 		isClimbingUp = false;
-		if (getBoard()->isLadder(getX(), getY() + 2) && !isOnLadder()) {
-			this->erase(); //Ask amir if thers a better solution
+		if (getBoard()->isLadder(Point(getX(), getY() + 2)) && !isOnLadder()) {
+			this->erase(); 
 			setY(getY() + 1);
 		}
 		isClimbingDown = true;
 	}
 }
 
-void Mario::handleHorizontal(char keyPressed) {
+void Mario::handleHorizontal(KEYS keyPressed) {
 	if (!isClimbingDown && !isClimbingUp) {
 		if (!isOnFloor()) {
 			isFalling = true;
 		}
 		else {
 			switch (keyPressed) {
-			case 'a':
+			case KEYS::LEFT:
 				setDir(Entity::LEFT);
 				break;
-			case 'd':
+			case KEYS::RIGHT:
 				setDir(Entity::RIGHT);
 				break;
 			default:
@@ -94,14 +91,14 @@ void Mario::jump() {
 		jumpCounter = 0;
 		isJumping = false;
 		isFalling = true;
-		setDirY(down);
+		setDirY(DOWN);
 	}
 }
 
 
 void Mario::fall() {
 	isFalling = true;
-	setDirY(down);
+	setDirY(DOWN);
 	if (!isOnFloor()) {
 		fallingCounter++;
 	}
@@ -113,7 +110,7 @@ void Mario::fall() {
 }
 
 void Mario::climb() {
-	if (getBoard()->isLadder(getX(), getY() + getDirY())) {
+	if (getBoard()->isLadder(Point(getX(), getY() + getDirY()))) {
 		return;
 	}
 	else {

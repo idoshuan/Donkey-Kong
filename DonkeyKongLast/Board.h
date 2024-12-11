@@ -1,5 +1,7 @@
 #pragma once
 #include "Utils.h"
+#include "Point.h"
+#include "GameConfig.h"
 #include <iostream>
 
 class Board {
@@ -50,18 +52,20 @@ public:
 
     void reset();
     void print() const;
-    char getChar(int x, int y) const {
-        return currentBoard[y][x];
+    char getChar(Point p) const {
+        return currentBoard[p.getY()][p.getX()];
     }
-    bool isValidPosition(int x, int y) const {
-        char ch = getChar(x, y);
+    bool isValidPosition(Point p) const {
+        char ch = getChar(p);
+        int x = p.getX();
+        int y = p.getY();
         return(x >= MIN_X && x < MAX_X && y >= MIN_Y && y < MAX_Y && ch != FLOOR && ch != LEFT_FLOOR && ch != RIGHT_FLOOR);
     }
-    bool isLadder(int x, int y) const {
-        return getChar(x, y) == 'H';
+    bool isLadder(Point p) const {
+        return getChar(p) == BOARD_CHARACTERS::LADDER;
     }
-    bool isFloorBelow(int x, int y) const {
-        char ch = getChar(x, y + 1);
+    bool isFloorBelow(Point p) const {
+        char ch = getChar(Point(p.getX(), p.getY() + 1));
         return ch == '=' || ch == '>' || ch == '<';
     }
     int getMaxX() const{

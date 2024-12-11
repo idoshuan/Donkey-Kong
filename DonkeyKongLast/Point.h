@@ -1,12 +1,11 @@
 #pragma once
-#include "Board.h"
 
 class Point {
-	char ch;
 	int x, y;
 
 public:
 	Point(int x, int y) :x(x), y(y) {}
+
 	int getX() const {
 		return x;
 	}

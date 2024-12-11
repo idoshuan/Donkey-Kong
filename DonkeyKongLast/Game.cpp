@@ -21,9 +21,10 @@ void Game::handleGameState() {
 	switch (gameState) {
 	case GameState::MENU:
 		menu.displayMenu();
-		handleMenuState(menu.getAction());
+		handleMenuState(menu.getAction());  
 		break;
 	case GameState::START:
+		clearScreen();
 		gameStartTime = clock::now();
 		board.print();
 		gameState = GameState::PLAYING;
@@ -53,27 +54,10 @@ void Game::handleGameState() {
 	}
 }
 
-void Game::handleGameWin(){
-	clearScreen();
-	std::cout << R"(
- __   __  _______  __   __    _     _  ___   __    _  __   
-|  | |  ||       ||  | |  |  | | _ | ||   | |  |  | ||  |  
-|  |_|  ||   _   ||  | |  |  | || || ||   | |   |_| ||  |  
-|       ||  | |  ||  |_|  |  |       ||   | |       ||  |  
-|_     _||  |_|  ||       |  |       ||   | |  _    ||__|  
-  |   |  |       ||       |  |   _   ||   | | | |   | __   
-  |___|  |_______||_______|  |__| |__||___| |_|  |__||__|  
-                                                           
-)" << std::endl;
-	Sleep(1900);
-	gameState = GameState::MENU;
-}
-
 void Game::updateGameLogic() {
 	drawCharacters();
-	Sleep(100);
+	Sleep(70);
 	eraseCharacters();
-
 	trySpawnBarrel();
 
 	for (int i = 0; i < barrelCount; i++) {
@@ -96,7 +80,6 @@ void Game::updateGameLogic() {
 		}
 	}
 	moveCharacters();
-
 }
 
 void Game::resetGame() {
@@ -116,10 +99,9 @@ void Game::resetGame() {
 // ------------------- Input Handling -------------------
 void Game::checkForKeyPress() {
 	if (_kbhit()) {
-		char key = _getch();
-		if (key == ESC) {
+		KEYS key = charToKey(_getch());
+		if (key == KEYS::ESC) {
 			gameState = GameState::PAUSED;
-			drawCharacters();
 			return;
 		}
 		mario.keyPressed(key);
@@ -273,6 +255,22 @@ void Game::displayPauseScreen() {
 	std::cout << "        GAME PAUSED         \n";
 	std::cout << " Press ESC again to resume  \n";
 	std::cout << "----------------------------\n";
+}
+
+void Game::handleGameWin() {
+	clearScreen();
+	std::cout << R"(
+ __   __  _______  __   __    _     _  ___   __    _  __   
+|  | |  ||       ||  | |  |  | | _ | ||   | |  |  | ||  |  
+|  |_|  ||   _   ||  | |  |  | || || ||   | |   |_| ||  |  
+|       ||  | |  ||  |_|  |  |       ||   | |       ||  |  
+|_     _||  |_|  ||       |  |       ||   | |  _    ||__|  
+  |   |  |       ||       |  |   _   ||   | | | |   | __   
+  |___|  |_______||_______|  |__| |__||___| |_|  |__||__|  
+                                                           
+)" << std::endl;
+	Sleep(1900);
+	gameState = GameState::MENU;
 }
 
 // ------------------- Utility Functions -------------------

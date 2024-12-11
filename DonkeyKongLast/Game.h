@@ -4,6 +4,7 @@
 #include "Entity.h"
 #include "Barrel.h"
 #include "Menu.h"
+#include "GameConfig.h"
 
 #include <iostream>
 #include <windows.h>
@@ -26,8 +27,8 @@ class Game {
 private:
     // ------------------- Constants -------------------
     // Mario-related constants
-    static constexpr int marioInitX = 20;
-    static constexpr int marioInitY = 0;
+    static constexpr int marioInitX = 4;
+    static constexpr int marioInitY = 23;
     static constexpr int marioMaxFallHeight = 5;
     static constexpr int initLives = 3;
 
