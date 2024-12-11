@@ -54,7 +54,17 @@ void Game::handleGameState() {
 }
 
 void Game::handleGameWin(){
-	std::cout << "YOU WON!!!" << std::endl; 
+	clearScreen();
+	std::cout << R"(
+ __   __  _______  __   __    _     _  ___   __    _  __   
+|  | |  ||       ||  | |  |  | | _ | ||   | |  |  | ||  |  
+|  |_|  ||   _   ||  | |  |  | || || ||   | |   |_| ||  |  
+|       ||  | |  ||  |_|  |  |       ||   | |       ||  |  
+|_     _||  |_|  ||       |  |       ||   | |  _    ||__|  
+  |   |  |       ||       |  |   _   ||   | | | |   | __   
+  |___|  |_______||_______|  |__| |__||___| |_|  |__||__|  
+                                                           
+)" << std::endl;
 	Sleep(1900);
 	gameState = GameState::MENU;
 }
