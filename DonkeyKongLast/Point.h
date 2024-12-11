@@ -2,7 +2,6 @@
 
 class Point {
 	int x, y;
-
 public:
 	Point(int x, int y) :x(x), y(y) {}
 
@@ -18,4 +17,10 @@ public:
 	void setY(int newY) {
 		y = newY;
 	}
+	
+	bool operator==(const Point& other) const {
+		return x == other.x && y == other.y;
+	}
+
 };
+
