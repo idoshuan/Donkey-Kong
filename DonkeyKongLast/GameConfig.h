@@ -37,6 +37,7 @@ inline KEYS charToKey(char key) {
     case 'a': return KEYS::LEFT;
     case 'd': return KEYS::RIGHT;
     case 's': return KEYS::STAY;
+    case 27: return KEYS::ESC;
     default: return KEYS::INVALID;
     }
 }

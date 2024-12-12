@@ -6,8 +6,7 @@ Game::Game()
 	mario(marioInitX, marioInitY, &board),
 	lives(initLives),
 	barrelCount(0),
-	firstBarrelSpawned(false) {
-}
+	firstBarrelSpawned(false) {}
 
 // ------------------- Game Loop -------------------
 void Game::startGame() {
@@ -24,13 +23,14 @@ void Game::handleGameState() {
 		handleMenuState(menu.getAction());  
 		break;
 	case GameState::START:
+		lives = initLives;
 		clearScreen();
 		gameStartTime = clock::now();
 		board.print();
 		gameState = GameState::PLAYING;
 		break;
 	case GameState::PLAYING:
-		if (lives > 2) {
+		if (lives > 0) {
 			updateGameLogic();
 			checkForKeyPress();
 		}
@@ -87,6 +87,7 @@ void Game::handleGameOver()
 	gameState = GameState::MENU;
 }
 void Game::updateGameLogic() {
+	displayLives();
 	drawCharacters();
 	Sleep(70);
 	eraseCharacters();
@@ -136,6 +137,7 @@ void Game::checkForKeyPress() {
 		KEYS key = charToKey(_getch());
 		if (key == KEYS::ESC) {
 			gameState = GameState::PAUSED;
+			drawCharacters();
 			return;
 		}
 		mario.keyPressed(key);
@@ -160,7 +162,8 @@ bool Game::checkMarioDeath() {
 	return checkMarioDeathFromBarrel() || checkMarioDeathFromFall();
 }
 bool Game::checkMarioWon() {
-	return mario.getX() == 38 && mario.getY() == 0;
+	Point paulina = board.getPaulina();
+	return mario.getX() == paulina.getX() && mario.getY() == paulina.getY();
 }
 
 void Game::marioBlink() {
@@ -277,7 +280,7 @@ bool Game::isExplosionFatal(const Barrel& barrel) const {
 void Game::handlePauseInput() {
 	if (_kbhit()) {
 		char key = _getch();
-		if (key == ESC) {
+		if (key == KEYS::ESC) {
 				gameState = GameState::PLAYING; // Resume the game
 		}
 	}
@@ -289,22 +292,6 @@ void Game::displayPauseScreen() {
 	std::cout << "        GAME PAUSED         \n";
 	std::cout << " Press ESC again to resume  \n";
 	std::cout << "----------------------------\n";
-}
-
-void Game::handleGameWin() {
-	clearScreen();
-	std::cout << R"(
- __   __  _______  __   __    _     _  ___   __    _  __   
-|  | |  ||       ||  | |  |  | | _ | ||   | |  |  | ||  |  
-|  |_|  ||   _   ||  | |  |  | || || ||   | |   |_| ||  |  
-|       ||  | |  ||  |_|  |  |       ||   | |       ||  |  
-|_     _||  |_|  ||       |  |       ||   | |  _    ||__|  
-  |   |  |       ||       |  |   _   ||   | | | |   | __   
-  |___|  |_______||_______|  |__| |__||___| |_|  |__||__|  
-                                                           
-)" << std::endl;
-	Sleep(1900);
-	gameState = GameState::MENU;
 }
 
 // ------------------- Utility Functions -------------------
@@ -331,4 +318,16 @@ void Game::eraseCharacters() {
 	for (int i = 0; i < barrelCount; i++) {
 		barrelArr[i].erase();
 	}
+}
+
+void Game::displayLives() const {
+	// Position for displaying lives (e.g., top-left corner)
+	int displayX = 6;
+	int displayY = 0;
+
+	// Move the cursor to the desired position
+	gotoxy(displayX, displayY);
+
+	// Print the lives
+	std::cout << lives;
 }

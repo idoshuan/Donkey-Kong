@@ -25,6 +25,7 @@ enum class GameState {
 // ------------------- Class Declaration -------------------
 class Game {
 private:
+   
     // ------------------- Constants -------------------
     // Mario-related constants
     static constexpr int marioInitX = 4;
@@ -34,8 +35,6 @@ private:
 
     // Barrel-related constants
     static constexpr int numBarrels = 10;
-    static constexpr int leftBarrelInitX = 38;
-    static constexpr int rightBarrelInitX = 40;
     static constexpr int barrelInitY = 2;
     static constexpr int barrelSpawnInterval = 5000;
     static constexpr int firstBarrelSpawnDelay = 4000;
@@ -43,8 +42,7 @@ private:
 
     // General constants
     const int explosionRadius = 2;
-    static constexpr int ESC = 27;
-
+    
     using clock = std::chrono::steady_clock;
     using milliseconds = std::chrono::milliseconds;
     using time = std::chrono::time_point<clock>;
@@ -58,9 +56,10 @@ private:
     int lives;
     int barrelCount;
     bool firstBarrelSpawned;
+    int leftBarrelInitX = board.getDonkeyKong().getX() - 1;
+    int rightBarrelInitX = board.getDonkeyKong().getX() + 1;
     time lastBarrelTime;
     time gameStartTime;
-
     // ------------------- Private Game Loop Functions -------------------
     void handleGameState();
     void handleGameWin();
@@ -104,6 +103,8 @@ private:
     void moveCharacters();
     void drawCharacters();
 
+
+    void displayLives() const;
 public:
     // ------------------- Constructor -------------------
     Game();

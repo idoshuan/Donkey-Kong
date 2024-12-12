@@ -9,6 +9,10 @@ class Board {
     static constexpr int MAX_Y = 25;
     static constexpr int MIN_X = 0;
     static constexpr int MIN_Y = 0;
+    static constexpr int PAULINA_X = 38;
+    static constexpr int PAULINA_Y = 0;
+    static constexpr int DONKEYKONG_X = 39;
+    static constexpr int DONKEYKONG_Y = 2;
 
     static constexpr char FLOOR = '=';  // Representing floor
     static constexpr char LADDER = 'H'; // Representing ladder
@@ -18,9 +22,9 @@ class Board {
     const char* originalBoard[MAX_Y] = {
         //          1         2         3         4         5         6         7
         //01234567890123456789012345678901234567890123456789012345678901234567890123456789 
-         "                                      $                                         ", //0
+         "Lives:                                                                          ", //0
          "             =======================================================            ", //1
-         "               H                       &                        H               ", //2
+         "               H                                                H               ", //2
          "               H       <<<<<<<<<<<<<<<<=>>>>>>>>>>>>>>>>        H               ", //3
          "               H                                                H               ", //4
          "    >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>                          H               ", //5
@@ -45,8 +49,12 @@ class Board {
          "================================================================================"  //24
     };
     char currentBoard[MAX_Y][MAX_X + 1]; // +1 for null terminator
+
+    Point paulina;
+    Point donkeyKong;
+
 public:
-    Board() {
+    Board() :paulina(PAULINA_X, PAULINA_Y), donkeyKong(DONKEYKONG_X, DONKEYKONG_Y) {
         reset();
     }
 
@@ -73,6 +81,13 @@ public:
     }
     int getMinX() const{
         return MIN_X;
+    }
+
+    Point getPaulina() {
+        return paulina;
+    }
+    Point getDonkeyKong() {
+        return donkeyKong;
     }
 };
 
