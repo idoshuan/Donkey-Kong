@@ -4,20 +4,20 @@
 #include "Board.h"
 
 void Board::reset() {
-	for (int i = 0; i < MAX_Y; i++) {
-		memcpy(currentBoard[i], originalBoard[i], MAX_X + 1);
+	for (int i = 0; i < BOARD_BOUNDARIES::MAX_Y; i++) {
+		memcpy(currentBoard[i], originalBoard[i], BOARD_BOUNDARIES::MAX_X + 1);
 	}
 }
 
 void Board::print() const {
 
-	for (int y = 0; y < MAX_Y - 1; ++y) {
-		for (int x = 0; x < MAX_X - 1; ++x) {
+	for (int y = 0; y < BOARD_BOUNDARIES::MAX_Y - 1; ++y) {
+		for (int x = 0; x < BOARD_BOUNDARIES::MAX_X - 1; ++x) {
 			Point currentPoint(x, y);
-			if (currentPoint == paulina) {
-				std::cout << char(ENTITIES_CHARACTERS::PRINCESS);
+			if (currentPoint == CHARACTER_POSITIONS::paulina) {
+				std::cout << char(ENTITIES_CHARACTERS::PAULINA);
 			}
-			else if (currentPoint == donkeyKong) {
+			else if (currentPoint == CHARACTER_POSITIONS::donkeyKong) {
 				std::cout << char(ENTITIES_CHARACTERS::DONKEY_KONG);
 			}
 			else {
@@ -26,10 +26,6 @@ void Board::print() const {
 		}
 		std::cout << std::endl;
 	}
-
-
-	std::cout << currentBoard[MAX_Y - 1];
-
-
+	std::cout << currentBoard[BOARD_BOUNDARIES::MAX_Y - 1];
 }
 

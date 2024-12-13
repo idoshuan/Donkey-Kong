@@ -4,12 +4,12 @@
 
 void Barrel::move() {
 	if (floorDir() == '<') {
-		setDirX(-1);
-		prevDirX = -1;
+		setDirX(X_LEFT);
+		prevDirX = X_LEFT;
 	}
 	else if (floorDir() == '>') {
-		setDirX(1);
-		prevDirX = 1;
+		setDirX(X_RIGHT);
+		prevDirX = X_RIGHT;
 	}
 	else if (floorDir() == '=') {
 		setDirX(prevDirX);
@@ -29,7 +29,7 @@ void Barrel::fall() {
 	else {
 		resetFallingCounter = true;
 		isFalling = false;
-		setDirY(0);
+		setDirY(Y_NONE);
 	}
 }
 

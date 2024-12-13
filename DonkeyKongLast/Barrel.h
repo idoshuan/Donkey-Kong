@@ -3,15 +3,15 @@
 
 class Barrel: public Entity{
 
-	int fallingCounter;
-	bool isFalling;
-	bool resetFallingCounter;
-	bool isActive;
-	bool isExplode;
-	int prevDirX;
+	int fallingCounter = 0;
+	bool isFalling = false;
+	bool resetFallingCounter = false;
+	bool isActive = false; 
+	bool isExplode = false;
+	int prevDirX = 0;
 
 public:
-	Barrel(int x = 0, int y = 0, Board* pBoard = nullptr) : Entity(ENTITIES_CHARACTERS::BARREL, x, y, pBoard), fallingCounter(0), isFalling(false), resetFallingCounter(false), isActive(false), isExplode(false), prevDirX(0){}
+	Barrel(Point initPoint = Point{ 0, 0 }, Board* pBoard = nullptr) : Entity(ENTITIES_CHARACTERS::BARREL, initPoint, pBoard) {}
 	
 	void move();
 	void fall();

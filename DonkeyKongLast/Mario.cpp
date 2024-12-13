@@ -1,8 +1,5 @@
 #include "Mario.h"
 
-// fix stay while falling
-// ask amir about line 62
-
 void Mario::keyPressed(KEYS keyPressed) {
 	if (isValidKey(keyPressed)) {
 		switch (keyPressed) {
@@ -40,9 +37,9 @@ void Mario::move() {
 
 void Mario::handleUp() {
 	if (!isJumping && !isFalling) {
-		setDirY(UP);
+		setDirY(Y_UP);
 		if (isOnLadder()) {
-			setDirX(STAY);
+			setDirX(X_NONE);
 			isClimbingUp = true;
 		}
 		else {
@@ -55,6 +52,7 @@ void Mario::handleDown() {
 	if (!isJumping && !isFalling) {
 		setDir(Entity::DOWN);
 		isClimbingUp = false;
+
 		if (getBoard()->isLadder(Point(getX(), getY() + 2)) && !isOnLadder()) {
 			this->erase(); 
 			setY(getY() + 1);
@@ -91,21 +89,21 @@ void Mario::jump() {
 		jumpCounter = 0;
 		isJumping = false;
 		isFalling = true;
-		setDirY(DOWN);
+		setDirY(Y_DOWN);
 	}
 }
 
 
 void Mario::fall() {
 	isFalling = true;
-	setDirY(DOWN);
+	setDirY(Y_DOWN);
 	if (!isOnFloor()) {
 		fallingCounter++;
 	}
 	else {
 		resetFallingCounter = true;
 		isFalling = false;
-		setDirY(0);
+		setDirY(Y_NONE);
 	}
 }
 
@@ -121,7 +119,7 @@ void Mario::climb() {
 		else {
 			isClimbingDown = false;
 		}
-		setDirY(0);
+		setDirY(Y_NONE);
 	}
 }
 

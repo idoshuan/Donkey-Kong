@@ -1,17 +1,9 @@
 ﻿#include "Game.h"
 
-// ------------------- Constructor -------------------
-Game::Game()
-	:gameState(GameState::MENU),
-	mario(marioInitX, marioInitY, &board),
-	lives(initLives),
-	barrelCount(0),
-	firstBarrelSpawned(false) {}
-
 // ------------------- Game Loop -------------------
 void Game::startGame() {
 	ShowConsoleCursor(false);
-	while (true) {
+	while (isRunning) {
 		handleGameState();
 	}
 }
@@ -24,7 +16,6 @@ void Game::handleGameState() {
 		break;
 	case GameState::START:
 		lives = initLives;
-		clearScreen();
 		gameStartTime = clock::now();
 		board.print();
 		gameState = GameState::PLAYING;
@@ -38,53 +29,20 @@ void Game::handleGameState() {
 		}
 		break;
 	case GameState::PAUSED:
-		handlePauseInput();
+		handlePause();
 		break;
-
 	case GameState::GAME_OVER:
 		handleGameOver();
-		return;
+		break;;
 	case GameState::WON:
 		handleGameWin();
-		return;
+		break;
 	default:
 		std::cerr << "Unknown game state!" << std::endl;
-		return startGame();
+		isRunning = false;
 	}
 }
 
-void Game::handleGameWin(){
-	clearScreen();
-
-	std::cout << R"(
-  __     ______  _    _   ___         _______  _   _ 
-  \ \   / / __ \| |  | |  \ \        / /_   _|| \ | |
-   \ \_/ / |  | | |  | |   \ \  /\  / /  | |  |  \| |
-    \   /| |  | | |  | |    \ \/  \/ /   | |  | . ` |
-     | | | |__| | |__| |     \  /\  /   _| |_ | |\  |
-     |_|  \____/ \____/       \/  \/   |_____||_| \_|
-                                                    
-    )";	Sleep(1000);
-	gameState = GameState::MENU;
-}
-
-void Game::handleGameOver()
-{
-	marioBlink();
-
-	clearScreen(); 
-	std::cout << R"(
-  __     ______  _    _   _      ____   _____ ______ 
-  \ \   / / __ \| |  | | | |    / __ \ / ____|  ____|
-   \ \_/ / |  | | |  | | | |   | |  | | (___ | |__   
-    \   /| |  | | |  | | | |   | |  | |\___ \|  __|  
-     | | | |__| | |__| | | |___| |__| |____) | |____ 
-     |_|  \____/ \____/  |______\____/|_____/|______|
-                                                    
-)" << std::endl;
-	Sleep(1000);
-	gameState = GameState::MENU;
-}
 void Game::updateGameLogic() {
 	displayLives();
 	drawCharacters();
@@ -92,13 +50,7 @@ void Game::updateGameLogic() {
 	checkForKeyPress();
 	eraseCharacters();
 	trySpawnBarrel();
-
-	for (int i = 0; i < barrelCount; i++) {
-		if (hasBarrelExploded(barrelArr[i])) {
-			barrelArr[i].explode();
-		}
-	}
-
+	explodeBarrels();
 	if (checkMarioDeath()) {
 		lives--;
 		resetGame();
@@ -106,12 +58,9 @@ void Game::updateGameLogic() {
 	}
 	if (checkMarioWon()) {
 		gameState = GameState::WON;
+		return;
 	}
-	for (int i = 0; i < barrelCount; i++) {
-		if (shouldDeactivateBarrel(barrelArr[i])) {
-			barrelArr[i].deactivate();
-		}
-	}
+	deactivateBarrels();
 	moveCharacters();
 }
 
@@ -122,7 +71,7 @@ void Game::resetGame() {
 	for (int i = 0; i < numBarrels; i++) {
 		barrelArr[i] = Barrel();
 	}
-	mario = Mario(marioInitX, marioInitY, &board);
+	mario = Mario(marioInitPos, &board);
 	barrelCount = 0;
 	firstBarrelSpawned = false;
 	gameStartTime = clock::now();
@@ -137,7 +86,6 @@ void Game::checkForKeyPress() {
 		KEYS key = charToKey(_getch());
 		if (key == KEYS::ESC) {
 			gameState = GameState::PAUSED;
-			drawCharacters();
 			return;
 		}
 		mario.keyPressed(key);
@@ -153,7 +101,8 @@ void Game::handleMenuState(MenuAction action) {
 		menu.displayInstructions();
 		break;
 	case MenuAction::EXIT_GAME:
-		exit(0);
+		isRunning = false;
+		break;
 	}
 }
 
@@ -163,17 +112,9 @@ bool Game::checkMarioDeath() {
 }
 bool Game::checkMarioWon() {
 	Point paulina = board.getPaulina();
-	return mario.getX() == paulina.getX() && mario.getY() == paulina.getY();
+	return mario.getX() + mario.getDirX() == paulina.getX() && mario.getY() == paulina.getY();
 }
 
-void Game::marioBlink() {
-	for (int i = 0; i < 6; i++) {
-		mario.draw();
-		Sleep(200);
-		mario.erase();
-		Sleep(200);
-	}
-}
 
 bool Game::checkMarioDeathFromBarrel() {
 	for (int i = 0; i < barrelCount; i++) {
@@ -194,6 +135,15 @@ bool Game::checkMarioDeathFromFall() {
 	else {
 		mario.resetFallingCounterIfNeeded();
 		return false;
+	}
+}
+
+void Game::marioBlink() {
+	for (int i = 0; i < 6; i++) {
+		mario.draw();
+		Sleep(200);
+		mario.erase();
+		Sleep(200);
 	}
 }
 
@@ -225,10 +175,10 @@ bool Game::canSpawnBarrel(const time& now) const {
 
 void Game::spawnBarrel() {
 	if (barrelCount % 2 == 0) {
-		barrelArr[barrelCount] = Barrel(leftBarrelInitX, barrelInitY, &board);
+		barrelArr[barrelCount] = Barrel(leftBarrelPos, &board);
 	}
 	else {
-		barrelArr[barrelCount] = Barrel(rightBarrelInitX, barrelInitY, &board);
+		barrelArr[barrelCount] = Barrel(rightBarrelPos, &board);
 	}
 	barrelArr[barrelCount].activate();
 	barrelCount++;
@@ -236,6 +186,23 @@ void Game::spawnBarrel() {
 
 bool Game::shouldDeactivateBarrel(Barrel& barrel) const {
 	return hasBarrelExploded(barrel) || barrel.getX() == board.getMinX() || barrel.getX() == board.getMaxX();
+}
+
+
+void Game::explodeBarrels() {
+	for (int i = 0; i < barrelCount; i++) {
+		if (hasBarrelExploded(barrelArr[i])) {
+			barrelArr[i].explode();
+		}
+	}
+}
+
+void Game::deactivateBarrels() {
+	for (int i = 0; i < barrelCount; i++) {
+		if (shouldDeactivateBarrel(barrelArr[i])) {
+			barrelArr[i].deactivate();
+		}
+	}
 }
 
 bool Game::hasBarrelExploded(Barrel& barrel) const {
@@ -277,21 +244,48 @@ bool Game::isExplosionFatal(const Barrel& barrel) const {
 }
 
 // ------------------- Pause Handling -------------------
-void Game::handlePauseInput() {
+void Game::handlePause() {
+
+	if (!isAlreadyPaused) {
+		displayPauseScreen();
+		drawCharacters();
+		isAlreadyPaused = true;
+	}
+
 	if (_kbhit()) {
 		char key = _getch();
 		if (key == KEYS::ESC) {
-				gameState = GameState::PLAYING; // Resume the game
+			clearPauseScreen();
+			isAlreadyPaused = false;
+			gameState = GameState::PLAYING;
 		}
 	}
 }
 
+
 void Game::displayPauseScreen() {
-	std::cout << "\n\n\n";
-	std::cout << "----------------------------\n";
-	std::cout << "        GAME PAUSED         \n";
-	std::cout << " Press ESC again to resume  \n";
-	std::cout << "----------------------------\n";
+	gotoxy(pauseMessageX, pauseMessageY);
+	std::cout << "----------------------------";
+	gotoxy(pauseMessageX, pauseMessageY + 1);
+	std::cout << "        GAME PAUSED         ";
+	gotoxy(pauseMessageX, pauseMessageY + 2);
+	std::cout << " Press ESC again to resume  ";
+	gotoxy(pauseMessageX, pauseMessageY + 3);
+	std::cout << "----------------------------";
+}
+
+void Game::clearPauseScreen() {
+	int startX = pauseMessageX;
+	int startY = pauseMessageY;
+	int width = pauseMessageWidth;
+	int height = pauseMessageHeight;
+
+	for (int y = 0; y < height; ++y) {
+		gotoxy(startX, startY + y);
+		for (int x = 0; x < width; ++x) {
+			std::cout << ' ';
+		}
+	}
 }
 
 // ------------------- Utility Functions -------------------
@@ -330,4 +324,36 @@ void Game::displayLives() const {
 
 	// Print the lives
 	std::cout << lives;
+}
+
+void Game::handleGameWin() {
+	resetGame();
+	clearScreen();
+
+	std::cout << R"(
+  __     ______  _    _   __          _______  _   _ 
+  \ \   / / __ \| |  | |  \ \        / /_   _|| \ | |
+   \ \_/ / |  | | |  | |   \ \  /\  / /  | |  |  \| |
+    \   /| |  | | |  | |    \ \/  \/ /   | |  | . ` |
+     | | | |__| | |__| |     \  /\  /   _| |_ | |\  |
+     |_|  \____/ \____/       \/  \/   |_____||_| \_|
+                                                    
+    )";	Sleep(1500);
+	gameState = GameState::MENU;
+}
+
+void Game::handleGameOver()
+{
+	clearScreen();
+	std::cout << R"(
+  __     ______  _    _   _      ____   _____ ______ 
+  \ \   / / __ \| |  | | | |    / __ \ / ____|  ____|
+   \ \_/ / |  | | |  | | | |   | |  | | (___ | |__   
+    \   /| |  | | |  | | | |   | |  | |\___ \|  __|  
+     | | | |__| | |__| | | |___| |__| |____) | |____ 
+     |_|  \____/ \____/  |______\____/|_____/|______|
+                                                    
+)" << std::endl;
+	Sleep(1500);
+	gameState = GameState::MENU;
 }

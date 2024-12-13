@@ -1,7 +1,7 @@
 #include "Menu.h"
 
 void Menu::displayMenu() {
-	clearScreen(); // Call system-specific clear screen (e.g., system("clear") or system("cls"))
+	clearScreen(); 
 	std::cout << "===========================\n";
 	std::cout << "     Donkey Kong Game      \n";
 	std::cout << "===========================\n";

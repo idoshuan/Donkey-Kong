@@ -13,7 +13,7 @@
 #include <thread>
 
 // ------------------- Enums -------------------
-enum class GameState {
+const enum class GameState {
     MENU,
     START,
     PLAYING,
@@ -24,40 +24,43 @@ enum class GameState {
 
 // ------------------- Class Declaration -------------------
 class Game {
-private:
    
     // ------------------- Constants -------------------
     // Mario-related constants
-    static constexpr int marioInitX = 4;
-    static constexpr int marioInitY = 23;
+    static constexpr Point marioInitPos = { 4,23 };
     static constexpr int marioMaxFallHeight = 5;
     static constexpr int initLives = 3;
 
     // Barrel-related constants
-    static constexpr int numBarrels = 10;
-    static constexpr int barrelInitY = 2;
-    static constexpr int barrelSpawnInterval = 5000;
-    static constexpr int firstBarrelSpawnDelay = 4000;
+    static constexpr int numBarrels = 20;
+    static constexpr int barrelSpawnInterval = 4000;
+    static constexpr int firstBarrelSpawnDelay = 3000;
     static constexpr int barrelMaxFallHeight = 8;
+    static constexpr int explosionRadius = 2;
 
-    // General constants
-    const int explosionRadius = 2;
+    // Pause-related constants
+    static constexpr int pauseMessageX = 25;
+    static constexpr int pauseMessageY = 12;
+    static constexpr int pauseMessageWidth = 28;
+    static constexpr int pauseMessageHeight = 5;
     
     using clock = std::chrono::steady_clock;
     using milliseconds = std::chrono::milliseconds;
     using time = std::chrono::time_point<clock>;
 
     // ------------------- Game State Variables -------------------
-    GameState gameState;
+    bool isRunning = true;
+    GameState gameState = GameState::MENU;
     Menu menu;
-    Mario mario;
     Board board;
+    Mario mario{ marioInitPos, &board };
     Barrel barrelArr[numBarrels];
-    int lives;
-    int barrelCount;
-    bool firstBarrelSpawned;
-    int leftBarrelInitX = board.getDonkeyKong().getX() - 1;
-    int rightBarrelInitX = board.getDonkeyKong().getX() + 1;
+    int lives = initLives;
+    bool isAlreadyPaused = false;
+    int barrelCount = 0;
+    bool firstBarrelSpawned = false;
+    Point leftBarrelPos = { board.getDonkeyKong().getX() - 1, board.getDonkeyKong().getY() };
+    Point rightBarrelPos = { board.getDonkeyKong().getX() + 1, board.getDonkeyKong().getY() };
     time lastBarrelTime;
     time gameStartTime;
     // ------------------- Private Game Loop Functions -------------------
@@ -66,6 +69,7 @@ private:
     void updateGameLogic();
     void resetGame();
     void handleGameOver();
+    void displayLives() const;
 
     // ------------------- Private Menu-Related Functions -------------------
     void handleMenuState(MenuAction action);
@@ -84,6 +88,8 @@ private:
     bool canSpawnBarrel(const time& now) const;
     bool hasBarrelExploded(Barrel& barrel) const;
     bool shouldDeactivateBarrel(Barrel& barrel) const;
+    void deactivateBarrels();
+    void explodeBarrels();
 
     // Collision and explosion checks
     bool isDirectCollision(const Barrel& barrel) const;
@@ -95,22 +101,15 @@ private:
     void checkForKeyPress();
 
     // ------------------- Private Pause-Related Functions -------------------
+    void handlePause();
     void displayPauseScreen();
-    void handlePauseInput();
+    void clearPauseScreen();
 
     // ------------------- Private Utility Functions -------------------
     void eraseCharacters();
     void moveCharacters();
     void drawCharacters();
 
-
-    void displayLives() const;
 public:
-    // ------------------- Constructor -------------------
-    Game();
-
-    // ------------------- Public Main Game Functions -------------------
     void startGame();
-    
-    
 };

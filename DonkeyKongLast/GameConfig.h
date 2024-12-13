@@ -1,15 +1,9 @@
 #pragma once
 #include "iostream"
 
-enum class ENTITIES_CHARACTERS {MARIO = '@',  BARREL = 'O', DONKEY_KONG = '&', PRINCESS = '$' };
-enum class BOARD_CHARACTERS { LADDER = 'H', RIGHT_FLOOR = '>', LEFT_FLOOR = '>', FLOOR = '=', AIR = ' ' };
+enum class ENTITIES_CHARACTERS {MARIO = '@',  BARREL = 'O', DONKEY_KONG = '&', PAULINA = '$' };
+enum class BOARD_CHARACTERS { LADDER = 'H', RIGHT_FLOOR = '>', LEFT_FLOOR = '<', FLOOR = '=', AIR = ' ' };
 enum class KEYS {UP = 'w', DOWN = 'x', STAY = 's', RIGHT = 'd', LEFT = 'a', ESC = 27, INVALID };
-struct BoardBoundaries {
-    static constexpr int MAX_X = 80;
-    static constexpr int MIN_X = 0;
-    static constexpr int MAX_Y = 25;
-    static constexpr int MIN_Y = 0;
-};
 
 inline bool operator==(char ch, BOARD_CHARACTERS bCh) {
     return ch == static_cast<char>(bCh);
@@ -17,6 +11,14 @@ inline bool operator==(char ch, BOARD_CHARACTERS bCh) {
 
 inline bool operator==(BOARD_CHARACTERS bCh, char ch) {
     return ch == bCh;
+}
+
+inline bool operator!=(char ch, BOARD_CHARACTERS bCh) {
+    return ch != static_cast<char>(bCh);
+}
+
+inline bool operator!=(BOARD_CHARACTERS bCh, char ch) {
+    return ch != bCh;
 }
 
 inline bool operator==(char ch, ENTITIES_CHARACTERS bCh) {
