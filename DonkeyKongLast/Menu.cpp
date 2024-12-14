@@ -32,13 +32,6 @@ MenuAction Menu::getAction() {
 
 void Menu::displayInstructions() {
 	clearScreen();
-	std::cout << "===========================\n";
-	std::cout << "       Instructions        \n";
-	std::cout << "===========================\n";
-	std::cout << "Use arrow keys to move.\n";
-	std::cout << "Avoid obstacles and reach the top.\n";
-	std::cout << "Good luck!\n";
-	std::cout << "===========================\n";
-	std::cout << "Press Enter to return to the menu.\n";
+	
 	_getch();
 }
