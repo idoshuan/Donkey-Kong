@@ -11,8 +11,8 @@ public:
         static constexpr int MIN_Y = 0;
     };
 
-    void printScreen(const char** screen);
-    void clearScreen() {
+    void printScreen(const char** screen) const;
+    void clearScreen() const{
         system("cls");
     }
-}
+};

@@ -1,10 +1,10 @@
 #include "Screen.h"
 
-void Screen::printScreen(const char** screen) {
-    for (int i = 0; i < 25; ++i) {
-        for (int j = 0; j < 80; ++j) {
-            std::cout << screen[i][j];
-        }
-        std::cout << '\n';
-    }
+void Screen::printScreen(const char** screen) const{
+	clearScreen();
+	for (int i = 0; i < SCREEN_BOUNDARIES::MAX_Y - 1; ++i) {
+		std::cout << screen[i];
+		std::cout << '\n'; 
+	}
+	std::cout << screen[SCREEN_BOUNDARIES::MAX_Y - 1];
 }

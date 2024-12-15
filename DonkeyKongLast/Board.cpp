@@ -4,15 +4,15 @@
 #include "Board.h"
 
 void Board::reset() {
-	for (int i = 0; i < BOARD_BOUNDARIES::MAX_Y; i++) {
-		memcpy(currentBoard[i], originalBoard[i], BOARD_BOUNDARIES::MAX_X + 1);
+	for (int i = 0; i < SCREEN_BOUNDARIES::MAX_Y; i++) {
+		memcpy(currentBoard[i], originalBoard[i], SCREEN_BOUNDARIES::MAX_X + 1);
 	}
 }
 
 void Board::print() const {
-
-	for (int y = 0; y < BOARD_BOUNDARIES::MAX_Y - 1; ++y) {
-		for (int x = 0; x < BOARD_BOUNDARIES::MAX_X - 1; ++x) {
+	clearScreen();
+	for (int y = 0; y < SCREEN_BOUNDARIES::MAX_Y - 1; ++y) {
+		for (int x = 0; x < SCREEN_BOUNDARIES::MAX_X - 1; ++x) {
 			Point currentPoint(x, y);
 			if (currentPoint == CHARACTER_POSITIONS::paulina) {
 				std::cout << char(ENTITIES_CHARACTERS::PAULINA);
@@ -26,6 +26,6 @@ void Board::print() const {
 		}
 		std::cout << std::endl;
 	}
-	std::cout << currentBoard[BOARD_BOUNDARIES::MAX_Y - 1];
+	std::cout << currentBoard[SCREEN_BOUNDARIES::MAX_Y - 1];
 }
 

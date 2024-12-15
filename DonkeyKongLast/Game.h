@@ -27,7 +27,7 @@ class Game {
    
     // ------------------- Constants -------------------
     // Mario-related constants
-    static constexpr Point marioInitPos = { 4,23 };
+    static constexpr Point marioInitPos = { 20,0 };
     static constexpr int marioMaxFallHeight = 5;
     static constexpr int initLives = 3;
 

@@ -2,22 +2,17 @@
 #include "Utils.h"
 #include "Point.h"
 #include "GameConfig.h"
+#include "Screen.h"
 #include <iostream>
 
-class Board {
-    struct BOARD_BOUNDARIES {
-        static constexpr int MAX_X = 80;
-        static constexpr int MIN_X = 0;
-        static constexpr int MAX_Y = 25;
-        static constexpr int MIN_Y = 0;
-    };
-
+class Board : public Screen {
+   
     struct CHARACTER_POSITIONS {
         static constexpr Point paulina = { 39,0 };
-        static constexpr Point donkeyKong = { 39,1 };
+        static constexpr Point donkeyKong = { 39,2 };
     };
 
-    const char* originalBoard[BOARD_BOUNDARIES::MAX_Y] = {
+    const char* originalBoard[SCREEN_BOUNDARIES::MAX_Y] = {
         //          1         2         3         4         5         6         7
         //01234567890123456789012345678901234567890123456789012345678901234567890123456789 
          "Lives:                                                                          ", //0
@@ -46,7 +41,7 @@ class Board {
          "                                   H                                            ", //23                                                
          "================================================================================"  //24
     };
-    char currentBoard[BOARD_BOUNDARIES::MAX_Y][BOARD_BOUNDARIES::MAX_X + 1]; // +1 for null terminator
+    char currentBoard[SCREEN_BOUNDARIES::MAX_Y][SCREEN_BOUNDARIES::MAX_X + 1]; // +1 for null terminator
 
 public:
     Board() {
@@ -62,7 +57,7 @@ public:
         char ch = getChar(p);
         int x = p.getX();
         int y = p.getY();
-        return(x >= BOARD_BOUNDARIES::MIN_X && x < BOARD_BOUNDARIES::MAX_X && y >= BOARD_BOUNDARIES::MIN_Y && y < BOARD_BOUNDARIES::MAX_Y && ch != BOARD_CHARACTERS::FLOOR && ch != BOARD_CHARACTERS::LEFT_FLOOR && ch != BOARD_CHARACTERS::RIGHT_FLOOR);
+        return(x >= SCREEN_BOUNDARIES::MIN_X && x < SCREEN_BOUNDARIES::MAX_X && y >= SCREEN_BOUNDARIES::MIN_Y && y < SCREEN_BOUNDARIES::MAX_Y && ch != BOARD_CHARACTERS::FLOOR && ch != BOARD_CHARACTERS::LEFT_FLOOR && ch != BOARD_CHARACTERS::RIGHT_FLOOR);
     }
     bool isLadder(Point p) const {
         return getChar(p) == BOARD_CHARACTERS::LADDER;
@@ -72,10 +67,10 @@ public:
         return ch == BOARD_CHARACTERS::FLOOR || ch == BOARD_CHARACTERS::LEFT_FLOOR || ch == BOARD_CHARACTERS::RIGHT_FLOOR;
     }
     int getMaxX() const{
-        return BOARD_BOUNDARIES::MAX_X;
+        return SCREEN_BOUNDARIES::MAX_X;
     }
     int getMinX() const{
-        return BOARD_BOUNDARIES::MIN_X;
+        return SCREEN_BOUNDARIES::MIN_X;
     }
 
     Point getPaulina() const{

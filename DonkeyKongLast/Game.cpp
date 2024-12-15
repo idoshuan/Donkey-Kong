@@ -12,10 +12,9 @@ void Game::handleGameState() {
 	switch (gameState) {
 	case GameState::MENU:
 		menu.displayMenu();
-		handleMenuState(menu.getAction());  
+		handleMenuState(menu.getAction());
 		break;
 	case GameState::START:
-		lives = initLives;
 		gameStartTime = clock::now();
 		board.print();
 		gameState = GameState::PLAYING;
@@ -303,7 +302,7 @@ void Game::drawCharacters() {
 	mario.draw();
 	for (int i = 0; i < barrelCount; i++) {
 		if (barrelArr[i].isCurrentlyActive()) {
-		   	barrelArr[i].draw();
+			barrelArr[i].draw();
 		}
 	}
 }
@@ -315,14 +314,11 @@ void Game::eraseCharacters() {
 }
 
 void Game::displayLives() const {
-	// Position for displaying lives (e.g., top-left corner)
 	int displayX = 6;
 	int displayY = 0;
 
-	// Move the cursor to the desired position
 	gotoxy(displayX, displayY);
 
-	// Print the lives
 	std::cout << lives;
 }
 
@@ -331,19 +327,30 @@ void Game::handleGameWin() {
 	clearScreen();
 
 	std::cout << R"(
-  __     ______  _    _   __          _______  _   _ 
-  \ \   / / __ \| |  | |  \ \        / /_   _|| \ | |
-   \ \_/ / |  | | |  | |   \ \  /\  / /  | |  |  \| |
-    \   /| |  | | |  | |    \ \/  \/ /   | |  | . ` |
-     | | | |__| | |__| |     \  /\  /   _| |_ | |\  |
-     |_|  \____/ \____/       \/  \/   |_____||_| \_|
-                                                    
-    )";	Sleep(1500);
+      .--..--..--..--..--..--..--..--..--..--..--..--..--..--. 
+	  / .. \.. \.. \.. \.. \.. \.. \.. \.. \.. \.. \.. \.. \.. \
+	  \ \/\ `'\ `'\ `'\ `'\ `'\ `'\ `'\ `'\ `'\ `'\ `'\ `'\ \/ /
+	   \/ /`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'\/ / 
+	   / /\                                                / /\ 
+	  / /\ \   __   __           __        ___       _    / /\ \
+	  \ \/ /   \ \ / /__  _   _  \ \      / (_)_ __ | |   \ \/ /
+	   \/ /     \ V / _ \| | | |  \ \ /\ / /| | '_ \| |    \/ / 
+       / /\      | | (_) | |_| |   \ V  V / | | | | |_|    / /\ 
+	  / /\ \     |_|\___/ \__,_|    \_/\_/  |_|_| |_(_)   / /\ \
+	  \ \/ /                                              \ \/ /
+	   \/ /                                                \/ / 
+	   / /\.--..--..--..--..--..--..--..--..--..--..--..--./ /\ 
+	  / /\ \.. \.. \.. \.. \.. \.. \.. \.. \.. \.. \.. \.. \/\ \
+	  \ `'\ `'\ `'\ `'\ `'\ `'\ `'\ `'\ `'\ `'\ `'\ `'\ `'\ `' /
+	   `--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--' 
+)" << std::endl;
+	Sleep(1500);
 	gameState = GameState::MENU;
 }
 
 void Game::handleGameOver()
 {
+	lives = initLives;
 	clearScreen();
 	std::cout << R"(
   __     ______  _    _   _      ____   _____ ______ 

@@ -2,13 +2,13 @@
 
 void Menu::displayMenu() {
 	clearScreen(); 
-	std::cout << "===========================\n";
-	std::cout << "     Donkey Kong Game      \n";
-	std::cout << "===========================\n";
-	std::cout << "1. Start Game\n";
-	std::cout << "8. Instructions\n";
-	std::cout << "9. Exit\n";
-	std::cout << "===========================\n";
+	printScreen(menu);
+}
+
+void Menu::displayInstructions() {
+	clearScreen();
+	printScreen(instructions);
+	_getch();
 }
 
 MenuAction Menu::getAction() {
@@ -28,10 +28,4 @@ MenuAction Menu::getAction() {
 		std::cout << "Invalid choice. Please try again.\n";
 		return getAction();
 	}
-}
-
-void Menu::displayInstructions() {
-	clearScreen();
-	
-	_getch();
 }
