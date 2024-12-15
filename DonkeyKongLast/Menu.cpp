@@ -25,7 +25,6 @@ MenuAction Menu::getAction() {
 		return MenuAction::EXIT_GAME;
 		break;
 	default:
-		std::cout << "Invalid choice. Please try again.\n";
 		return getAction();
 	}
 }
