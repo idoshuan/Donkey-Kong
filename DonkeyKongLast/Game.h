@@ -82,7 +82,7 @@ private:
     // ------------------- Private Game Loop Functions -------------------
     void handleGameState();
     void updateGameLogic();
-    void resetGame();
+    void resetStage();
 
     // ------------------- Private Menu-Related Functions -------------------
     void handleMenuState(MenuAction action);

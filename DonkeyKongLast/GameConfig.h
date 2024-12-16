@@ -1,9 +1,22 @@
 #pragma once
-#include "iostream"
+#include <iostream>
 
-enum class ENTITIES_CHARACTERS {MARIO = '@',  BARREL = 'O', DONKEY_KONG = '&', PAULINA = '$' };
+/**
+ * @brief Enumerations for game characters, board elements, and input keys.
+ */
+
+ // ------------------- Enumerations -------------------
+enum class ENTITIES_CHARACTERS { MARIO = '@', BARREL = 'O', DONKEY_KONG = '&', PAULINA = '$' };
 enum class BOARD_CHARACTERS { LADDER = 'H', RIGHT_FLOOR = '>', LEFT_FLOOR = '<', FLOOR = '=', AIR = ' ' };
-enum class KEYS {UP = 'w', DOWN = 'x', STAY = 's', RIGHT = 'd', LEFT = 'a', ESC = 27, INVALID };
+enum class KEYS { UP = 'w', DOWN = 'x', STAY = 's', RIGHT = 'd', LEFT = 'a', ESC = 27, INVALID };
+
+// ------------------- Operators -------------------
+/**
+ * @brief Overloaded operators for comparing enumerations with characters.
+ * These operators allow direct comparison between a character (`char`)
+ * and the values of BOARD_CHARACTERS, ENTITIES_CHARACTERS, or KEYS enumerations,
+ * avoiding the need for explicit casting.
+ */
 
 inline bool operator==(char ch, BOARD_CHARACTERS bCh) {
     return ch == static_cast<char>(bCh);
@@ -37,6 +50,12 @@ inline bool operator==(KEYS key, char ch) {
     return ch == key;
 }
 
+// ------------------- Utility Functions -------------------
+/**
+ * @brief Converts a character input into a KEYS enumeration.
+ * @param key The character to convert.
+ * @return The corresponding KEYS value.
+ */
 inline KEYS charToKey(char key) {
     switch (std::tolower(key)) {
     case 'w': return KEYS::UP;

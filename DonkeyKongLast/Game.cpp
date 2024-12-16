@@ -65,7 +65,7 @@ void Game::updateGameLogic() {
     explodeBarrels();
     if (checkMarioDeath()) {
         lives--;
-        resetGame();
+        resetStage();
         return;
     }
     if (checkMarioWon()) {
@@ -80,7 +80,7 @@ void Game::updateGameLogic() {
  * @brief Resets the game to prepare for a new round.
  * Clears barrels, resets Mario, and initializes game state variables.
  */
-void Game::resetGame() {
+void Game::resetStage() {
     marioBlink();
 
     for (int i = 0; i < maxBarrels; i++) {
@@ -92,6 +92,9 @@ void Game::resetGame() {
     gameStartTime = clock::now();
     lastBarrelTime = gameStartTime;
     displayLives();
+    while (_kbhit()) { // Clean the buffer after mario dies
+        _getch();
+    }
 }
 
 // ------------------- Input Handling -------------------
@@ -179,12 +182,14 @@ bool Game::checkMarioDeathFromFall() {
  * @brief Makes Mario blink (disappear and reappear) visually.
  */
 void Game::marioBlink() {
+    drawCharacters();
     for (int i = 0; i < 6; i++) {
         mario.draw();
         Sleep(200);
         mario.erase();
         Sleep(200);
     }
+    eraseCharacters();
 }
 
 // ------------------- Barrel-Related Functions -------------------
@@ -422,7 +427,7 @@ void Game::eraseCharacters() {
  */
 void Game::handleGameWin() {
     lives = initLives;
-    resetGame();
+    resetStage();
     screen.printWinScreen();
     Sleep(3500); // Pause to allow the player to see the screen
     gameState = GameState::MENU;
@@ -434,7 +439,6 @@ void Game::handleGameWin() {
  */
 void Game::handleGameOver() {
     lives = initLives;
-    resetGame();
     screen.printLoseScreen();
     Sleep(3500); // Pause to allow the player to see the screen
     gameState = GameState::MENU;

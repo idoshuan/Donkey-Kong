@@ -8,7 +8,7 @@
 /**
  * @class Board
  * @brief Represents the game board and handles its operations such as resetting, printing, and position validations.
- * Note: This entire class was based on the board class showed to us in class
+ * Note: This entire class is based on the board class showed to us in class
  */
 
 
@@ -17,10 +17,11 @@ class Board : public Screen {
 private:
     // ------------------- Constants -------------------
     struct CHARACTER_POSITIONS {
-        static constexpr Point paulina = { 39, 0 };
-        static constexpr Point donkeyKong = { 39, 2 };
+        static constexpr Point paulina = { 40, 0 };
+        static constexpr Point donkeyKong = { 40, 2 };
     };
 
+    /*
     const char* originalBoard[SCREEN_BOUNDARIES::MAX_Y] = {
         //          1         2         3         4         5         6         7
         //01234567890123456789012345678901234567890123456789012345678901234567890123456789 
@@ -49,6 +50,35 @@ private:
          "                                   H                                            ", //22
          "                                   H                                            ", //23                                                
          "================================================================================"  //24
+    };*/
+
+    const char* originalBoard[SCREEN_BOUNDARIES::MAX_Y] = {
+        //01234567890123456789012345678901234567890123456789012345678901234567890123456789
+         "                                        $                                       ",//1
+         "                                    =========                                   ",//2
+         "                                    H   &  H                                    ",//3
+         "                           <<<<<<<<<<<<<=>>>>>>>>>>>>>                          ",//4
+         "                            H                      H                            ",//5
+         "                            H                      H                            ",//6
+         "============>>>===============                   =====<<<<===============>>>====",//7
+         "            H                                                    H              ",//8
+         "            H                                              ============         ",//9
+         "            H                                              H         H          ",//10
+         "        <<<===============                                 H         H          ",//11
+         "                      H                                    H         H          ",//12
+         "                      H                                    H        ============",//13
+         "               ==================<<<<======>>>== ============              H    ",//14
+         "                 H                                     H                   H    ",//15
+         "                 H                                     H                   H    ",//16
+         "                 H                                     H                   H    ",//17
+         "      ==>>>=======                     ================>>>>>>================== ",//18
+         "              H                             H                      H            ",//19
+         "              H                             H                      H            ",//20
+         "              H                             H                      H            ",//21
+         "            ======<<<<<<=====================                      H            ",//22
+         "                 H                       H                         H            ",//23
+         "                 H                       H                         H            ",//24
+         "=========================>>>>>>=======================================>>>>>>===="//25
     };
 
     char currentBoard[SCREEN_BOUNDARIES::MAX_Y][SCREEN_BOUNDARIES::MAX_X + 1]; // +1 for null terminator
