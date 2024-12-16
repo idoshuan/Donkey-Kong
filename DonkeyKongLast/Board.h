@@ -8,6 +8,7 @@
 /**
  * @class Board
  * @brief Represents the game board and handles its operations such as resetting, printing, and position validations.
+ * Note: This entire class was based on the board class showed to us in class
  */
 
 
