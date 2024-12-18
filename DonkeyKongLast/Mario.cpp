@@ -42,7 +42,9 @@ void Mario::move() {
     else if (isFalling || !isOnFloor()) {
         fall();
     }
-    Entity::move();
+    if (isFalling || fallingCounter < marioMaxFallHeight) {
+         Entity::move();
+    }
 }
 
 // ------------------- Private Functions -------------------

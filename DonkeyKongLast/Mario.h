@@ -8,12 +8,12 @@
  * and falling mechanics, and processes player inputs to control his actions.
  */
 
-
 // ------------------- Class Declaration -------------------
 class Mario : public Entity {
 private:
     // ------------------- Constants -------------------
     static constexpr int jumpHeight = 2;
+    static constexpr int marioMaxFallHeight = 5;
 
     // ------------------- State Variables -------------------
     bool isJumping = false;
