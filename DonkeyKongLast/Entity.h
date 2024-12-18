@@ -42,7 +42,7 @@ public:
 	static constexpr Direction RIGHT = { 1, 0 };
 	static constexpr Direction NONE = { 0, 0 };
 
-	static enum {
+     enum {
 		Y_UP = -1, Y_DOWN = 1,
 		X_RIGHT = 1, X_LEFT = -1,
 		X_NONE = 0, Y_NONE = 0
