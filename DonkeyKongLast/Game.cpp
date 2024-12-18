@@ -302,7 +302,7 @@ bool Game::isInExplosionRadius(const Barrel& barrel) const {
 	int difX = std::abs(marioX - barrelX);
 	int difY = marioY - barrelY;
 
-	return (difX <= barrelExplosionRadius && difY <= 0 && difY <= barrelExplosionRadius);
+	return (difX <= barrelExplosionRadius && difY >= 0 && difY <= barrelExplosionRadius);
 }
 
 /**
