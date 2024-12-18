@@ -299,8 +299,8 @@ bool Game::isInExplosionRadius(const Barrel& barrel) const {
 	int marioX = mario.getX();
 	int marioY = mario.getY();
 
-	int difX = std::abs(marioX - barrelX);
-	int difY = marioY - barrelY;
+	int difX = std::abs(barrelX - marioX);
+	int difY = barrelY - marioY;
 
 	return (difX <= barrelExplosionRadius && difY >= 0 && difY <= barrelExplosionRadius);
 }
@@ -487,8 +487,8 @@ void Game::displayLives() const {
 /**
  * @brief Cleans buffer from spam clicks.
  */
-void Game::eatBuffer() const{
-	while (_kbhit()) { 
+void Game::eatBuffer() const {
+	while (_kbhit()) {
 		_getch();
 	}
 }
