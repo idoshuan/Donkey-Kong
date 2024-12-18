@@ -17,7 +17,7 @@ class Board : public Screen {
 private:
     // ------------------- Constants -------------------
     struct CHARACTER_POSITIONS {
-        static constexpr Point paulina = { 40, 2 };
+        static constexpr Point paulina = { 39, 0 };
         static constexpr Point donkeyKong = { 39, 2 };
     };
 
@@ -38,7 +38,7 @@ private:
          "             H     ========<<<==             =============                      ", //11
          "             H                                         H                        ", //12
          "             H                                         H                        ", //13
-         "     ===========>>>=======                          ========================    ", //14 
+         "     ===========>>>=======                           =======================    ", //14 
          "                        H                                         H             ", //15
          "                        H                                         H             ", //16
          "         ======================              ==========================         ", //17
@@ -93,4 +93,3 @@ public:
         return CHARACTER_POSITIONS::donkeyKong;
     }
 };
-

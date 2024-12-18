@@ -40,6 +40,7 @@ private:
     static constexpr Point marioInitPos = { 4, 23 };
     static constexpr int marioMaxFallHeight = 5;
     static constexpr int initLives = 3;
+    static constexpr int blinkIterations = 6;
 
     // Barrel-related constants
     static constexpr int maxBarrels = 20;
@@ -49,10 +50,16 @@ private:
     static constexpr int barrelExplosionRadius = 2;
 
     // Pause screen constants
-    static constexpr int pauseMessageX = 25;
+    static constexpr int pauseMessageX = 26;
     static constexpr int pauseMessageY = 12;
     static constexpr int pauseMessageWidth = 28;
     static constexpr int pauseMessageHeight = 5;
+    static constexpr int pauseMessageTitleOffset = 8; // Horizontal offset from the left border for ("GAME PAUSED") message.
+    static constexpr int pauseMessageContinueOffset = 1; // Horizontal offset from the left border for ("Press ESC again to resume") message.
+
+    // Countdown screen constants
+    static constexpr int countdownMessageTitleOffset = 6; // Horizontal offset from the top-left corner for ("CONTINUING IN:") message.
+    static constexpr int countdownMessageCounterOffset = 12;// Horizontal offset from the top-left corner for countdown numbers below the title.
 
     // Typedefs for time-related operations
     using clock = std::chrono::steady_clock;
@@ -116,7 +123,9 @@ private:
     // ------------------- Private Pause-Related Functions -------------------
     void handlePause();
     void displayPauseScreen();
-    void clearPauseScreen();
+    void clearMessageInsideBorders();
+    void clearEntirePauseScreen();
+    void displayCountdown();
 
     // ------------------- Private Utility Functions -------------------
     void eraseCharacters();
@@ -125,6 +134,7 @@ private:
     void handleGameWin();
     void handleGameOver();
     void displayLives() const;
+    void eatBuffer() const;
 
 public:
     void startGame();
