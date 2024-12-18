@@ -131,7 +131,7 @@ void Mario::fall() {
     if (!isOnFloor()) {
         fallingCounter++;
     }
-    else {
+    if(isOnFloor()) {
         resetFallingCounter = true;
         isFalling = false;
         setDirY(Y_NONE);

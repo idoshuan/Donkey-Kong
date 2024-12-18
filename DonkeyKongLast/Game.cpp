@@ -460,6 +460,7 @@ void Game::handleGameWin() {
 	screen.printWinScreen();
 	Sleep(3500); // Pause to allow the player to see the screen
 	gameState = GameState::MENU;
+	eatBuffer();
 }
 
 /**
@@ -471,6 +472,7 @@ void Game::handleGameOver() {
 	screen.printLoseScreen();
 	Sleep(3500); // Pause to allow the player to see the screen
 	gameState = GameState::MENU;
+	eatBuffer();
 }
 
 /**
