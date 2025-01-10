@@ -31,6 +31,7 @@ enum class GameState {
     START,
     PLAYING,
     PAUSED,
+    LEVEL_WON,
     GAME_OVER,
     WON
 };
@@ -81,6 +82,7 @@ private:
     Point leftBarrelPos;
     Point rightBarrelPos;
 
+    int currLevel;
     int lives = initLives;
     int barrelCount = 0;
     bool isAlreadyPaused = false;

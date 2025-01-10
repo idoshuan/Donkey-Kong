@@ -39,6 +39,7 @@ void Game::handleGameState() {
 	case GameState::START:
 		gameStartTime = clock::now();
 		board.load(fileNames[0]);
+		currLevel = 1;
 		setCharacters();
 		board.reset();
 		board.print();
@@ -55,6 +56,19 @@ void Game::handleGameState() {
 		break;
 	case GameState::PAUSED:
 		handlePause();
+		break;
+	case GameState::LEVEL_WON:
+		if (currLevel == fileNames.size()) {
+			gameState = GameState::WON;
+		}
+		else {
+			board.load(fileNames[++currLevel]);
+			setCharacters();
+			board.reset();
+			board.print();
+			displayLives();
+			gameState = GameState::PLAYING;
+		}
 		break;
 	case GameState::GAME_OVER:
 		handleGameOver();
@@ -92,7 +106,7 @@ void Game::updateGameLogic() {
 		return;
 	}
 	if (checkMarioWon()) {
-		gameState = GameState::WON;
+		gameState = GameState::LEVEL_WON;
 		return;
 	}
 	deactivateBarrels();
