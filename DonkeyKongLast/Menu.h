@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include <conio.h>
+#include <vector>
 
 /**
  * @brief The Menu class handles the game's main menu interface,
@@ -12,9 +13,9 @@
  * It manages user input to determine the selected action.
  */
 
-
 enum class MenuAction {
 	START_GAME = 1,
+	SHOW_BOARD_FILES = 2,
 	SHOW_INSTRUCTIONS = 8,
 	EXIT_GAME = 9
 };
@@ -25,6 +26,7 @@ public:
 	void displayMenu();
 	MenuAction getAction();
 	void displayInstructions();
+	void displayBoardFiles(std::vector<std::string>& vec_to_fill);
 };
 
 

@@ -13,6 +13,9 @@
 #include <conio.h>
 #include <chrono>
 #include <thread>
+#include <vector>
+#include <filesystem>
+
 
 /**
  * @brief The Game class manages the main game loop, state transitions,
@@ -37,7 +40,6 @@ class Game {
 private:
     // ------------------- Constants -------------------
     // Mario-related constants
-    static constexpr Point marioInitPos = { 4, 23 };
     static constexpr int marioMaxFallHeight = 5;
     static constexpr int initLives = 3;
     static constexpr int blinkIterations = 6;
@@ -69,10 +71,11 @@ private:
     // ------------------- Game State Variables -------------------
     bool isRunning = true;
     GameState gameState = GameState::MENU;
+    std::vector<std::string> fileNames;
     Screen screen;
     Menu menu;
     Board board;
-    Mario mario{ marioInitPos, &board };
+    Mario mario = {board.getMario(), &board};
     Barrel barrelArr[maxBarrels];
 
     Point leftBarrelPos = { board.getDonkeyKong().getX() - 1, board.getDonkeyKong().getY() };
@@ -87,6 +90,9 @@ private:
     time gameStartTime;
 
     // ------------------- Private Game Loop Functions -------------------
+    void startGame();
+    void getBoardFileNames(std::vector<std::string>&  fileNames);
+    void setCharacters();
     void handleGameState();
     void updateGameLogic();
     void resetStage();
@@ -137,5 +143,7 @@ private:
     void eatBuffer() const;
 
 public:
-    void startGame();
+    Game() {
+        startGame();
+    }
 };

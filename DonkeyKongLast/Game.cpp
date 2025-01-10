@@ -8,9 +8,22 @@
  */
 void Game::startGame() {
 	ShowConsoleCursor(false);
+	getBoardFileNames(fileNames);
 	while (isRunning) {
 		handleGameState();
 	}
+}
+
+void Game::getBoardFileNames(std::vector<std::string>& fileNames) {
+	namespace fs = std::filesystem;
+	for (const auto& entry : fs::directory_iterator(fs::current_path())) {
+		auto filename = entry.path().filename();
+		auto filenameStr = filename.string();
+		if (filenameStr.substr(0, 6) == "dkong_" && filename.extension() == ".screen") {
+			fileNames.push_back(filenameStr);
+		}
+	}
+	std::sort(fileNames.begin(), fileNames.end());
 }
 
 /**
@@ -25,6 +38,9 @@ void Game::handleGameState() {
 		break;
 	case GameState::START:
 		gameStartTime = clock::now();
+		board.load(fileNames[0]);
+		setCharacters();
+		board.reset();
 		board.print();
 		displayLives();
 		gameState = GameState::PLAYING;
@@ -50,6 +66,13 @@ void Game::handleGameState() {
 		std::cerr << "Unknown game state!" << std::endl;
 		isRunning = false;
 	}
+}
+
+void Game::setCharacters() {
+	mario.setBoard(board);
+	mario.setPos(board.getMario());
+	Point leftBarrelPos = { board.getDonkeyKong().getX() - 1, board.getDonkeyKong().getY() };
+	Point rightBarrelPos = { board.getDonkeyKong().getX() + 1, board.getDonkeyKong().getY() };
 }
 
 /**
@@ -86,7 +109,7 @@ void Game::resetStage() {
 	for (int i = 0; i < maxBarrels; i++) {
 		barrelArr[i] = Barrel();
 	}
-	mario = Mario(marioInitPos, &board);
+	mario = Mario(board.getMario(), &board);
 	barrelCount = 0;
 	firstBarrelSpawned = false;
 	gameStartTime = clock::now();
@@ -119,6 +142,9 @@ void Game::handleMenuState(MenuAction action) {
 	switch (action) {
 	case MenuAction::START_GAME:
 		gameState = GameState::START;
+		break;
+	case MenuAction::SHOW_BOARD_FILES:
+		menu.displayBoardFiles(fileNames);
 		break;
 	case MenuAction::SHOW_INSTRUCTIONS:
 		menu.displayInstructions();

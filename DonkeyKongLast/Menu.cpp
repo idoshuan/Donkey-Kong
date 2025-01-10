@@ -21,6 +21,14 @@ void Menu::displayInstructions() {
     _getch(); // Wait for user input
 }
 
+void Menu::displayBoardFiles(std::vector<std::string>& fileNames) {
+    clearScreen();
+    for (int i = 0; i < fileNames.size(); i++) {
+        std::cout << i+1 << ". " << fileNames[i] << std::endl;
+    }
+    _getch();
+}
+
 /**
  * @brief Gets the player's selected action from the menu.
  * Prompts the user to press a key corresponding to a menu option.
@@ -32,6 +40,8 @@ MenuAction Menu::getAction() {
     switch (choice) {
     case '1':
         return MenuAction::START_GAME;
+    case '2':
+        return MenuAction::SHOW_BOARD_FILES;
     case '8':
         return MenuAction::SHOW_INSTRUCTIONS;
     case '9':

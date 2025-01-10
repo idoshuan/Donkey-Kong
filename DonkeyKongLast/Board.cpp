@@ -1,5 +1,4 @@
-#include <cstring>
-#include <iostream>
+
 #include "Board.h"
 
 // ------------------- Public Methods -------------------
@@ -9,9 +8,7 @@
  * Copies the contents of `originalBoard` into `currentBoard`.
  */
 void Board::reset() {
-    for (int i = 0; i < SCREEN_BOUNDARIES::MAX_Y; i++) {
-        memcpy(currentBoard[i], originalBoard[i], SCREEN_BOUNDARIES::MAX_X + 1);
-    }
+	memcpy(currentBoard, originalBoard, SCREEN_BOUNDARIES::MAX_Y * (SCREEN_BOUNDARIES::MAX_X + 1));
 }
 
 /**
@@ -20,10 +17,67 @@ void Board::reset() {
  */
 void Board::print() const {
     clearScreen();
-    for (int y = 0; y < SCREEN_BOUNDARIES::MAX_Y - 1; ++y) {
-        std::cout << currentBoard[y] << std::endl;
-    }
-    std::cout << currentBoard[SCREEN_BOUNDARIES::MAX_Y - 1];
+	std::cout << currentBoard[0];
+}
+
+void Board::load(const std::string& filename) {
+	std::ifstream screenFile(filename);
+	if (screenFile.bad()) {
+		//TO-DO return error
+	}
+	else {
+		int currRow = 0;
+		int currCol = 0;
+		char c;
+		bool isBounded = false;
+
+		while (!screenFile.get(c).eof() && currRow < SCREEN_BOUNDARIES::MAX_Y) {
+			if (c == '\n') {
+				if (currCol < SCREEN_BOUNDARIES::MAX_X) {
+					#pragma warning(suppress : 4996) 
+					strcpy(originalBoard[currRow] + currCol, std::string(SCREEN_BOUNDARIES::MAX_X - currCol - 1, ' ').c_str());
+				}
+				++currRow;
+				currCol = 0;
+				continue;
+			}
+			if (currCol < SCREEN_BOUNDARIES::MAX_X) {
+				if (c == 'Q' && !isBounded) {
+					isBounded = true;
+				}
+				else if (c == ENTITIES_CHARACTERS::MARIO) {
+					mario = { currCol, currRow };
+				}
+				else if (c == ENTITIES_CHARACTERS::PAULINA) {
+					paulina = { currCol, currRow };
+				}
+				else if (c == ENTITIES_CHARACTERS::DONKEY_KONG) {
+					donkey = { currCol, currRow };
+				}
+				else if (c == ENTITIES_CHARACTERS::GHOST) {
+					ghosts.push_back({ currCol, currRow });
+				}
+				originalBoard[currRow][currCol++] = c;
+			}
+		}
+		int lastRow = (currRow < SCREEN_BOUNDARIES::MAX_Y ? currRow : SCREEN_BOUNDARIES::MAX_Y - 1);
+		if (isBounded) {
+			#pragma warning(suppress : 4996) 
+			strcpy(originalBoard[0], std::string(SCREEN_BOUNDARIES::MAX_X, 'Q').c_str());
+			#pragma warning(suppress : 4996) 
+			strcpy(originalBoard[lastRow], std::string(SCREEN_BOUNDARIES::MAX_X, 'Q').c_str());
+			for (int row = 1; row < lastRow; ++row) {
+				originalBoard[row][0] = 'Q';
+				originalBoard[row][SCREEN_BOUNDARIES::MAX_X - 1] = 'Q';
+				originalBoard[row][SCREEN_BOUNDARIES::MAX_X] = '\n';
+			}
+		}
+		originalBoard[0][SCREEN_BOUNDARIES::MAX_X] = '\n';
+		originalBoard[lastRow][SCREEN_BOUNDARIES::MAX_X] = '\0';
+		for (int row = 1; row < lastRow; ++row) {
+			originalBoard[row][SCREEN_BOUNDARIES::MAX_X] = '\n';
+		}
+	}
 }
 
 /**

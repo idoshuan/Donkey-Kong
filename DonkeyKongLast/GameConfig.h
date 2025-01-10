@@ -6,7 +6,7 @@
  */
 
  // ------------------- Enumerations -------------------
-enum class ENTITIES_CHARACTERS { MARIO = '@', BARREL = 'O', DONKEY_KONG = '&', PAULINA = '$' };
+enum class ENTITIES_CHARACTERS { MARIO = '@', BARREL = 'O', DONKEY_KONG = '&', PAULINA = '$', GHOST = 'X' };
 enum class BOARD_CHARACTERS { LADDER = 'H', RIGHT_FLOOR = '>', LEFT_FLOOR = '<', FLOOR = '=', AIR = ' ' };
 enum class KEYS { UP = 'w', DOWN = 'x', STAY = 's', RIGHT = 'd', LEFT = 'a', ESC = 27, INVALID };
 

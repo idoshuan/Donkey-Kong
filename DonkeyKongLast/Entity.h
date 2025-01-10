@@ -75,6 +75,9 @@ public:
 	void setY(int newY) {
 		point.setY(newY);
 	}
+	void setPos(Point pos) {
+		point = pos;
+	}
 	void setDir(Direction newDir) {
 		dir = newDir;
 	}
