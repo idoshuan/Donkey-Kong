@@ -6,15 +6,15 @@
  * If the barrel is not on a floor or already falling, it initiates falling.
  */
 void Barrel::move() {
-    if (floorDir() == '<') {
+    if (floorDir() == BOARD_CHARACTERS::LEFT_FLOOR) {
         setDirX(X_LEFT);       
         prevDirX = X_LEFT;
     }
-    else if (floorDir() == '>') {
+    else if (floorDir() == BOARD_CHARACTERS::RIGHT_FLOOR) {
         setDirX(X_RIGHT);      
         prevDirX = X_RIGHT;
     }
-    else if (floorDir() == '=') {
+    else if (floorDir() == BOARD_CHARACTERS::FLOOR || floorDir() == BOARD_CHARACTERS::QFLOOR) {
         setDirX(prevDirX);     
     }
 

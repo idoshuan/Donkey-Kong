@@ -46,7 +46,7 @@ public:
     }
     bool isFloorBelow(const Point p) const {
         char ch = getChar(Point(p.getX(), p.getY() + 1));
-        return ch == BOARD_CHARACTERS::FLOOR || ch == BOARD_CHARACTERS::LEFT_FLOOR || ch == BOARD_CHARACTERS::RIGHT_FLOOR;
+        return ch == BOARD_CHARACTERS::FLOOR || ch == BOARD_CHARACTERS::LEFT_FLOOR || ch == BOARD_CHARACTERS::RIGHT_FLOOR || ch == BOARD_CHARACTERS::QFLOOR;
     }
     int getMaxX() const{
         return SCREEN_BOUNDARIES::MAX_X;

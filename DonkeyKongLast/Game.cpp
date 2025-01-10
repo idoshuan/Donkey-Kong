@@ -62,7 +62,8 @@ void Game::handleGameState() {
 			gameState = GameState::WON;
 		}
 		else {
-			board.load(fileNames[++currLevel]);
+			board.load(fileNames[currLevel++]);
+			resetStage();
 			setCharacters();
 			board.reset();
 			board.print();
