@@ -34,7 +34,8 @@ private:
 
 public:
 	// ------------------- Constructor -------------------
-	Entity(ENTITIES_CHARACTERS ch, Point initPoint, Board* pBoard = nullptr, Direction dir = NONE) : ch(ch), point(initPoint), pBoard(pBoard), dir(dir){};
+	Entity(ENTITIES_CHARACTERS ch, Board* pBoard = nullptr, Direction dir = NONE) : ch(ch), pBoard(pBoard), dir(dir){};
+	Entity(ENTITIES_CHARACTERS ch, Point point, Board* pBoard = nullptr, Direction dir = NONE) : ch(ch), point(point), pBoard(pBoard), dir(dir){};
 
 	// ------------------- Constants -------------------
 	static constexpr Direction DOWN = { 0, 1 };
@@ -68,7 +69,7 @@ public:
 		return pBoard;
 	}
 
-	// ------------------- Getters -------------------
+	// ------------------- Setters -------------------
 	void setX(int newX) {
 		point.setX(newX);
 	}

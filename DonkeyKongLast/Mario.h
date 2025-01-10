@@ -34,7 +34,9 @@ private:
 
 public:
     // ------------------- Constructor -------------------
-    Mario(Point initPoint, Board* pBoard) : Entity(ENTITIES_CHARACTERS::MARIO, initPoint, pBoard) {}
+    Mario() : Entity(ENTITIES_CHARACTERS::MARIO) {}
+    Mario(Board& board) : Entity(ENTITIES_CHARACTERS::MARIO, board.getMario(), &board) {}
+
 
     // ------------------- Public Functions -------------------
     void keyPressed(KEYS key);

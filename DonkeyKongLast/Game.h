@@ -75,11 +75,11 @@ private:
     Screen screen;
     Menu menu;
     Board board;
-    Mario mario = {board.getMario(), &board};
+    Mario mario;
     Barrel barrelArr[maxBarrels];
 
-    Point leftBarrelPos = { board.getDonkeyKong().getX() - 1, board.getDonkeyKong().getY() };
-    Point rightBarrelPos = { board.getDonkeyKong().getX() + 1, board.getDonkeyKong().getY() };
+    Point leftBarrelPos;
+    Point rightBarrelPos;
 
     int lives = initLives;
     int barrelCount = 0;

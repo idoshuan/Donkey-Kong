@@ -71,8 +71,8 @@ void Game::handleGameState() {
 void Game::setCharacters() {
 	mario.setBoard(board);
 	mario.setPos(board.getMario());
-	Point leftBarrelPos = { board.getDonkeyKong().getX() - 1, board.getDonkeyKong().getY() };
-	Point rightBarrelPos = { board.getDonkeyKong().getX() + 1, board.getDonkeyKong().getY() };
+	leftBarrelPos = { board.getDonkeyKong().getX() - 1, board.getDonkeyKong().getY() };
+	rightBarrelPos = { board.getDonkeyKong().getX() + 1, board.getDonkeyKong().getY() };
 }
 
 /**
@@ -81,7 +81,7 @@ void Game::setCharacters() {
  */
 void Game::updateGameLogic() {
 	drawCharacters();
-	Sleep(70);
+	Sleep(55);
 	checkForKeyPress();
 	eraseCharacters();
 	trySpawnBarrel();
@@ -109,7 +109,7 @@ void Game::resetStage() {
 	for (int i = 0; i < maxBarrels; i++) {
 		barrelArr[i] = Barrel();
 	}
-	mario = Mario(board.getMario(), &board);
+	mario = Mario(board);
 	barrelCount = 0;
 	firstBarrelSpawned = false;
 	gameStartTime = clock::now();
@@ -261,13 +261,12 @@ bool Game::canSpawnBarrel(const time& now) const {
  */
 void Game::spawnBarrel() {
 	if (barrelCount % 2 == 0) {
-		barrelArr[barrelCount] = Barrel(leftBarrelPos, &board);
+		barrelArr[barrelCount] = Barrel(leftBarrelPos, board);
 	}
 	else {
-		barrelArr[barrelCount] = Barrel(rightBarrelPos, &board);
+		barrelArr[barrelCount] = Barrel(rightBarrelPos, board);
 	}
-	barrelArr[barrelCount].activate();
-	barrelCount++;
+	barrelArr[barrelCount++].activate();
 }
 
 /**
@@ -386,8 +385,8 @@ void Game::handlePause() {
 void Game::displayPauseScreen() {
 	gotoxy(pauseMessageX, pauseMessageY);
 	std::cout << "---------------------------";
-	gotoxy(pauseMessageX + pauseMessageTitleOffset, pauseMessageY + 1);
-	std::cout << "GAME PAUSED";
+	gotoxy(pauseMessageX, pauseMessageY + 1);
+	std::cout << "       GAME PAUSED         ";
 	gotoxy(pauseMessageX + pauseMessageContinueOffset, pauseMessageY + 2);
 	std::cout << "Press ESC again to resume";
 	gotoxy(pauseMessageX, pauseMessageY + 3);
@@ -432,7 +431,7 @@ void Game::clearEntirePauseScreen() {
 	for (int y = 0; y < pauseMessageHeight; ++y) {
 		gotoxy(pauseMessageX, pauseMessageY + y);
 		for (int x = 0; x < pauseMessageWidth; ++x) {
-			std::cout << ' '; // Clear the full line character by character
+			std::cout << board.getChar({pauseMessageX+x,pauseMessageY+y}); // Retrive current board characters
 		}
 	}
 }

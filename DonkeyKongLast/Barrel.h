@@ -24,9 +24,8 @@ private:
 
 public:
 	// ------------------- Constructor -------------------
-	Barrel(Point initPoint = Point{ 0, 0 }, Board* pBoard = nullptr)
-		: Entity(ENTITIES_CHARACTERS::BARREL, initPoint, pBoard) {
-	}
+	Barrel(): Entity(ENTITIES_CHARACTERS::BARREL) {}
+	Barrel(Point pos, Board& board) : Entity(ENTITIES_CHARACTERS::BARREL, pos, &board) {}
 
 	// ------------------- Public Functions -------------------
 	void move();

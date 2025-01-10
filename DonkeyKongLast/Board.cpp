@@ -47,6 +47,7 @@ void Board::load(const std::string& filename) {
 				}
 				else if (c == ENTITIES_CHARACTERS::MARIO) {
 					mario = { currCol, currRow };
+					c = ' ';
 				}
 				else if (c == ENTITIES_CHARACTERS::PAULINA) {
 					paulina = { currCol, currRow };
@@ -56,6 +57,7 @@ void Board::load(const std::string& filename) {
 				}
 				else if (c == ENTITIES_CHARACTERS::GHOST) {
 					ghosts.push_back({ currCol, currRow });
+					c = ' ';
 				}
 				originalBoard[currRow][currCol++] = c;
 			}
