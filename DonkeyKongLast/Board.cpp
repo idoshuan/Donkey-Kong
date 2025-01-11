@@ -42,21 +42,21 @@ void Board::load(const std::string& filename) {
 				continue;
 			}
 			if (currCol < SCREEN_BOUNDARIES::MAX_X) {
-				if (c == 'Q' && !isBounded) {
+				if (std::toupper(c) == 'Q' && !isBounded) {
 					isBounded = true;
 				}
 				else if (c == ENTITIES_CHARACTERS::MARIO) {
-					mario = { currCol, currRow };
+					marioPos = { currCol, currRow };
 					c = ' ';
 				}
 				else if (c == ENTITIES_CHARACTERS::PAULINA) {
-					paulina = { currCol, currRow };
+					paulinaPos = { currCol, currRow };
 				}
 				else if (c == ENTITIES_CHARACTERS::DONKEY_KONG) {
-					donkey = { currCol, currRow };
+					donkeyPos = { currCol, currRow };
 				}
-				else if (c == ENTITIES_CHARACTERS::GHOST) {
-					ghosts.push_back({ currCol, currRow });
+				else if (std::toupper(c) == ENTITIES_CHARACTERS::GHOST) {
+					ghostsPos.push_back({ currCol, currRow });
 					c = ' ';
 				}
 				originalBoard[currRow][currCol++] = c;

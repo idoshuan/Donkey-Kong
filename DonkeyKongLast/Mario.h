@@ -35,7 +35,7 @@ private:
 public:
     // ------------------- Constructor -------------------
     Mario() : Entity(ENTITIES_CHARACTERS::MARIO) {}
-    Mario(Board& board) : Entity(ENTITIES_CHARACTERS::MARIO, board.getMario(), &board) {}
+    Mario(Board& board) : Entity(ENTITIES_CHARACTERS::MARIO, board.getMarioPos(), &board) {}
 
 
     // ------------------- Public Functions -------------------

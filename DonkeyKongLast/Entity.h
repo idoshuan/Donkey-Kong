@@ -12,7 +12,7 @@
 
  // ------------------- Class Declaration -------------------
 class Entity {
-private:
+
 	/**
 	 * @brief Represents a direction vector with x and y components.
 	 */
@@ -47,7 +47,7 @@ public:
 		Y_UP = -1, Y_DOWN = 1,
 		X_RIGHT = 1, X_LEFT = -1,
 		X_NONE = 0, Y_NONE = 0
-	};
+	 };
 
 	// ------------------- Getters -------------------
 	int getX() const {
@@ -96,6 +96,9 @@ public:
 	bool isOnFloor() const {
 		return pBoard->isFloorBelow(point);
 	}
+	bool isNextPosFloor() const {
+		return pBoard->isFloorBelow(Point(point.getX() + dir.x, point.getY() + dir.y));
+	}
 	bool isOnLadder() const {
 		return pBoard->getChar(point) == BOARD_CHARACTERS::LADDER;
 	}
@@ -118,5 +121,8 @@ public:
 	}
 	void stop() {
 		dir = NONE;
+	}
+	void turnAround() {
+		dir.x = -dir.x;
 	}
 };

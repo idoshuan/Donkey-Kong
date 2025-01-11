@@ -1,6 +1,8 @@
 #pragma once
 #include <Windows.h>
 #include <conio.h>
+#include <iostream>
+#include <random>
 
 /**
  * @brief Utility functions for console manipulation.
@@ -20,4 +22,11 @@ inline void eatBuffer() {
 	while (_kbhit()) {
 		_getch();
 	}
+}
+
+inline double getRandomDouble(double min = 0.0, double max = 1.0) {
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    std::uniform_real_distribution<> dis(min, max);
+    return dis(gen);
 }

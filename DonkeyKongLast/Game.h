@@ -4,6 +4,7 @@
 #include "Board.h"
 #include "Entity.h"
 #include "Barrel.h"
+#include "Ghost.h"
 #include "Menu.h"
 #include "Screen.h"
 #include "GameConfig.h"
@@ -77,14 +78,14 @@ private:
     Menu menu;
     Board board;
     Mario mario;
-    Barrel barrelArr[maxBarrels];
+    std::vector<Barrel> barrels;
+    std::vector<Ghost> ghosts;
 
     Point leftBarrelPos;
     Point rightBarrelPos;
 
-    int currLevel;
+    int currLevel = 0;
     int lives = initLives;
-    int barrelCount = 0;
     bool isAlreadyPaused = false;
     bool firstBarrelSpawned = false;
 
@@ -94,7 +95,6 @@ private:
     // ------------------- Private Game Loop Functions -------------------
     void startGame();
     void getBoardFileNames(std::vector<std::string>&  fileNames);
-    void setCharacters();
     void handleGameState();
     void updateGameLogic();
     void resetStage();
@@ -109,6 +109,7 @@ private:
     bool checkMarioWon();
     bool checkMarioDeathFromBarrel();
     bool checkMarioDeathFromFall();
+    bool checkMarioDeathFromGhost();
 
     // ------------------- Private Barrel-Related Functions -------------------
     void trySpawnBarrel();
@@ -120,9 +121,12 @@ private:
     void deactivateBarrels();
     void explodeBarrels();
 
+    // ------------------- Private Ghost-Related Functions -------------------
+    void checkGhostsCollision();
+
     // ------------------- Collision and Explosion Checks -------------------
-    bool isDirectCollision(const Barrel& barrel) const;
-    bool isMissedCollision(const Barrel& barrel) const;
+    bool isDirectCollision(const Entity& entity) const;
+    bool isMissedCollision(const Entity& entity) const;
     bool isExplosionFatal(const Barrel& barrel) const;
     bool isInExplosionRadius(const Barrel& barrel) const;
 

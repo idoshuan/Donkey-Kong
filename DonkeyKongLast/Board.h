@@ -21,8 +21,8 @@
 class Board : public Screen {
 private:
     // ------------------- Constants -------------------
-    Point paulina, mario, donkey;
-    std::vector<Point> ghosts;
+    Point paulinaPos, marioPos, donkeyPos;
+    std::vector<Point> ghostsPos;
 
     char originalBoard[SCREEN_BOUNDARIES::MAX_Y][SCREEN_BOUNDARIES::MAX_X + 1]; // +1 for null terminator
     char currentBoard[SCREEN_BOUNDARIES::MAX_Y][SCREEN_BOUNDARIES::MAX_X + 1]; // +1 for null terminator
@@ -55,16 +55,16 @@ public:
         return SCREEN_BOUNDARIES::MIN_X;
     }
 
-    Point getPaulina() const{
-        return paulina;
+    Point getPaulinaPos() const{
+        return paulinaPos;
     }
-    Point getDonkeyKong() const{
-        return donkey;
+    Point getDonkeyKongPos() const{
+        return donkeyPos;
     }
-    Point getMario() const {
-        return mario;
+    Point getMarioPos() const {
+        return marioPos;
     }
-    std::vector<Point> getGhosts() const {
-        return ghosts;
+    std::vector<Point> getGhostsPos() const {
+        return ghostsPos;
     }
 };

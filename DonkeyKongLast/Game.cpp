@@ -37,8 +37,6 @@ void Game::handleGameState() {
 		handleMenuState(menu.getAction());
 		break;
 	case GameState::START:
-		gameStartTime = clock::now();
-		board.load(fileNames[currLevel]);
 		startNewStage();
 		gameState = GameState::PLAYING;
 		break;
@@ -54,12 +52,10 @@ void Game::handleGameState() {
 		handlePause();
 		break;
 	case GameState::LEVEL_WON:
-		if (currLevel == fileNames.size() - 1) {
+		if (currLevel == fileNames.size()) {
 			gameState = GameState::WON;
 		}
 		else {
-			board.load(fileNames[++currLevel]);
-			resetStage();
 			startNewStage();
 			gameState = GameState::PLAYING;
 		}
@@ -75,19 +71,7 @@ void Game::handleGameState() {
 		isRunning = false;
 	}
 }
-void Game::startNewStage() {
-	setCharacters();
-	board.reset();
-	board.print();
-	displayLives();
-}
 
-void Game::setCharacters() {
-	mario.setBoard(board);
-	mario.setPos(board.getMario());
-	leftBarrelPos = { board.getDonkeyKong().getX() - 1, board.getDonkeyKong().getY() };
-	rightBarrelPos = { board.getDonkeyKong().getX() + 1, board.getDonkeyKong().getY() };
-}
 
 /**
  * @brief Updates the game logic during the PLAYING state.
@@ -95,17 +79,20 @@ void Game::setCharacters() {
  */
 void Game::updateGameLogic() {
 	drawCharacters();
-	Sleep(55);
+	Sleep(70);
 	checkForKeyPress();
 	eraseCharacters();
 	trySpawnBarrel();
 	explodeBarrels();
+	checkGhostsCollision();
 	if (checkMarioDeath()) {
 		lives--;
+		marioBlink();
 		resetStage();
 		return;
 	}
 	if (checkMarioWon()) {
+		marioBlink();
 		gameState = GameState::LEVEL_WON;
 		return;
 	}
@@ -118,18 +105,33 @@ void Game::updateGameLogic() {
  * Clears barrels, resets Mario, and initializes game state variables.
  */
 void Game::resetStage() {
-	marioBlink();
-
-	for (int i = 0; i < maxBarrels; i++) {
-		barrelArr[i] = Barrel();
+	barrels.clear();
+	for (size_t i = 0; i < ghosts.size(); ++i) {
+		ghosts[i].setPos(board.getGhostsPos()[i]);
 	}
 	mario = Mario(board);
-	barrelCount = 0;
 	firstBarrelSpawned = false;
 	gameStartTime = clock::now();
 	lastBarrelTime = gameStartTime;
 	displayLives();
 	eatBuffer();
+}
+
+void Game::startNewStage() {
+	gameStartTime = clock::now();
+	board = Board();
+	board.load(fileNames[currLevel++]);
+	ghosts.clear();
+	barrels.clear();
+	mario = Mario(board);
+	for (auto& ghostPos : board.getGhostsPos()) {
+		ghosts.push_back(Ghost(ghostPos, board));
+	}
+	leftBarrelPos = { board.getDonkeyKongPos().getX() - 1, board.getDonkeyKongPos().getY() };
+	rightBarrelPos = { board.getDonkeyKongPos().getX() + 1, board.getDonkeyKongPos().getY() };
+	board.reset();
+	board.print();
+	displayLives();
 }
 
 // ------------------- Input Handling -------------------
@@ -178,7 +180,7 @@ void Game::handleMenuState(MenuAction action) {
  * Combines checks for barrel collisions and falling beyond the maximum height.
  */
 bool Game::checkMarioDeath() {
-	return checkMarioDeathFromBarrel() || checkMarioDeathFromFall();
+	return checkMarioDeathFromBarrel() || checkMarioDeathFromFall() || checkMarioDeathFromGhost();
 }
 
 /**
@@ -186,7 +188,7 @@ bool Game::checkMarioDeath() {
  * Compares Mario's position with Paulina's position.
  */
 bool Game::checkMarioWon() {
-	Point paulina = board.getPaulina();
+	Point paulina = board.getPaulinaPos();
 	return mario.getX() + mario.getDirX() == paulina.getX() && mario.getY() == paulina.getY();
 }
 
@@ -194,8 +196,7 @@ bool Game::checkMarioWon() {
  * @brief Checks if Mario has died from a barrel collision.
  */
 bool Game::checkMarioDeathFromBarrel() {
-	for (int i = 0; i < barrelCount; i++) {
-		Barrel barrel = barrelArr[i];
+	for (auto& barrel : barrels) {
 		if (barrel.isCurrentlyActive()) {
 			if (isDirectCollision(barrel) || isMissedCollision(barrel) || isExplosionFatal(barrel)) {
 				return true;
@@ -216,6 +217,15 @@ bool Game::checkMarioDeathFromFall() {
 		mario.resetFallingCounterIfNeeded();
 		return false;
 	}
+}
+
+bool Game::checkMarioDeathFromGhost() {
+	for (auto& ghost : ghosts) {
+		if (isDirectCollision(ghost) || isMissedCollision(ghost)) {
+			return true;
+		}
+	}
+	return false;
 }
 
 /**
@@ -266,7 +276,7 @@ bool Game::shouldSpawnFirstBarrel(const time& now) const {
  * Ensures conditions like timing and barrel count are met.
  */
 bool Game::canSpawnBarrel(const time& now) const {
-	if (!firstBarrelSpawned || barrelCount >= maxBarrels) return false;
+	if (!firstBarrelSpawned) return false;
 	auto timeSinceLastBarrelSpawn = std::chrono::duration_cast<milliseconds>(now - lastBarrelTime).count();
 	return timeSinceLastBarrelSpawn >= barrelSpawnInterval;
 }
@@ -276,13 +286,13 @@ bool Game::canSpawnBarrel(const time& now) const {
  * Activates the newly created barrel and increments the barrel count.
  */
 void Game::spawnBarrel() {
-	if (barrelCount % 2 == 0) {
-		barrelArr[barrelCount] = Barrel(leftBarrelPos, board);
+	if (barrels.size() % 2 == 0) {
+		barrels.push_back(Barrel(leftBarrelPos, board));
 	}
 	else {
-		barrelArr[barrelCount] = Barrel(rightBarrelPos, board);
+		barrels.push_back(Barrel(rightBarrelPos, board));
 	}
-	barrelArr[barrelCount++].activate();
+	barrels.back().activate();
 }
 
 /**
@@ -297,9 +307,9 @@ bool Game::shouldDeactivateBarrel(Barrel& barrel) const {
  * @brief Handles explosions of barrels on the game board.
  */
 void Game::explodeBarrels() {
-	for (int i = 0; i < barrelCount; i++) {
-		if (hasBarrelExploded(barrelArr[i])) {
-			barrelArr[i].explode();
+	for (auto& barrel : barrels) {
+		if (hasBarrelExploded(barrel)) {
+			barrel.explode();
 		}
 	}
 }
@@ -308,9 +318,9 @@ void Game::explodeBarrels() {
  * @brief Deactivates barrels based on certain conditions.
  */
 void Game::deactivateBarrels() {
-	for (int i = 0; i < barrelCount; i++) {
-		if (shouldDeactivateBarrel(barrelArr[i])) {
-			barrelArr[i].deactivate();
+	for (auto& barrel : barrels) {
+		if (shouldDeactivateBarrel(barrel)) {
+			barrel.deactivate();
 		}
 	}
 }
@@ -327,6 +337,19 @@ bool Game::hasBarrelExploded(Barrel& barrel) const {
 		return false;
 	}
 }
+// ------------------- Ghost-Related Functions -------------------
+
+void Game::checkGhostsCollision() {
+	for (int i = 0; i < ghosts.size(); i++)
+		for (int j = i + 1; j < ghosts.size(); j++) {
+			if (ghosts[i].getY() == ghosts[j].getY())
+				if (ghosts[i].getX() + ghosts[i].getDirX() == ghosts[j].getX() || ghosts[j].getX() + ghosts[j].getDirX() == ghosts[i].getX()) {
+					ghosts[i].turnAround();
+					ghosts[j].turnAround();
+				}
+		}
+}
+
 
 // ------------------- Collision and Explosion Checks -------------------
 
@@ -349,17 +372,17 @@ bool Game::isInExplosionRadius(const Barrel& barrel) const {
 /**
  * @brief Checks for a direct collision between Mario and a barrel.
  */
-bool Game::isDirectCollision(const Barrel& barrel) const {
-	return mario.getX() == barrel.getX() && mario.getY() == barrel.getY();
+bool Game::isDirectCollision(const Entity& entity) const {
+	return mario.getX() == entity.getX() && mario.getY() == entity.getY();
 }
 
 /**
  * @brief Checks if Mario narrowly missed a collision with a barrel.
  */
-bool Game::isMissedCollision(const Barrel& barrel) const {
+bool Game::isMissedCollision(const Entity& entity) const {
 	int marioPreviousX = mario.getX() - mario.getDirX();
 	int marioPreviousY = mario.getY() - mario.getDirY();
-	return marioPreviousX == barrel.getX() && marioPreviousY == barrel.getY();
+	return marioPreviousX == entity.getX() && marioPreviousY == entity.getY();
 }
 
 /**
@@ -447,7 +470,7 @@ void Game::clearEntirePauseScreen() {
 	for (int y = 0; y < pauseMessageHeight; ++y) {
 		gotoxy(pauseMessageX, pauseMessageY + y);
 		for (int x = 0; x < pauseMessageWidth; ++x) {
-			std::cout << board.getChar({pauseMessageX+x,pauseMessageY+y}); // Retrive current board characters
+			std::cout << board.getChar({ pauseMessageX + x,pauseMessageY + y }); // Retrive current board characters
 		}
 	}
 }
@@ -461,10 +484,13 @@ void Game::clearEntirePauseScreen() {
  */
 void Game::moveCharacters() {
 	mario.move();
-	for (int i = 0; i < barrelCount; i++) {
-		if (barrelArr[i].isCurrentlyActive()) {
-			barrelArr[i].move();
+	for (auto& barrel : barrels) {
+		if (barrel.isCurrentlyActive()) {
+			barrel.move();
 		}
+	}
+	for (auto& ghost : ghosts) {
+		ghost.move();
 	}
 }
 
@@ -473,10 +499,13 @@ void Game::moveCharacters() {
  */
 void Game::drawCharacters() {
 	mario.draw();
-	for (int i = 0; i < barrelCount; i++) {
-		if (barrelArr[i].isCurrentlyActive()) {
-			barrelArr[i].draw();
+	for (auto& barrel : barrels) {
+		if (barrel.isCurrentlyActive()) {
+			barrel.draw();
 		}
+	}
+	for (auto& ghost : ghosts) {
+		ghost.draw();
 	}
 }
 
@@ -485,8 +514,11 @@ void Game::drawCharacters() {
  */
 void Game::eraseCharacters() {
 	mario.erase();
-	for (int i = 0; i < barrelCount; i++) {
-		barrelArr[i].erase();
+	for (auto& barrel : barrels) {
+		barrel.erase();
+	}
+	for (auto& ghost : ghosts) {
+		ghost.erase();
 	}
 }
 
@@ -496,6 +528,7 @@ void Game::eraseCharacters() {
  * Resets the game and displays the "You Win" screen.
  */
 void Game::handleGameWin() {
+	currLevel = 0;
 	lives = initLives;
 	resetStage();
 	screen.printWinScreen();
