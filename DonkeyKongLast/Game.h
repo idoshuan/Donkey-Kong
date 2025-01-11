@@ -143,7 +143,6 @@ private:
     void handleGameWin();
     void handleGameOver();
     void displayLives() const;
-    void eatBuffer() const;
 
 public:
     Game() {

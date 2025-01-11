@@ -6,6 +6,7 @@
 #include <string>
 #include <conio.h>
 #include <vector>
+#include <cctype>
 
 /**
  * @brief The Menu class handles the game's main menu interface,
@@ -27,6 +28,7 @@ public:
 	MenuAction getAction();
 	void displayInstructions();
 	void displayBoardFiles(std::vector<std::string>& vec_to_fill);
+	int getScreenChoice(int filesSize);
 };
 
 

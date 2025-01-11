@@ -26,7 +26,6 @@ void Menu::displayBoardFiles(std::vector<std::string>& fileNames) {
     for (int i = 0; i < fileNames.size(); i++) {
         std::cout << i+1 << ". " << fileNames[i] << std::endl;
     }
-    _getch();
 }
 
 /**
@@ -48,5 +47,25 @@ MenuAction Menu::getAction() {
         return MenuAction::EXIT_GAME;
     default:
         return getAction(); 
+    }
+}
+
+int Menu::getScreenChoice(int filesSize) {
+    while (true) { // Loop until a valid input is received
+        char choice = _getch();
+
+        if (std::isdigit(choice)) {
+            int c = choice - '0' - 1;
+            if (c < filesSize && c >= 0) {
+                return c; // Valid input
+            }
+        }
+
+        gotoxy(0, 24);
+        std::cout << "Select number between 1 and " << filesSize << ".";
+        Sleep(2000);
+
+        gotoxy(0, 24);
+        std::cout << std::string(80, ' ');
     }
 }

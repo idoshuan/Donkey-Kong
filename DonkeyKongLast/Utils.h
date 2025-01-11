@@ -1,5 +1,6 @@
 #pragma once
 #include <Windows.h>
+#include <conio.h>
 
 /**
  * @brief Utility functions for console manipulation.
@@ -14,4 +15,9 @@ void gotoxy(int x, int y);
 void ShowConsoleCursor(bool showFlag);
 inline void clearScreen() {
     system("cls");
+}
+inline void eatBuffer() {
+	while (_kbhit()) {
+		_getch();
+	}
 }

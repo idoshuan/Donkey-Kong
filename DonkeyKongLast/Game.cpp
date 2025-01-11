@@ -38,8 +38,7 @@ void Game::handleGameState() {
 		break;
 	case GameState::START:
 		gameStartTime = clock::now();
-		board.load(fileNames[0]);
-		currLevel = 1;
+		board.load(fileNames[currLevel]);
 		startNewStage();
 		gameState = GameState::PLAYING;
 		break;
@@ -55,11 +54,11 @@ void Game::handleGameState() {
 		handlePause();
 		break;
 	case GameState::LEVEL_WON:
-		if (currLevel == fileNames.size()) {
+		if (currLevel == fileNames.size() - 1) {
 			gameState = GameState::WON;
 		}
 		else {
-			board.load(fileNames[currLevel++]);
+			board.load(fileNames[++currLevel]);
 			resetStage();
 			startNewStage();
 			gameState = GameState::PLAYING;
@@ -160,6 +159,8 @@ void Game::handleMenuState(MenuAction action) {
 		break;
 	case MenuAction::SHOW_BOARD_FILES:
 		menu.displayBoardFiles(fileNames);
+		currLevel = menu.getScreenChoice(fileNames.size());
+		gameState = GameState::START;
 		break;
 	case MenuAction::SHOW_INSTRUCTIONS:
 		menu.displayInstructions();
@@ -526,11 +527,4 @@ void Game::displayLives() const {
 	std::cout << lives;
 }
 
-/**
- * @brief Cleans buffer from spam clicks.
- */
-void Game::eatBuffer() const {
-	while (_kbhit()) {
-		_getch();
-	}
-}
+
