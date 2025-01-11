@@ -40,10 +40,7 @@ void Game::handleGameState() {
 		gameStartTime = clock::now();
 		board.load(fileNames[0]);
 		currLevel = 1;
-		setCharacters();
-		board.reset();
-		board.print();
-		displayLives();
+		startNewStage();
 		gameState = GameState::PLAYING;
 		break;
 	case GameState::PLAYING:
@@ -64,10 +61,7 @@ void Game::handleGameState() {
 		else {
 			board.load(fileNames[currLevel++]);
 			resetStage();
-			setCharacters();
-			board.reset();
-			board.print();
-			displayLives();
+			startNewStage();
 			gameState = GameState::PLAYING;
 		}
 		break;
@@ -81,6 +75,12 @@ void Game::handleGameState() {
 		std::cerr << "Unknown game state!" << std::endl;
 		isRunning = false;
 	}
+}
+void Game::startNewStage() {
+	setCharacters();
+	board.reset();
+	board.print();
+	displayLives();
 }
 
 void Game::setCharacters() {

@@ -98,6 +98,7 @@ private:
     void handleGameState();
     void updateGameLogic();
     void resetStage();
+    void startNewStage();
 
     // ------------------- Private Menu-Related Functions -------------------
     void handleMenuState(MenuAction action);
