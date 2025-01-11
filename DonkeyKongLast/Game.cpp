@@ -542,6 +542,7 @@ void Game::handleGameWin() {
  * Resets the game and displays the "Game Over" screen.
  */
 void Game::handleGameOver() {
+	currLevel = 0;
 	lives = initLives;
 	screen.printLoseScreen();
 	Sleep(3500); // Pause to allow the player to see the screen
