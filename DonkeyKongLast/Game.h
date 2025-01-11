@@ -17,6 +17,7 @@
 #include <thread>
 #include <vector>
 #include <filesystem>
+#include <optional>
 
 
 /**
@@ -79,7 +80,7 @@ private:
 	Menu menu;
 	Board board;
 	Mario mario;
-	Hammer hammer = Hammer(mario);
+	std::optional<Hammer> hammer;
 	std::vector<Barrel> barrels;
 	std::vector<Ghost> ghosts;
 

@@ -3,7 +3,7 @@
 
 class Hammer
 {
-	Mario mario;
+	Mario& mario;
 	Point pos = { mario.getX() + Entity::X_RIGHT,mario.getY() };
 	char ch = 'p';
 
@@ -19,9 +19,8 @@ public:
 	void move() {
 		if (mario.getDirX() != Entity::X_NONE) {
 			pos.setX(mario.getX() + mario.getDirX());
-			pos.setY(mario.getY());
-		//	pos = { mario.getX() + mario.getDirX() ,mario.getY()};
 		}
+		pos.setY(mario.getY());
 	}
 	void draw() const {
 		drawCharacter(static_cast<char>(ch));
