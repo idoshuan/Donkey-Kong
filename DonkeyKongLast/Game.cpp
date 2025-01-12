@@ -68,7 +68,7 @@ void Game::updateGameLogic() {
 	checkHammerPickUp();
 	drawCharacters();
 	checkForKeyPress();
-	checkSwing();
+	checkKill();
 	eraseCharacters();
 	trySpawnBarrel();
 	explodeBarrels();
@@ -80,6 +80,8 @@ void Game::updateGameLogic() {
 		return;
 	}
 	if (checkMarioWon()) {
+		score += 20;
+		scoreAnimation("+100");
 		marioBlinkAnimation();
 		gameState = GameState::LEVEL_WON;
 		return;
@@ -365,22 +367,39 @@ void Game::checkHammerPickUp() {
 	}
 }
 
-void Game::checkSwing() {
+void Game::checkKill() {
 	if (hammer && hammer->isCurrentlySwinging()) {
 		for (auto& barrel : barrels) {
-			if (barrel.getPos() == hammer->getPos() || barrel.getNextPos() == hammer->getPos()) {
+			if (barrel.isCurrentlyActive() && (barrel.getPos() == hammer->getPos() || barrel.getNextPos() == hammer->getPos())) {
 				barrel.deactivate();
+				score += 10;
+				scoreAnimation("+10");
 			}
 		}
 		for (auto& ghost : ghosts) {
-			if (ghost.getPos() == hammer->getPos() || ghost.getNextPos() == hammer->getPos()) {
+			if (ghost.isCurrentlyActive() && (ghost.getPos() == hammer->getPos() || ghost.getNextPos() == hammer->getPos())) {
 				ghost.deactivate();
+				score += 15;
+				scoreAnimation("+15");
 			}
 		}
 		hammer->stopSwing();
 	}
 }
-
+void Game::scoreAnimation(const std::string& points) {
+	if (board.isValidPosition({ mario.getX(), mario.getY() - 1 })) {
+		gotoxy(mario.getX() + mario.getDirX(), mario.getY() - 1);
+	}
+	else {
+		gotoxy(mario.getX() - points.size(), mario.getY());
+	}
+	std::cout << points;
+	Sleep(50);
+	for (int x = 0; x < points.size(); ++x) {
+		gotoxy(mario.getX() + mario.getDirX()+x, mario.getY() - 1);
+		std::cout << board.getChar({ mario.getX() + mario.getDirX() + x,mario.getY() });
+	}
+}
 
 
 
@@ -643,7 +662,7 @@ void Game::marioBlinkAnimation() {
 
 void Game::hammerHitAnimation() {
 	gotoxy(hammer->getX(), hammer->getY());
-	std::cout << '+';
+	std::cout << '*';
 	Sleep(20);
 }
 

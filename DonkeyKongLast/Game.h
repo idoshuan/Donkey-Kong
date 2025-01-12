@@ -88,7 +88,7 @@ private:
 	Point rightBarrelPos;
 
 	int currLevel = 0;
-	int score;
+	int score = 0;
 	int lives = initLives;
 	bool isAlreadyPaused = false;
 	bool firstBarrelSpawned = false;
@@ -129,7 +129,11 @@ private:
 
 	// ------------------- Private Hammer-Related Functions -------------------
 	void checkHammerPickUp();
-	void checkSwing();
+	void checkKill();
+
+	void scoreAnimation(const std::string& points);
+
+	bool isHammerColliding(const Point& pos, const Point& nextPos);
 
 	// ------------------- Collision and Explosion Checks -------------------
 	bool isDirectCollision(const Entity& entity) const;
@@ -159,6 +163,8 @@ private:
 	void marioBlinkAnimation();
 	void hammerHitAnimation();
 
+	template<typename Entity>
+	void handleCollision(Entity& object, int points, const std::string& displayText);
 public:
 	Game() {
 		startGame();
