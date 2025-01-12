@@ -42,7 +42,7 @@ void Board::load(const std::string& filename) {
 				continue;
 			}
 			if (currCol < SCREEN_BOUNDARIES::MAX_X) {
-				if (std::toupper(c) == 'Q' && !isBounded) {
+				if (std::toupper(c) == BOARD_CHARACTERS::QFLOOR && !isBounded) {
 					isBounded = true;
 				}
 				else if (c == ENTITIES_CHARACTERS::MARIO) {
@@ -55,7 +55,7 @@ void Board::load(const std::string& filename) {
 				else if (c == ENTITIES_CHARACTERS::DONKEY_KONG) {
 					donkeyPos = { currCol, currRow };
 				}
-				else if (c == BOARD_CHARACTERS::HAMMER) {
+				else if (std::tolower(c) == BOARD_CHARACTERS::HAMMER) {
 					hammerPos = { currCol, currRow };
 				}
 				else if (std::toupper(c) == ENTITIES_CHARACTERS::GHOST) {

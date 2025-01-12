@@ -106,6 +106,8 @@ void Game::updateGameLogic() {
  * Clears barrels, resets Mario, and initializes game state variables.
  */
 void Game::resetStage() {
+	hammer.reset();
+	board.reviveHammer();
 	barrels.clear();
 	for (size_t i = 0; i < ghosts.size(); ++i) {
 		ghosts[i].setPos(board.getGhostsPos()[i]);
@@ -355,6 +357,7 @@ void Game::checkGhostsCollision() {
 void Game::checkHammerPickUp() {
 	if (mario.getPos() == board.getHammerPos() && !hammer) {
 		hammer.emplace(mario);
+		board.deleteHammer();
 	}
 }
 
