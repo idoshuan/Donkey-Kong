@@ -6,7 +6,7 @@ class Hammer
 	Mario& mario;
 	Point pos = { mario.getX() + Entity::X_RIGHT,mario.getY() };
 	char ch = 'p';
-
+	bool isSwinging = false;
 	// ------------------- Utility Functions -------------------
 	void drawCharacter(char c) const {
 		gotoxy(pos.getX(), pos.getY());
@@ -18,7 +18,12 @@ public:
 
 	void move() {
 		if (mario.getDirX() != Entity::X_NONE) {
-			pos.setX(mario.getX() + mario.getDirX());
+			if (mario.getBoard()->isValidPosition({ pos.getX() + mario.getDirX(), mario.getY() })) {
+				pos.setX(mario.getX() + mario.getDirX());
+			}
+			else {
+				pos.setX(mario.getX() - mario.getDirX());
+			}
 		}
 		pos.setY(mario.getY());
 	}
@@ -29,6 +34,17 @@ public:
 		char backgroundChar = mario.getBoard()->getChar(Point(pos.getX(), pos.getY()));
 		drawCharacter(backgroundChar);
 	}
-
+	Point getPos() {
+		return pos;
+	}
+	void swing() {
+		isSwinging = true;
+	}
+	void stopSwing() {
+		isSwinging = false;
+	}
+	bool isCurrentlySwinging() {
+		return isSwinging;
+	}
 };
 

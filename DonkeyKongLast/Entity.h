@@ -34,8 +34,8 @@ class Entity {
 
 public:
 	// ------------------- Constructor -------------------
-	Entity(ENTITIES_CHARACTERS ch, Board* pBoard = nullptr, Direction dir = NONE) : ch(ch), pBoard(pBoard), dir(dir){};
-	Entity(ENTITIES_CHARACTERS ch, Point point, Board* pBoard = nullptr, Direction dir = NONE) : ch(ch), point(point), pBoard(pBoard), dir(dir){};
+	Entity(ENTITIES_CHARACTERS ch, Board* pBoard = nullptr, Direction dir = NONE) : ch(ch), pBoard(pBoard), dir(dir) {};
+	Entity(ENTITIES_CHARACTERS ch, Point point, Board* pBoard = nullptr, Direction dir = NONE) : ch(ch), point(point), pBoard(pBoard), dir(dir) {};
 
 	// ------------------- Constants -------------------
 	static constexpr Direction DOWN = { 0, 1 };
@@ -43,16 +43,19 @@ public:
 	static constexpr Direction RIGHT = { 1, 0 };
 	static constexpr Direction NONE = { 0, 0 };
 
-     enum {
+	enum {
 		Y_UP = -1, Y_DOWN = 1,
 		X_RIGHT = 1, X_LEFT = -1,
 		X_NONE = 0, Y_NONE = 0
-	 };
+	};
 
 	// ------------------- Getters -------------------
-	 Point getPos() const {
-		 return point;
-	 }
+	Point getPos() const {
+		return point;
+	}
+	Point getNextPos() const {
+		return { point.getX() + dir.x,point.getY() + dir.y };
+	}
 	int getX() const {
 		return point.getX();
 	}

@@ -23,6 +23,7 @@ private:
     int jumpCounter = 0;
     int fallingCounter = 0;
     bool resetFallingCounter = false;
+   
 
     void handleUp();
     void handleDown();
@@ -44,4 +45,5 @@ public:
     void resetFallingCounterIfNeeded();
     int getFallingCounter() const;
     bool isCurrentlyFalling() const;
+   
 };

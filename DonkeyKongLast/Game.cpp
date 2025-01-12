@@ -82,6 +82,7 @@ void Game::updateGameLogic() {
 	drawCharacters();
 	Sleep(70);
 	checkForKeyPress();
+	checkSwing();
 	eraseCharacters();
 	trySpawnBarrel();
 	explodeBarrels();
@@ -111,6 +112,7 @@ void Game::resetStage() {
 	barrels.clear();
 	for (size_t i = 0; i < ghosts.size(); ++i) {
 		ghosts[i].setPos(board.getGhostsPos()[i]);
+		ghosts[i].activate();
 	}
 	mario = Mario(board);
 	firstBarrelSpawned = false;
@@ -150,7 +152,12 @@ void Game::checkForKeyPress() {
 			gameState = GameState::PAUSED;
 			return;
 		}
-		mario.keyPressed(key);
+		else if (key == 'p' && hammer) {
+			hammer->swing();
+		}
+		else {
+			mario.keyPressed(key);
+		}
 	}
 }
 
@@ -224,8 +231,10 @@ bool Game::checkMarioDeathFromFall() {
 
 bool Game::checkMarioDeathFromGhost() {
 	for (auto& ghost : ghosts) {
-		if (isDirectCollision(ghost) || isMissedCollision(ghost)) {
-			return true;
+		if (ghost.isCurrentlyActive()) {
+			if (isDirectCollision(ghost) || isMissedCollision(ghost)) {
+				return true;
+			}
 		}
 	}
 	return false;
@@ -361,6 +370,21 @@ void Game::checkHammerPickUp() {
 	}
 }
 
+void Game::checkSwing() {
+	if (hammer && hammer->isCurrentlySwinging()) {
+		for (auto& barrel : barrels){
+			if (barrel.getPos() == hammer->getPos() || barrel.getNextPos() == hammer->getPos()){
+				barrel.deactivate();
+			}
+		}
+		for (auto& ghost : ghosts){
+			if (ghost.getPos() == hammer->getPos() || ghost.getNextPos() == hammer->getPos()){
+				ghost.deactivate();
+			}
+		}
+		hammer->stopSwing();
+	}
+}
 
 // ------------------- Collision and Explosion Checks -------------------
 
@@ -504,7 +528,9 @@ void Game::moveCharacters() {
 		}
 	}
 	for (auto& ghost : ghosts) {
-		ghost.move();
+		if (ghost.isCurrentlyActive()) {
+			ghost.move();
+		}
 	}
 }
 
@@ -522,7 +548,9 @@ void Game::drawCharacters() {
 		}
 	}
 	for (auto& ghost : ghosts) {
-		ghost.draw();
+		if (ghost.isCurrentlyActive()) {
+			ghost.draw();
+		}
 	}
 }
 

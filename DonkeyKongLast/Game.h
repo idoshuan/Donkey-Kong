@@ -129,6 +129,7 @@ private:
 
 	// ------------------- Private Hammer-Related Functions -------------------
 	void checkHammerPickUp();
+	void checkSwing();
 
 	// ------------------- Collision and Explosion Checks -------------------
 	bool isDirectCollision(const Entity& entity) const;

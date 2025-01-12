@@ -179,7 +179,7 @@ void Mario::resetFallingCounterIfNeeded() {
  * @return True if the key is valid; false otherwise.
  */
 bool Mario::isValidKey(KEYS key) const {
-    return (key == KEYS::UP || key == KEYS::DOWN || key == KEYS::LEFT || key == KEYS::RIGHT || key == KEYS::STAY);
+    return (key == KEYS::UP || key == KEYS::DOWN || key == KEYS::LEFT || key == KEYS::RIGHT || key == KEYS::STAY || key == KEYS::HAMMER);
 }
 
 /**

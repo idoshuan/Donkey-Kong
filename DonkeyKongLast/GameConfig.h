@@ -8,7 +8,7 @@
  // ------------------- Enumerations -------------------
 enum class ENTITIES_CHARACTERS { MARIO = '@', BARREL = 'O', DONKEY_KONG = '&', PAULINA = '$', GHOST = 'X' };
 enum class BOARD_CHARACTERS { LADDER = 'H', RIGHT_FLOOR = '>', LEFT_FLOOR = '<', FLOOR = '=', QFLOOR = 'Q', AIR = ' ' ,HAMMER='p' };
-enum class KEYS { UP = 'w', DOWN = 'x', STAY = 's', RIGHT = 'd', LEFT = 'a', ESC = 27, INVALID };
+enum class KEYS { UP = 'w', DOWN = 'x', STAY = 's', RIGHT = 'd', LEFT = 'a', HAMMER ='p', ESC = 27, INVALID };
 
 // ------------------- Operators -------------------
 /**
@@ -63,6 +63,7 @@ inline KEYS charToKey(char key) {
     case 'a': return KEYS::LEFT;
     case 'd': return KEYS::RIGHT;
     case 's': return KEYS::STAY;
+    case 'p': return KEYS::HAMMER;
     case 27: return KEYS::ESC;
     default: return KEYS::INVALID;
     }

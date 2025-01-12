@@ -6,6 +6,8 @@
 
 
 class Ghost : public Entity {
+	bool isActive = true;
+	
 	void setRandDir();
 
 public:
@@ -14,4 +16,13 @@ public:
 		setDirX(getRandomDouble() >= 0.5 ? Entity::X_LEFT : Entity::X_RIGHT);
 	}
 	void move();
+	void deactivate() {
+		isActive = false;
+	}
+	bool isCurrentlyActive() const {
+		return isActive;
+	}
+	void activate() {
+		isActive = true;
+	}
 };
