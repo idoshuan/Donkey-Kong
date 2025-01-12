@@ -73,12 +73,12 @@ public:
     void deleteHammer() {
         gotoxy(hammerPos.getX(), hammerPos.getY());
         std::cout << static_cast<char>(BOARD_CHARACTERS::AIR);
-        currentBoard[hammerPos.getX()][hammerPos.getY()] = static_cast<char>(BOARD_CHARACTERS::AIR);
+        currentBoard[hammerPos.getY()][hammerPos.getX()] = static_cast<char>(BOARD_CHARACTERS::AIR);
     }
     void reviveHammer() {
         gotoxy(hammerPos.getX(), hammerPos.getY());
         std::cout << static_cast<char>(BOARD_CHARACTERS::HAMMER);
-        currentBoard[hammerPos.getX()][hammerPos.getY()] = static_cast<char>(BOARD_CHARACTERS::HAMMER);
+        currentBoard[hammerPos.getY()][hammerPos.getX()] = static_cast<char>(BOARD_CHARACTERS::HAMMER);
 
     }
 };

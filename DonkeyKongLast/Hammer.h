@@ -34,9 +34,6 @@ public:
 		char backgroundChar = mario.getBoard()->getChar(Point(pos.getX(), pos.getY()));
 		drawCharacter(backgroundChar);
 	}
-	Point getPos() {
-		return pos;
-	}
 	void swing() {
 		isSwinging = true;
 	}
@@ -46,5 +43,16 @@ public:
 	bool isCurrentlySwinging() {
 		return isSwinging;
 	}
+	Point getPos() {
+		return pos;
+	}
+	int getX() {
+		return pos.getX();
+	}
+	int getY() {
+		return pos.getY();
+	}
+
+
 };
 

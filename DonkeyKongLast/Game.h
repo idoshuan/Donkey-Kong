@@ -88,6 +88,7 @@ private:
 	Point rightBarrelPos;
 
 	int currLevel = 0;
+	int score;
 	int lives = initLives;
 	bool isAlreadyPaused = false;
 	bool firstBarrelSpawned = false;
@@ -107,7 +108,6 @@ private:
 	void handleMenuState(MenuAction action);
 
 	// ------------------- Private Mario-Related Functions -------------------
-	void marioBlink();
 	bool checkMarioDeath();
 	bool checkMarioWon();
 	bool checkMarioDeathFromBarrel();
@@ -154,6 +154,10 @@ private:
 	void handleGameWin();
 	void handleGameOver();
 	void displayLives() const;
+
+	// ------------------- Private Animation Functions -------------------
+	void marioBlinkAnimation();
+	void hammerHitAnimation();
 
 public:
 	Game() {

@@ -14,18 +14,6 @@ void Game::startGame() {
 	}
 }
 
-void Game::getBoardFileNames(std::vector<std::string>& fileNames) {
-	namespace fs = std::filesystem;
-	for (const auto& entry : fs::directory_iterator(fs::current_path())) {
-		auto filename = entry.path().filename();
-		auto filenameStr = filename.string();
-		if (filenameStr.substr(0, 6) == "dkong_" && filename.extension() == ".screen") {
-			fileNames.push_back(filenameStr);
-		}
-	}
-	std::sort(fileNames.begin(), fileNames.end());
-}
-
 /**
  * @brief Handles the logic for the current game state.
  * Switches between states like MENU, START, PLAYING, PAUSED, GAME_OVER, and WON.
@@ -72,7 +60,6 @@ void Game::handleGameState() {
 	}
 }
 
-
 /**
  * @brief Updates the game logic during the PLAYING state.
  * Handles input, updates Mario and barrels, and checks for game-ending conditions.
@@ -80,7 +67,6 @@ void Game::handleGameState() {
 void Game::updateGameLogic() {
 	checkHammerPickUp();
 	drawCharacters();
-	Sleep(200);
 	checkForKeyPress();
 	checkSwing();
 	eraseCharacters();
@@ -89,12 +75,12 @@ void Game::updateGameLogic() {
 	checkGhostsCollision();
 	if (checkMarioDeath()) {
 		lives--;
-		marioBlink();
+		marioBlinkAnimation();
 		resetStage();
 		return;
 	}
 	if (checkMarioWon()) {
-		marioBlink();
+		marioBlinkAnimation();
 		gameState = GameState::LEVEL_WON;
 		return;
 	}
@@ -140,6 +126,9 @@ void Game::startNewStage() {
 	displayLives();
 }
 
+
+
+
 // ------------------- Input Handling -------------------
 
 /**
@@ -147,24 +136,22 @@ void Game::startNewStage() {
  * Processes ESC to pause the game or sends key input to Mario.
  */
 void Game::checkForKeyPress() {
-	if (_kbhit()) {
-		KEYS key = charToKey(_getch());
-		if (key != KEYS::INVALID) {
-			if (key == KEYS::ESC) {
-				gameState = GameState::PAUSED;
-				return;
-			}
-			else if (key != KEYS::HAMMER) {
-				mario.keyPressed(key);
-				if (_kbhit()) {
-					key = charToKey(_getch());
-					if (hammer && key == KEYS::HAMMER) {
-						hammer->swing();
-					}
+	for (int i = 0; i < 5; i++) {
+		Sleep(12);
+		if (_kbhit()) {
+			KEYS key = charToKey(_getch());
+			if (key != KEYS::INVALID) {
+				if (key == KEYS::ESC) {
+					gameState = GameState::PAUSED;
+					return;
 				}
-			}
-			else if(hammer && key == KEYS::HAMMER) {
-				hammer->swing();
+				else if (key != KEYS::HAMMER) {
+					mario.keyPressed(key);
+				}
+				else if (hammer && key == KEYS::HAMMER) {
+					hammer->swing();
+					hammerHitAnimation();
+				}
 			}
 		}
 	}
@@ -191,6 +178,9 @@ void Game::handleMenuState(MenuAction action) {
 		break;
 	}
 }
+
+
+
 
 // ------------------- Mario-Related Functions -------------------
 
@@ -249,19 +239,8 @@ bool Game::checkMarioDeathFromGhost() {
 	return false;
 }
 
-/**
- * @brief Makes Mario blink (disappear and reappear) visually.
- */
-void Game::marioBlink() {
-	drawCharacters();
-	for (int i = 0; i < blinkIterations; i++) {
-		mario.draw();
-		Sleep(200);
-		mario.erase();
-		Sleep(200);
-	}
-	eraseCharacters();
-}
+
+
 
 // ------------------- Barrel-Related Functions -------------------
 
@@ -358,6 +337,10 @@ bool Game::hasBarrelExploded(Barrel& barrel) const {
 		return false;
 	}
 }
+
+
+
+
 // ------------------- Ghost-Related Functions -------------------
 
 void Game::checkGhostsCollision() {
@@ -370,6 +353,9 @@ void Game::checkGhostsCollision() {
 				}
 		}
 }
+
+
+
 
 // ------------------- Hammer-Related Functions -------------------
 void Game::checkHammerPickUp() {
@@ -394,6 +380,9 @@ void Game::checkSwing() {
 		hammer->stopSwing();
 	}
 }
+
+
+
 
 // ------------------- Collision and Explosion Checks -------------------
 
@@ -435,6 +424,9 @@ bool Game::isMissedCollision(const Entity& entity) const {
 bool Game::isExplosionFatal(const Barrel& barrel) const {
 	return barrel.didExplode() && isInExplosionRadius(barrel);
 }
+
+
+
 
 // ------------------- Pause Handling -------------------
 
@@ -521,7 +513,20 @@ void Game::clearEntirePauseScreen() {
 
 
 
+
 // ------------------- Utility Functions -------------------
+
+void Game::getBoardFileNames(std::vector<std::string>& fileNames) {
+	namespace fs = std::filesystem;
+	for (const auto& entry : fs::directory_iterator(fs::current_path())) {
+		auto filename = entry.path().filename();
+		auto filenameStr = filename.string();
+		if (filenameStr.substr(0, 6) == "dkong_" && filename.extension() == ".screen") {
+			fileNames.push_back(filenameStr);
+		}
+	}
+	std::sort(fileNames.begin(), fileNames.end());
+}
 
 /**
  * @brief Moves Mario and barrels on the game board.
@@ -579,7 +584,6 @@ void Game::eraseCharacters() {
 	}
 }
 
-
 /**
  * @brief Handles the actions when the player wins the game.
  * Resets the game and displays the "You Win" screen.
@@ -616,6 +620,31 @@ void Game::displayLives() const {
 
 	gotoxy(displayX, displayY);
 	std::cout << lives;
+}
+
+
+
+
+// ------------------- Animation Functions -------------------
+
+/**
+ * @brief Makes Mario blink (disappear and reappear) visually.
+ */
+void Game::marioBlinkAnimation() {
+	drawCharacters();
+	for (int i = 0; i < blinkIterations; i++) {
+		mario.draw();
+		Sleep(200);
+		mario.erase();
+		Sleep(200);
+	}
+	eraseCharacters();
+}
+
+void Game::hammerHitAnimation() {
+	gotoxy(hammer->getX(), hammer->getY());
+	std::cout << '+';
+	Sleep(20);
 }
 
 
