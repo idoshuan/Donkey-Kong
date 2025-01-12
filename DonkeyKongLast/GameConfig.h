@@ -50,6 +50,14 @@ inline bool operator==(KEYS key, char ch) {
     return ch == key;
 }
 
+inline bool operator!=(char ch, KEYS key) {
+    return ch != static_cast<char>(key);
+}
+
+inline bool operator!=(KEYS key, char ch) {
+    return ch != key;
+}
+
 // ------------------- Utility Functions -------------------
 /**
  * @brief Converts a character input into a KEYS enumeration.

@@ -80,7 +80,7 @@ void Game::handleGameState() {
 void Game::updateGameLogic() {
 	checkHammerPickUp();
 	drawCharacters();
-	Sleep(70);
+	Sleep(200);
 	checkForKeyPress();
 	checkSwing();
 	eraseCharacters();
@@ -123,6 +123,7 @@ void Game::resetStage() {
 }
 
 void Game::startNewStage() {
+	hammer.reset();
 	gameStartTime = clock::now();
 	board = Board();
 	board.load(fileNames[currLevel++]);
@@ -148,15 +149,23 @@ void Game::startNewStage() {
 void Game::checkForKeyPress() {
 	if (_kbhit()) {
 		KEYS key = charToKey(_getch());
-		if (key == KEYS::ESC) {
-			gameState = GameState::PAUSED;
-			return;
-		}
-		else if (key == 'p' && hammer) {
-			hammer->swing();
-		}
-		else {
-			mario.keyPressed(key);
+		if (key != KEYS::INVALID) {
+			if (key == KEYS::ESC) {
+				gameState = GameState::PAUSED;
+				return;
+			}
+			else if (key != KEYS::HAMMER) {
+				mario.keyPressed(key);
+				if (_kbhit()) {
+					key = charToKey(_getch());
+					if (hammer && key == KEYS::HAMMER) {
+						hammer->swing();
+					}
+				}
+			}
+			else if(hammer && key == KEYS::HAMMER) {
+				hammer->swing();
+			}
 		}
 	}
 }
@@ -372,13 +381,13 @@ void Game::checkHammerPickUp() {
 
 void Game::checkSwing() {
 	if (hammer && hammer->isCurrentlySwinging()) {
-		for (auto& barrel : barrels){
-			if (barrel.getPos() == hammer->getPos() || barrel.getNextPos() == hammer->getPos()){
+		for (auto& barrel : barrels) {
+			if (barrel.getPos() == hammer->getPos() || barrel.getNextPos() == hammer->getPos()) {
 				barrel.deactivate();
 			}
 		}
-		for (auto& ghost : ghosts){
-			if (ghost.getPos() == hammer->getPos() || ghost.getNextPos() == hammer->getPos()){
+		for (auto& ghost : ghosts) {
+			if (ghost.getPos() == hammer->getPos() || ghost.getNextPos() == hammer->getPos()) {
 				ghost.deactivate();
 			}
 		}
