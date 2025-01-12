@@ -50,6 +50,9 @@ public:
 	 };
 
 	// ------------------- Getters -------------------
+	 Point getPos() const {
+		 return point;
+	 }
 	int getX() const {
 		return point.getX();
 	}

@@ -188,6 +188,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameConfig.h" />
     <ClInclude Include="Ghost.h" />
+    <ClInclude Include="Hammer.h" />
     <ClInclude Include="Mario.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="Entity.h" />
@@ -200,6 +201,7 @@
     <ClCompile Include="Board.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Ghost.cpp" />
+    <ClCompile Include="Hammer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mario.cpp" />
     <ClCompile Include="Menu.cpp" />

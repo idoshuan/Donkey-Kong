@@ -124,6 +124,7 @@ void Game::startNewStage() {
 	ghosts.clear();
 	barrels.clear();
 	mario = Mario(board);
+	hammer = Hammer(mario);
 	for (auto& ghostPos : board.getGhostsPos()) {
 		ghosts.push_back(Ghost(ghostPos, board));
 	}
@@ -350,6 +351,13 @@ void Game::checkGhostsCollision() {
 		}
 }
 
+// ------------------- Hammer-Related Functions -------------------
+void Game::checkHammerPickUp() {
+	if (mario.getPos() == board.getHammerPos()) {
+		hasHammer = true;
+	}
+}
+
 
 // ------------------- Collision and Explosion Checks -------------------
 
@@ -483,6 +491,7 @@ void Game::clearEntirePauseScreen() {
  * @brief Moves Mario and barrels on the game board.
  */
 void Game::moveCharacters() {
+	hammer.move();
 	mario.move();
 	for (auto& barrel : barrels) {
 		if (barrel.isCurrentlyActive()) {
@@ -499,6 +508,7 @@ void Game::moveCharacters() {
  */
 void Game::drawCharacters() {
 	mario.draw();
+	hammer.draw();
 	for (auto& barrel : barrels) {
 		if (barrel.isCurrentlyActive()) {
 			barrel.draw();
@@ -514,6 +524,7 @@ void Game::drawCharacters() {
  */
 void Game::eraseCharacters() {
 	mario.erase();
+	hammer.erase();
 	for (auto& barrel : barrels) {
 		barrel.erase();
 	}

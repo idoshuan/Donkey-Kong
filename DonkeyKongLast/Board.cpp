@@ -55,6 +55,9 @@ void Board::load(const std::string& filename) {
 				else if (c == ENTITIES_CHARACTERS::DONKEY_KONG) {
 					donkeyPos = { currCol, currRow };
 				}
+				else if (c == BOARD_CHARACTERS::HAMMER) {
+					hammerPos = { currCol, currRow };
+				}
 				else if (std::toupper(c) == ENTITIES_CHARACTERS::GHOST) {
 					ghostsPos.push_back({ currCol, currRow });
 					c = ' ';

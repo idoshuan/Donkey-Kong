@@ -23,7 +23,7 @@ private:
     int jumpCounter = 0;
     int fallingCounter = 0;
     bool resetFallingCounter = false;
-    
+
     void handleUp();
     void handleDown();
     void handleHorizontal(KEYS key);
