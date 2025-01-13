@@ -8,6 +8,7 @@
 #include <cstring>
 #include <vector>
 #include <fstream>
+#include <string>
 
 
 /**
@@ -34,7 +35,7 @@ public:
      * as defined in the `CHARACTER_POSITIONS` structure.
      */
     void reset();
-    void load(const std::string& filename);
+    bool load(const std::string& filename, std::string* errors);
     void print() const;
     bool isValidPosition(const Point p) const;
 

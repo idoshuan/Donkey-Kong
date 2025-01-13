@@ -111,10 +111,22 @@ void Game::resetStage() {
 }
 
 void Game::startNewStage() {
+	board = Board();
+	std::string errorMessage;
+
+	while (currLevel<fileNames.size()) {
+		if (!board.load(fileNames[currLevel], &errorMessage)) {
+			board.clearScreen();
+			std::cout << "Board " << fileNames[currLevel++] << " is not valid"<<std::endl;
+			std::cout << errorMessage << std::endl;
+			_getch();
+		}
+		else {
+			break;
+		}
+	}
 	hammer.reset();
 	gameStartTime = clock::now();
-	board = Board();
-	board.load(fileNames[currLevel++]);
 	ghosts.clear();
 	barrels.clear();
 	mario = Mario(board);
@@ -386,20 +398,7 @@ void Game::checkKill() {
 		hammer->stopSwing();
 	}
 }
-void Game::scoreAnimation(const std::string& points) {
-	if (board.isValidPosition({ mario.getX(), mario.getY() - 1 })) {
-		gotoxy(mario.getX() + mario.getDirX(), mario.getY() - 1);
-	}
-	else {
-		gotoxy(mario.getX() - points.size(), mario.getY());
-	}
-	std::cout << points;
-	Sleep(50);
-	for (int x = 0; x < points.size(); ++x) {
-		gotoxy(mario.getX() + mario.getDirX()+x, mario.getY() - 1);
-		std::cout << board.getChar({ mario.getX() + mario.getDirX() + x,mario.getY() });
-	}
-}
+
 
 
 
@@ -663,7 +662,17 @@ void Game::marioBlinkAnimation() {
 void Game::hammerHitAnimation() {
 	gotoxy(hammer->getX(), hammer->getY());
 	std::cout << '*';
-	Sleep(20);
+	Sleep(25);
 }
 
-
+void Game::scoreAnimation(const std::string& points) {
+	if (board.isValidPosition({ mario.getX() - 1, mario.getY() - 1 }) && board.isValidPosition({ mario.getX(), mario.getY() - 1 }) && board.isValidPosition({ mario.getX() + 1, mario.getY() - 1 })) {
+		gotoxy(mario.getX() - 1, mario.getY() - 1);
+		std::cout << points;
+		Sleep(60);
+		for (int x = 0; x < points.size(); ++x) {
+			gotoxy(mario.getX() - 1 + x, mario.getY() - 1);
+			std::cout << board.getChar({ mario.getX() - 1 + x,mario.getY() - 1 });
+		}
+	}
+}

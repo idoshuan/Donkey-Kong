@@ -16,74 +16,132 @@ void Board::reset() {
  * Clears the screen before printing to ensure the board is displayed cleanly.
  */
 void Board::print() const {
-    clearScreen();
+	clearScreen();
 	std::cout << currentBoard[0];
 }
 
-void Board::load(const std::string& filename) {
+bool Board::load(const std::string& filename, std::string* errors) {
+	std::string errorMessages;
 	std::ifstream screenFile(filename);
-	if (screenFile.bad()) {
-		//TO-DO return error
-	}
-	else {
-		int currRow = 0;
-		int currCol = 0;
-		char c;
-		bool isBounded = false;
+	bool isValid = true;
 
-		while (!screenFile.get(c).eof() && currRow < SCREEN_BOUNDARIES::MAX_Y) {
-			if (c == '\n') {
-				if (currCol < SCREEN_BOUNDARIES::MAX_X) {
-					#pragma warning(suppress : 4996) 
-					strcpy(originalBoard[currRow] + currCol, std::string(SCREEN_BOUNDARIES::MAX_X - currCol - 1, ' ').c_str());
-				}
-				++currRow;
-				currCol = 0;
-				continue;
-			}
+	if (screenFile.bad()) {
+		errorMessages += "Error opening file: " + filename + "\n";
+		return false;
+	}
+
+	bool hasMario = false, hasPaulina = false, hasDonkey = false, hasHammer = false;
+	bool isBounded = false;
+	int currRow = 0, currCol = 0;
+	char c;
+
+	while (!screenFile.get(c).eof() && currRow < SCREEN_BOUNDARIES::MAX_Y) {
+		if (c == '\n') {
 			if (currCol < SCREEN_BOUNDARIES::MAX_X) {
-				if (std::toupper(c) == BOARD_CHARACTERS::QFLOOR && !isBounded) {
-					isBounded = true;
+#pragma warning(suppress : 4996) 
+				strcpy(originalBoard[currRow] + currCol, std::string(SCREEN_BOUNDARIES::MAX_X - currCol - 1, ' ').c_str());
+			}
+			++currRow;
+			currCol = 0;
+			continue;
+		}
+
+		else if (currCol < SCREEN_BOUNDARIES::MAX_X) {
+			if (c == ENTITIES_CHARACTERS::MARIO) {
+				if (hasMario) {
+					errorMessages += "Error: Multiple Mario positions at (" + std::to_string(currCol) + ", " + std::to_string(currRow) + ")\n";
+					isValid = false;
 				}
-				else if (c == ENTITIES_CHARACTERS::MARIO) {
+				else {
 					marioPos = { currCol, currRow };
-					c = ' ';
+					hasMario = true;
 				}
-				else if (c == ENTITIES_CHARACTERS::PAULINA) {
+				c = ' ';
+			}
+			else if (std::tolower(c) == ENTITIES_CHARACTERS::GHOST) {
+				ghostsPos.push_back({ currCol, currRow });
+				c = ' ';
+			}
+			else if (c == ENTITIES_CHARACTERS::PAULINA) {
+				if (hasPaulina) {
+					errorMessages += "Error: Multiple Paulina positions at (" + std::to_string(currCol) + ", " + std::to_string(currRow) + ")\n";
+					isValid = false;
+				}
+				else {
 					paulinaPos = { currCol, currRow };
+					hasPaulina = true;
 				}
-				else if (c == ENTITIES_CHARACTERS::DONKEY_KONG) {
+			}
+			else if (c == ENTITIES_CHARACTERS::DONKEY_KONG) {
+				if (hasDonkey) {
+					errorMessages += "Error: Multiple Donkey positions at (" + std::to_string(currCol) + ", " + std::to_string(currRow) + ")\n";
+					isValid = false;
+				}
+				else {
 					donkeyPos = { currCol, currRow };
+					hasDonkey = true;
 				}
-				else if (std::tolower(c) == BOARD_CHARACTERS::HAMMER) {
+			}
+			else if (std::toupper(c) == BOARD_CHARACTERS::QFLOOR) {
+				isBounded = true;
+			}
+			else if (std::tolower(c) == BOARD_CHARACTERS::HAMMER) {
+				if (!hasHammer) {
 					hammerPos = { currCol, currRow };
+					hasHammer = true;
 				}
-				else if (std::toupper(c) == ENTITIES_CHARACTERS::GHOST) {
-					ghostsPos.push_back({ currCol, currRow });
-					c = ' ';
+				else {
+					isValid = false;
 				}
-				originalBoard[currRow][currCol++] = c;
 			}
-		}
-		int lastRow = (currRow < SCREEN_BOUNDARIES::MAX_Y ? currRow : SCREEN_BOUNDARIES::MAX_Y - 1);
-		if (isBounded) {
-			#pragma warning(suppress : 4996) 
-			strcpy(originalBoard[0], std::string(SCREEN_BOUNDARIES::MAX_X, 'Q').c_str());
-			#pragma warning(suppress : 4996) 
-			strcpy(originalBoard[lastRow], std::string(SCREEN_BOUNDARIES::MAX_X, 'Q').c_str());
-			for (int row = 1; row < lastRow; ++row) {
-				originalBoard[row][0] = 'Q';
-				originalBoard[row][SCREEN_BOUNDARIES::MAX_X - 1] = 'Q';
-				originalBoard[row][SCREEN_BOUNDARIES::MAX_X] = '\n';
+			else if (
+				c == BOARD_CHARACTERS::FLOOR ||
+				c == BOARD_CHARACTERS::RIGHT_FLOOR ||
+				c == BOARD_CHARACTERS::LEFT_FLOOR ||
+				c == BOARD_CHARACTERS::AIR ||
+				std::toupper(c) == BOARD_CHARACTERS::LADDER ||
+				std::toupper(c) == BOARD_CHARACTERS::LEGEND) // move and make legend pos
+			{
+				;
 			}
-		}
-		originalBoard[0][SCREEN_BOUNDARIES::MAX_X] = '\n';
-		originalBoard[lastRow][SCREEN_BOUNDARIES::MAX_X] = '\0';
-		for (int row = 1; row < lastRow; ++row) {
-			originalBoard[row][SCREEN_BOUNDARIES::MAX_X] = '\n';
+			else {
+				errorMessages += "Error: Unknown character '" + std::string(1, c) + "' at position (" + std::to_string(currCol) + ", " + std::to_string(currRow) + ")\n";
+				isValid = false;
+			}
+			originalBoard[currRow][currCol++] = c;
 		}
 	}
+
+
+	if (!hasMario) errorMessages += "Error: Mario doesn't exist\n", isValid = false;
+	if (!hasDonkey) errorMessages += "Error: Donkey doesn't exist\n", isValid = false;
+	if (!hasPaulina) errorMessages += "Error: Paulina doesn't exist\n", isValid = false;
+
+	int lastRow = SCREEN_BOUNDARIES::MAX_Y - 1;
+	if (currRow < lastRow || !std::all_of(originalBoard[lastRow], originalBoard[lastRow] + SCREEN_BOUNDARIES::MAX_X,
+		[](char c) { return c == BOARD_CHARACTERS::FLOOR || c == BOARD_CHARACTERS::LEFT_FLOOR || c == BOARD_CHARACTERS::RIGHT_FLOOR || c == BOARD_CHARACTERS::QFLOOR; })) {
+		errorMessages += "Error: Bottom row is not a valid floor\n";
+		isValid = false;
+	}
+
+	if (isBounded) {
+		memset(originalBoard[0], 'Q', SCREEN_BOUNDARIES::MAX_X);
+		memset(originalBoard[lastRow], 'Q', SCREEN_BOUNDARIES::MAX_X);
+		for (int row = 1; row < lastRow; ++row) {
+			originalBoard[row][0] = originalBoard[row][SCREEN_BOUNDARIES::MAX_X - 1] = 'Q';
+		}
+	}
+
+	originalBoard[0][SCREEN_BOUNDARIES::MAX_X] = '\n';
+	originalBoard[lastRow][SCREEN_BOUNDARIES::MAX_X] = '\0';
+	for (int row = 1; row < lastRow; ++row) {
+		originalBoard[row][SCREEN_BOUNDARIES::MAX_X] = '\n';
+	}
+
+	*errors = errorMessages;
+	return isValid;
 }
+
 
 /**
 * @brief Checks if a given position is valid for movement.

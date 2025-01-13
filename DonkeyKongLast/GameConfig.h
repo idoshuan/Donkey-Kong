@@ -6,8 +6,8 @@
  */
 
  // ------------------- Enumerations -------------------
-enum class ENTITIES_CHARACTERS { MARIO = '@', BARREL = 'O', DONKEY_KONG = '&', PAULINA = '$', GHOST = 'X' };
-enum class BOARD_CHARACTERS { LADDER = 'H', RIGHT_FLOOR = '>', LEFT_FLOOR = '<', FLOOR = '=', QFLOOR = 'Q', AIR = ' ' ,HAMMER='p' };
+enum class ENTITIES_CHARACTERS { MARIO = '@', BARREL = 'O', DONKEY_KONG = '&', PAULINA = '$', GHOST = 'x' };
+enum class BOARD_CHARACTERS { LADDER = 'H', RIGHT_FLOOR = '>', LEFT_FLOOR = '<', FLOOR = '=', QFLOOR = 'Q', AIR = ' ' ,HAMMER='p', LEGEND = 'L' };
 enum class KEYS { UP = 'w', DOWN = 'x', STAY = 's', RIGHT = 'd', LEFT = 'a', HAMMER ='p', ESC = 27, INVALID };
 
 // ------------------- Operators -------------------
