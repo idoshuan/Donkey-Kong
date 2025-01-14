@@ -80,7 +80,7 @@ void Game::updateGameLogic() {
 		return;
 	}
 	if (checkMarioWon()) {
-		score += 20;
+		score += 100;
 		scoreAnimation("+100");
 		marioBlinkAnimation();
 		gameState = GameState::LEVEL_WON;
@@ -151,8 +151,8 @@ void Game::startNewStage() {
  * Processes ESC to pause the game or sends key input to Mario.
  */
 void Game::checkForKeyPress() {
-	for (int i = 0; i < 5; i++) {
-		Sleep(12);
+	for (int i = 0; i < 8; i++) {
+		Sleep(5);
 		if (_kbhit()) {
 			KEYS key = charToKey(_getch());
 			if (key != KEYS::INVALID) {

@@ -29,7 +29,7 @@ bool Board::isValidPosition(const Point p) const {
 	char ch = getChar(p);
 	int x = p.getX();
 	int y = p.getY();
-	return(x >= minX && x < maxX && y >= minY && y < maxY && ch != BOARD_CHARACTERS::FLOOR && ch != BOARD_CHARACTERS::LEFT_FLOOR && ch != BOARD_CHARACTERS::RIGHT_FLOOR);
+	return(x >= minX && x < maxX && y >= minY && y < maxY && ch != BOARD_CHARACTERS::FLOOR && ch != BOARD_CHARACTERS::LEFT_FLOOR && ch != BOARD_CHARACTERS::RIGHT_FLOOR && ch != BOARD_CHARACTERS::QFLOOR);
 }
 
 bool Board::load(const std::string& filename, std::string* errors) {
@@ -95,7 +95,13 @@ bool Board::load(const std::string& filename, std::string* errors) {
 				}
 			}
 			else if (std::toupper(c) == BOARD_CHARACTERS::QFLOOR) {
-				isBounded = true;
+				if (currCol == SCREEN_BOUNDARIES::MIN_X || currCol == SCREEN_BOUNDARIES::MAX_X - 1 || currRow == SCREEN_BOUNDARIES::MIN_Y || currRow == SCREEN_BOUNDARIES::MAX_Y - 1) {
+					isBounded = true;
+				}
+				else {
+					errorMessages += "Error: Border character in the middle of the screen at (" + std::to_string(currCol) + ", " + std::to_string(currRow) + ")\n";
+					isValid = false;
+				}
 			}
 			else if (std::tolower(c) == BOARD_CHARACTERS::HAMMER) {
 				if (!hasHammer) {
@@ -153,7 +159,11 @@ bool Board::load(const std::string& filename, std::string* errors) {
 		if (!hasPaulina) errorMessages += "Error: Paulina doesn't exist\n", isValid = false;
 		else if (!isFloorBelow(paulinaPos)) errorMessages += "Error: Paulina isn't standing on a floor, please insert a valid floor character at position: (" + std::to_string(paulinaPos.getX()) + ", " + std::to_string(paulinaPos.getY() + 1) + ")\n", isValid = false;
 		if (!hasLegend) errorMessages += "Error: Legend doesn't exist\n", isValid = false;
-
+		if (ghostsPos.size() != 0) {
+			for (auto& ghostPos : ghostsPos) {
+				if (!isFloorBelow(ghostPos)) errorMessages += "Error: Ghost isn't standing on a floor, please insert a valid floor character at position: (" + std::to_string(ghostPos.getX()) + ", " + std::to_string(ghostPos.getY() + 1) + ")\n", isValid = false;
+			}
+		}
 
 		if (isBounded) {
 			memset(originalBoard[0], 'Q', SCREEN_BOUNDARIES::MAX_X);
