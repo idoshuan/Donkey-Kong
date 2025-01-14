@@ -23,10 +23,45 @@ void Menu::displayInstructions() {
 
 void Menu::displayBoardFiles(std::vector<std::string>& fileNames) {
     clearScreen();
-    for (int i = 0; i < fileNames.size(); i++) {
-        std::cout << i+1 << ". " << fileNames[i] << std::endl;
+    constexpr int columnWidth = SCREEN_BOUNDARIES::MAX_X / 2; 
+    const int rows = (fileNames.size() + 1) / 2; 
+
+    std::string title = "Available Files :";
+    int titlePadding = (SCREEN_BOUNDARIES::MAX_X - title.length()) / 2;
+    std::cout << std::string(titlePadding, ' ') << title << "\n\n\n";
+    std::cout << std::string(SCREEN_BOUNDARIES::MAX_X, '=') << "\n\n";
+
+    for (int row = 0; row < rows; ++row) {
+        // Left column
+        int leftIndex = row;
+        if (leftIndex < fileNames.size()) {
+            std::cout << std::setw(columnWidth - 2) << std::left
+                << (std::to_string(leftIndex + 1) + ". " + fileNames[leftIndex]);
+        }
+        else {
+            std::cout << std::setw(columnWidth - 2) << " "; 
+        }
+
+        // Right column
+        int rightIndex = row + rows;
+        if (rightIndex < fileNames.size()) {
+            std::cout << std::setw(columnWidth - 2) << std::left
+                << (std::to_string(rightIndex + 1) + ". " + fileNames[rightIndex]);
+        }
+        else {
+            std::cout << std::setw(columnWidth - 2) << " "; 
+        }
+
+        std::cout << '\n'; 
     }
+
+    std::cout << "\n" << std::string(SCREEN_BOUNDARIES::MAX_X, '=') << "\n";
 }
+
+
+
+
+
 
 /**
  * @brief Gets the player's selected action from the menu.
@@ -50,7 +85,7 @@ MenuAction Menu::getAction() {
     }
 }
 
-int Menu::getScreenChoice(size_t filesSize) {
+int Menu::getBoardChoice(size_t filesSize) {
     while (true) { // Loop until a valid input is received
         char choice = _getch();
 

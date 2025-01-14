@@ -10,12 +10,17 @@
  */
 void Screen::printScreen(const char** screen) const {
     clearScreen();
-    for (int y = 0; y < SCREEN_BOUNDARIES::MAX_Y - 1; ++y) {
-        std::cout << screen[y];
-        std::cout << '\n';
+
+    for (int x = 0; x < SCREEN_BOUNDARIES::MAX_X; ++x) {
+        for (int y = 0; y < SCREEN_BOUNDARIES::MAX_Y; ++y) {
+            gotoxy(x,y);
+            std::cout << screen[y][x]; // Access character at row `y`, column `x`
+        }
+        Sleep(1);         // Delay for effect
     }
-    std::cout << screen[SCREEN_BOUNDARIES::MAX_Y - 1];
 }
+
+
 
 // ------------------- Static Screens -------------------
 
@@ -38,18 +43,18 @@ const char* Screen::menuScreen[SCREEN_BOUNDARIES::MAX_Y] = {
     R"(    |   |                                                              |   |    )",
     R"(    |___|~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~|___|    )",
     R"(   (_____)                                                            (_____)   )",
-    R"(               _      ___ _            _      ___                               )",
-    R"(              / |    / __| |_ __ _ _ _| |_   / __|__ _ _ __  ___                )",
-    R"(              | | _  \__ \  _/ _` | '_|  _| | (_ / _` | '  \/ -_)               )",
-    R"(              | _(_) |___/\__\__,_|_| \__ |  \___\__,_|_|_|_\___|               )",
-    R"(               ___     ___         _               _   _                        )",
-    R"(              ( _ )   |_ _|_ _  __| |_ _ _ _  _ __| |_(_)___ _ _  ___           )",
-    R"(              / _ \_   | || ' \(_-<  _| '_| || / _|  _| / _ \ ' \(_-<           )",
-    R"(              \___(_) |___|_||_/__/\__|_|  \_,_\__|\__|_\___/_||_/__/           )",
-    R"(               ___    ___     _ _                                               )",
-    R"(              / _ \  | __|_ _(_) |_                                             )",
-    R"(              \_, /  | _|\ \ / |  _|                                            )",
-    R"(               /_(_) |___/_\_\_|\__|                                            )",
+    R"(                                                                                )",
+    R"(                                                                                )",
+    R"(                                                                                )",
+    R"(                               1. START GAME                                    )",
+    R"(                                                                                )",
+    R"(                               2. CHOOSE BOARD FILE                             )",
+    R"(                                                                                )",
+    R"(                               8. INSTRUCTIONS                                  )",
+    R"(                                                                                )",
+    R"(                               9. EXIT                                          )",
+    R"(                                                                                )",
+    R"(                                                                                )",
 };
 
 // Instructions Screen
@@ -84,6 +89,7 @@ const char* Screen::instructionsScreen[SCREEN_BOUNDARIES::MAX_Y] = {
     "                                                                                ",
     "                                                                                ",
 };
+
 
 // Instructions Screen
 /**
@@ -148,3 +154,5 @@ const char* Screen::loseScreen[SCREEN_BOUNDARIES::MAX_Y] = {
    R"(                                                                                )",
    R"(                                                                                )"
 };
+
+

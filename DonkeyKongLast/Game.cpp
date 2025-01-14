@@ -182,7 +182,7 @@ void Game::handleMenuState(MenuAction action) {
 		break;
 	case MenuAction::SHOW_BOARD_FILES:
 		menu.displayBoardFiles(fileNames);
-		currLevel = menu.getScreenChoice(fileNames.size());
+		currLevel = menu.getBoardChoice(fileNames.size());
 		gameState = GameState::START;
 		break;
 	case MenuAction::SHOW_INSTRUCTIONS:
