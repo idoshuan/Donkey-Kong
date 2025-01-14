@@ -1,11 +1,11 @@
 #include "Ghost.h"
 
 void Ghost::move() {
-	if (!isNextPosFloor()) {
+	if (!isNextPosFloor()||!getBoard()->isValidPosition(getNextPos())) {
 		turnAround();
 	}
 	else if(!inCollision){
-		setRandDir(); // Need to change to flag so when collision random doesnt start
+		setRandDir(); 
 	}
 	Entity::move();
 	inCollision = false;

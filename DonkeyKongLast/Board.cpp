@@ -141,7 +141,7 @@ bool Board::load(const std::string& filename, std::string* errors) {
 	}
 	else {
 		if (!std::all_of(originalBoard[lastRow], originalBoard[lastRow] + SCREEN_BOUNDARIES::MAX_X,
-			[](char c) { return c == BOARD_CHARACTERS::FLOOR || c == BOARD_CHARACTERS::LEFT_FLOOR || c == BOARD_CHARACTERS::RIGHT_FLOOR || c == BOARD_CHARACTERS::QFLOOR; })) {
+			[](char c) { return c == BOARD_CHARACTERS::FLOOR || c == BOARD_CHARACTERS::LEFT_FLOOR || c == BOARD_CHARACTERS::RIGHT_FLOOR || std::toupper(c) == BOARD_CHARACTERS::QFLOOR; })) {
 			errorMessages += "Error: Bottom row is not a valid floor\n";
 			isValid = false;
 		}
