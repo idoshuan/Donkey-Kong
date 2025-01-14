@@ -1,4 +1,4 @@
-
+// i changed board getchar to return original board and not current. so if problems with board check if this is the reason
 #include "Board.h"
 
 // ------------------- Public Methods -------------------
@@ -20,6 +20,18 @@ void Board::print() const {
 	std::cout << currentBoard[0];
 }
 
+/**
+* @brief Checks if a given position is valid for movement.
+* @param p The point to check.
+* @return True if the position is valid, false otherwise.
+*/
+bool Board::isValidPosition(const Point p) const {
+	char ch = getChar(p);
+	int x = p.getX();
+	int y = p.getY();
+	return(x >= minX && x < maxX && y >= minY && y < maxY && ch != BOARD_CHARACTERS::FLOOR && ch != BOARD_CHARACTERS::LEFT_FLOOR && ch != BOARD_CHARACTERS::RIGHT_FLOOR);
+}
+
 bool Board::load(const std::string& filename, std::string* errors) {
 	std::string errorMessages;
 	std::ifstream screenFile(filename);
@@ -30,7 +42,7 @@ bool Board::load(const std::string& filename, std::string* errors) {
 		return false;
 	}
 
-	bool hasMario = false, hasPaulina = false, hasDonkey = false, hasHammer = false;
+	bool hasMario = false, hasPaulina = false, hasDonkey = false, hasHammer = false, hasLegend = false;
 	bool isBounded = false;
 	int currRow = 0, currCol = 0;
 	char c;
@@ -94,13 +106,23 @@ bool Board::load(const std::string& filename, std::string* errors) {
 					isValid = false;
 				}
 			}
+			else if (std::toupper(c) == BOARD_CHARACTERS::LEGEND) {
+				if (hasLegend) {
+					errorMessages += "Error: Multiple Legend positions at (" + std::to_string(currCol) + ", " + std::to_string(currRow) + ")\n";
+					isValid = false;
+				}
+				else {
+					legendPos = { currCol, currRow };
+					c = ' ';
+					hasLegend = true;
+				}
+			}
 			else if (
 				c == BOARD_CHARACTERS::FLOOR ||
 				c == BOARD_CHARACTERS::RIGHT_FLOOR ||
 				c == BOARD_CHARACTERS::LEFT_FLOOR ||
 				c == BOARD_CHARACTERS::AIR ||
-				std::toupper(c) == BOARD_CHARACTERS::LADDER ||
-				std::toupper(c) == BOARD_CHARACTERS::LEGEND) // move and make legend pos
+				std::toupper(c) == BOARD_CHARACTERS::LADDER)
 			{
 				;
 			}
@@ -112,46 +134,46 @@ bool Board::load(const std::string& filename, std::string* errors) {
 		}
 	}
 
-
-	if (!hasMario) errorMessages += "Error: Mario doesn't exist\n", isValid = false;
-	if (!hasDonkey) errorMessages += "Error: Donkey doesn't exist\n", isValid = false;
-	if (!hasPaulina) errorMessages += "Error: Paulina doesn't exist\n", isValid = false;
-
-	int lastRow = SCREEN_BOUNDARIES::MAX_Y - 1;
-	if (currRow < lastRow || !std::all_of(originalBoard[lastRow], originalBoard[lastRow] + SCREEN_BOUNDARIES::MAX_X,
-		[](char c) { return c == BOARD_CHARACTERS::FLOOR || c == BOARD_CHARACTERS::LEFT_FLOOR || c == BOARD_CHARACTERS::RIGHT_FLOOR || c == BOARD_CHARACTERS::QFLOOR; })) {
-		errorMessages += "Error: Bottom row is not a valid floor\n";
+	int lastRow = currRow - 1;
+	if (lastRow < SCREEN_BOUNDARIES::MAX_Y - 1) {
+		errorMessages += "Error: Board should include 25 lines";
 		isValid = false;
 	}
+	else {
+		if (!std::all_of(originalBoard[lastRow], originalBoard[lastRow] + SCREEN_BOUNDARIES::MAX_X,
+			[](char c) { return c == BOARD_CHARACTERS::FLOOR || c == BOARD_CHARACTERS::LEFT_FLOOR || c == BOARD_CHARACTERS::RIGHT_FLOOR || c == BOARD_CHARACTERS::QFLOOR; })) {
+			errorMessages += "Error: Bottom row is not a valid floor\n";
+			isValid = false;
+		}
 
-	if (isBounded) {
-		memset(originalBoard[0], 'Q', SCREEN_BOUNDARIES::MAX_X);
-		memset(originalBoard[lastRow], 'Q', SCREEN_BOUNDARIES::MAX_X);
+		if (!hasMario) errorMessages += "Error: Mario doesn't exist\n", isValid = false;
+		else if (!isFloorBelow(marioPos)) errorMessages += "Error: Mario isn't standing on a floor, please insert a valid floor character at position: (" + std::to_string(marioPos.getX()) + ", " + std::to_string(marioPos.getY() + 1) + ")\n", isValid = false;
+		if (!hasDonkey) errorMessages += "Error: Donkey doesn't exist\n", isValid = false;
+		else if (!isFloorBelow(donkeyPos)) errorMessages += "Error: Donkey isn't standing on a floor, please insert a valid floor character at position: (" + std::to_string(donkeyPos.getX()) + ", " + std::to_string(donkeyPos.getY() + 1) + ")\n", isValid = false;
+		if (!hasPaulina) errorMessages += "Error: Paulina doesn't exist\n", isValid = false;
+		else if (!isFloorBelow(paulinaPos)) errorMessages += "Error: Paulina isn't standing on a floor, please insert a valid floor character at position: (" + std::to_string(paulinaPos.getX()) + ", " + std::to_string(paulinaPos.getY() + 1) + ")\n", isValid = false;
+		if (!hasLegend) errorMessages += "Error: Legend doesn't exist\n", isValid = false;
+
+
+		if (isBounded) {
+			memset(originalBoard[0], 'Q', SCREEN_BOUNDARIES::MAX_X);
+			memset(originalBoard[lastRow], 'Q', SCREEN_BOUNDARIES::MAX_X);
+			for (int row = 1; row < lastRow; ++row) {
+				originalBoard[row][0] = originalBoard[row][SCREEN_BOUNDARIES::MAX_X - 1] = 'Q';
+			}
+		}
+
+		originalBoard[0][SCREEN_BOUNDARIES::MAX_X] = '\n';
+		originalBoard[lastRow][SCREEN_BOUNDARIES::MAX_X] = '\0';
 		for (int row = 1; row < lastRow; ++row) {
-			originalBoard[row][0] = originalBoard[row][SCREEN_BOUNDARIES::MAX_X - 1] = 'Q';
+			originalBoard[row][SCREEN_BOUNDARIES::MAX_X] = '\n';
 		}
 	}
 
-	originalBoard[0][SCREEN_BOUNDARIES::MAX_X] = '\n';
-	originalBoard[lastRow][SCREEN_BOUNDARIES::MAX_X] = '\0';
-	for (int row = 1; row < lastRow; ++row) {
-		originalBoard[row][SCREEN_BOUNDARIES::MAX_X] = '\n';
-	}
-
+	minX += isBounded;
+	minY += isBounded;
+	maxX -= isBounded;
 	*errors = errorMessages;
 	return isValid;
-}
-
-
-/**
-* @brief Checks if a given position is valid for movement.
-* @param p The point to check.
-* @return True if the position is valid, false otherwise.
-*/
-bool Board::isValidPosition(const Point p) const {
-	char ch = getChar(p);
-	int x = p.getX();
-	int y = p.getY();
-	return(x >= SCREEN_BOUNDARIES::MIN_X && x < SCREEN_BOUNDARIES::MAX_X && y >= SCREEN_BOUNDARIES::MIN_Y && y < SCREEN_BOUNDARIES::MAX_Y && ch != BOARD_CHARACTERS::FLOOR && ch != BOARD_CHARACTERS::LEFT_FLOOR && ch != BOARD_CHARACTERS::RIGHT_FLOOR);
 }
 

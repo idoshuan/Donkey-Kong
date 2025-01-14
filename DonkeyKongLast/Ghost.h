@@ -7,7 +7,8 @@
 
 class Ghost : public Entity {
 	bool isActive = true;
-	
+	bool inCollision = false;
+
 	void setRandDir();
 
 public:
@@ -24,5 +25,9 @@ public:
 	}
 	void activate() {
 		isActive = true;
+	}
+	void collision() {
+		turnAround();
+		inCollision = true;
 	}
 };

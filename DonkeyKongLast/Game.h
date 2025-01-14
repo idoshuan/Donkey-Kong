@@ -99,6 +99,7 @@ private:
 	// ------------------- Private Game Loop Functions -------------------
 	void startGame();
 	void getBoardFileNames(std::vector<std::string>& fileNames);
+	bool tryLoadNextValidBoard();
 	void handleGameState();
 	void updateGameLogic();
 	void resetStage();
@@ -131,10 +132,6 @@ private:
 	void checkHammerPickUp();
 	void checkKill();
 
-	void scoreAnimation(const std::string& points);
-
-	bool isHammerColliding(const Point& pos, const Point& nextPos);
-
 	// ------------------- Collision and Explosion Checks -------------------
 	bool isDirectCollision(const Entity& entity) const;
 	bool isMissedCollision(const Entity& entity) const;
@@ -158,13 +155,14 @@ private:
 	void handleGameWin();
 	void handleGameOver();
 	void displayLives() const;
+	void displayScore() const;
 
 	// ------------------- Private Animation Functions -------------------
 	void marioBlinkAnimation();
 	void hammerHitAnimation();
+	void scoreAnimation(const std::string& points);
 
-	template<typename Entity>
-	void handleCollision(Entity& object, int points, const std::string& displayText);
+
 public:
 	Game() {
 		startGame();

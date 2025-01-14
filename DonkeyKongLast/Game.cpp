@@ -25,8 +25,8 @@ void Game::handleGameState() {
 		handleMenuState(menu.getAction());
 		break;
 	case GameState::START:
-		startNewStage();
 		gameState = GameState::PLAYING;
+		startNewStage();
 		break;
 	case GameState::PLAYING:
 		if (lives > 0) {
@@ -44,8 +44,8 @@ void Game::handleGameState() {
 			gameState = GameState::WON;
 		}
 		else {
-			startNewStage();
 			gameState = GameState::PLAYING;
+			startNewStage();
 		}
 		break;
 	case GameState::GAME_OVER:
@@ -98,7 +98,7 @@ void Game::resetStage() {
 	hammer.reset();
 	board.reviveHammer();
 	barrels.clear();
-	for (size_t i = 0; i < ghosts.size(); ++i) {
+	for (int i = 0; i < ghosts.size(); i++) {
 		ghosts[i].setPos(board.getGhostsPos()[i]);
 		ghosts[i].activate();
 	}
@@ -111,33 +111,34 @@ void Game::resetStage() {
 }
 
 void Game::startNewStage() {
-	board = Board();
-	std::string errorMessage;
+	board = Board(); 
 
-	while (currLevel<fileNames.size()) {
-		if (!board.load(fileNames[currLevel], &errorMessage)) {
-			board.clearScreen();
-			std::cout << "Board " << fileNames[currLevel++] << " is not valid"<<std::endl;
-			std::cout << errorMessage << std::endl;
-			_getch();
-		}
-		else {
-			break;
-		}
+	if (!tryLoadNextValidBoard()) {
+		std::cout << "No additional valid board found, returning to menu";
+		Sleep(2000);
+		currLevel = 0;
+		gameState = GameState::MENU;
+		return;
 	}
+
 	hammer.reset();
 	gameStartTime = clock::now();
 	ghosts.clear();
 	barrels.clear();
+
 	mario = Mario(board);
-	for (auto& ghostPos : board.getGhostsPos()) {
-		ghosts.push_back(Ghost(ghostPos, board));
+	for (const auto& ghostPos : board.getGhostsPos()) {
+		ghosts.emplace_back(ghostPos, board);
 	}
-	leftBarrelPos = { board.getDonkeyKongPos().getX() - 1, board.getDonkeyKongPos().getY() };
-	rightBarrelPos = { board.getDonkeyKongPos().getX() + 1, board.getDonkeyKongPos().getY() };
+
+	auto donkeyPos = board.getDonkeyKongPos();
+	leftBarrelPos = { donkeyPos.getX() - 1, donkeyPos.getY() };
+	rightBarrelPos = { donkeyPos.getX() + 1, donkeyPos.getY() };
+
 	board.reset();
 	board.print();
 	displayLives();
+	displayScore();
 }
 
 
@@ -314,7 +315,7 @@ void Game::spawnBarrel() {
  * Considers explosions and position boundaries.
  */
 bool Game::shouldDeactivateBarrel(Barrel& barrel) const {
-	return hasBarrelExploded(barrel) || barrel.getX() == board.getMinX() || barrel.getX() == board.getMaxX();
+	return hasBarrelExploded(barrel) || barrel.getX() + barrel.getDirX() == board.getMinX() || barrel.getX() + barrel.getDirX() == board.getMaxX();
 }
 
 /**
@@ -358,14 +359,20 @@ bool Game::hasBarrelExploded(Barrel& barrel) const {
 // ------------------- Ghost-Related Functions -------------------
 
 void Game::checkGhostsCollision() {
-	for (int i = 0; i < ghosts.size(); i++)
+	for (int i = 0; i < ghosts.size(); i++) {
 		for (int j = i + 1; j < ghosts.size(); j++) {
-			if (ghosts[i].getY() == ghosts[j].getY())
-				if (ghosts[i].getX() + ghosts[i].getDirX() == ghosts[j].getX() || ghosts[j].getX() + ghosts[j].getDirX() == ghosts[i].getX()) {
-					ghosts[i].turnAround();
-					ghosts[j].turnAround();
+			if (ghosts[i].getY() == ghosts[j].getY()) { 
+				int nextX_i = ghosts[i].getX() + ghosts[i].getDirX();
+				int nextX_j = ghosts[j].getX() + ghosts[j].getDirX();
+
+				// Check if they will collide in the next step
+				if ((nextX_i == ghosts[j].getX() || nextX_i == nextX_j) && (ghosts[i].getDirX() != ghosts[j].getDirX())) {
+					ghosts[i].collision(); 
+					ghosts[j].collision(); 
 				}
+			}
 		}
+	}
 }
 
 
@@ -546,6 +553,28 @@ void Game::getBoardFileNames(std::vector<std::string>& fileNames) {
 	std::sort(fileNames.begin(), fileNames.end());
 }
 
+bool Game::tryLoadNextValidBoard() {
+	std::string errorMessage;
+
+	while (currLevel < fileNames.size()) {
+		if (!board.load(fileNames[currLevel], &errorMessage)) {
+			board.clearScreen();
+			std::cout << "Board " << fileNames[currLevel] << " is not valid.\n" << errorMessage << std::endl;
+			std::cout << "Press any key to try the next board";
+			_getch(); 
+			eatBuffer();
+			currLevel++;
+		}
+		else {
+			currLevel++;
+			return true; 
+		}
+	}
+
+	board.clearScreen();
+	return false; 
+}
+
 /**
  * @brief Moves Mario and barrels on the game board.
  */
@@ -633,11 +662,19 @@ void Game::handleGameOver() {
  * @brief Displays the current number of lives on the game screen.
  */
 void Game::displayLives() const {
-	int displayX = 6;
-	int displayY = 0;
+	int displayX = board.getLegendPos().getX();
+	int displayY = board.getLegendPos().getY();
 
 	gotoxy(displayX, displayY);
-	std::cout << lives;
+	std::cout << "LIVES: " << lives;
+}
+
+void Game::displayScore() const {
+	int displayX = board.getLegendPos().getX();
+	int displayY = board.getLegendPos().getY() + 1;
+
+	gotoxy(displayX, displayY);
+	std::cout << "SCORE: " << score;
 }
 
 
@@ -675,4 +712,5 @@ void Game::scoreAnimation(const std::string& points) {
 			std::cout << board.getChar({ mario.getX() - 1 + x,mario.getY() - 1 });
 		}
 	}
+	displayScore();
 }

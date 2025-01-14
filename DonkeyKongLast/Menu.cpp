@@ -50,7 +50,7 @@ MenuAction Menu::getAction() {
     }
 }
 
-int Menu::getScreenChoice(int filesSize) {
+int Menu::getScreenChoice(size_t filesSize) {
     while (true) { // Loop until a valid input is received
         char choice = _getch();
 

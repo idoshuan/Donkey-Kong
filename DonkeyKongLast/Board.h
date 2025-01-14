@@ -22,11 +22,19 @@
 class Board : public Screen {
 private:
     // ------------------- Constants -------------------
-    Point paulinaPos, marioPos, donkeyPos,hammerPos;
+    Point paulinaPos, marioPos, donkeyPos,hammerPos, legendPos;
     std::vector<Point> ghostsPos;
+
+    int minX = SCREEN_BOUNDARIES::MIN_X, maxX = SCREEN_BOUNDARIES::MAX_X;
+    int minY = SCREEN_BOUNDARIES::MIN_Y, maxY = SCREEN_BOUNDARIES::MAX_Y;
 
     char originalBoard[SCREEN_BOUNDARIES::MAX_Y][SCREEN_BOUNDARIES::MAX_X + 1]; // +1 for null terminator
     char currentBoard[SCREEN_BOUNDARIES::MAX_Y][SCREEN_BOUNDARIES::MAX_X + 1]; // +1 for null terminator
+
+    bool isFloorBelowInFile(Point p) {
+        char ch = originalBoard[p.getY()+1][p.getX()];
+        return ch == BOARD_CHARACTERS::FLOOR || ch == BOARD_CHARACTERS::LEFT_FLOOR || ch == BOARD_CHARACTERS::RIGHT_FLOOR || ch == BOARD_CHARACTERS::QFLOOR;
+    }
 
 public:
     /**
@@ -40,7 +48,7 @@ public:
     bool isValidPosition(const Point p) const;
 
     char getChar(const Point p) const {
-        return currentBoard[p.getY()][p.getX()];
+        return originalBoard[p.getY()][p.getX()];
     }
     bool isLadder(const Point p) const {
         return getChar(p) == BOARD_CHARACTERS::LADDER;
@@ -50,10 +58,10 @@ public:
         return ch == BOARD_CHARACTERS::FLOOR || ch == BOARD_CHARACTERS::LEFT_FLOOR || ch == BOARD_CHARACTERS::RIGHT_FLOOR || ch == BOARD_CHARACTERS::QFLOOR;
     }
     int getMaxX() const{
-        return SCREEN_BOUNDARIES::MAX_X;
+        return maxX;
     }
     int getMinX() const{
-        return SCREEN_BOUNDARIES::MIN_X;
+        return minX;
     }
 
     Point getPaulinaPos() const{
@@ -68,18 +76,20 @@ public:
     Point getHammerPos() const {
         return hammerPos;
     }
+    Point getLegendPos() const {
+        return legendPos;
+    }
     std::vector<Point> getGhostsPos() const {
         return ghostsPos;
     }
     void deleteHammer() {
         gotoxy(hammerPos.getX(), hammerPos.getY());
         std::cout << static_cast<char>(BOARD_CHARACTERS::AIR);
-        currentBoard[hammerPos.getY()][hammerPos.getX()] = static_cast<char>(BOARD_CHARACTERS::AIR);
+        originalBoard[hammerPos.getY()][hammerPos.getX()] = static_cast<char>(BOARD_CHARACTERS::AIR);
     }
     void reviveHammer() {
         gotoxy(hammerPos.getX(), hammerPos.getY());
         std::cout << static_cast<char>(BOARD_CHARACTERS::HAMMER);
-        currentBoard[hammerPos.getY()][hammerPos.getX()] = static_cast<char>(BOARD_CHARACTERS::HAMMER);
-
+        originalBoard[hammerPos.getY()][hammerPos.getX()] = static_cast<char>(BOARD_CHARACTERS::HAMMER);
     }
 };

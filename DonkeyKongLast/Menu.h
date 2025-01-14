@@ -28,7 +28,7 @@ public:
 	MenuAction getAction();
 	void displayInstructions();
 	void displayBoardFiles(std::vector<std::string>& vec_to_fill);
-	int getScreenChoice(int filesSize);
+	int getScreenChoice(size_t filesSize);
 };
 
 

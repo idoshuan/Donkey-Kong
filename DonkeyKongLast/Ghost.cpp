@@ -4,10 +4,11 @@ void Ghost::move() {
 	if (!isNextPosFloor()) {
 		turnAround();
 	}
-	else {
+	else if(!inCollision){
 		setRandDir(); // Need to change to flag so when collision random doesnt start
 	}
 	Entity::move();
+	inCollision = false;
 }
 
 void Ghost::setRandDir() {
