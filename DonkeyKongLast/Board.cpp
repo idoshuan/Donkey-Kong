@@ -50,8 +50,9 @@ bool Board::load(const std::string& filename, std::string* errors) {
 		if (c == '\n') {
 			if (currCol < SCREEN_BOUNDARIES::MAX_X) {
 #pragma warning(suppress : 4996) 
-				strcpy(originalBoard[currRow] + currCol, std::string(SCREEN_BOUNDARIES::MAX_X - currCol - 1, ' ').c_str());
+				strcpy(originalBoard[currRow] + currCol, std::string(SCREEN_BOUNDARIES::MAX_X - currCol, ' ').c_str());
 			}
+			originalBoard[currRow][SCREEN_BOUNDARIES::MAX_X] = '\n';
 			++currRow;
 			currCol = 0;
 			continue;
@@ -140,6 +141,8 @@ bool Board::load(const std::string& filename, std::string* errors) {
 	}
 
 	int lastRow = currRow - 1;
+	originalBoard[lastRow][SCREEN_BOUNDARIES::MAX_X] = '\0';
+
 	if (lastRow < SCREEN_BOUNDARIES::MAX_Y - 1) {
 		errorMessages += "Error: Board should include 25 lines";
 		isValid = false;
@@ -170,12 +173,6 @@ bool Board::load(const std::string& filename, std::string* errors) {
 			for (int row = 1; row < lastRow; ++row) {
 				originalBoard[row][0] = originalBoard[row][SCREEN_BOUNDARIES::MAX_X - 1] = 'Q';
 			}
-		}
-
-		originalBoard[0][SCREEN_BOUNDARIES::MAX_X] = '\n';
-		originalBoard[lastRow][SCREEN_BOUNDARIES::MAX_X] = '\0';
-		for (int row = 1; row < lastRow; ++row) {
-			originalBoard[row][SCREEN_BOUNDARIES::MAX_X] = '\n';
 		}
 	}
 

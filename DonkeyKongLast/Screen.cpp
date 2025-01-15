@@ -11,8 +11,8 @@
 void Screen::printScreen(const char** screen, int score) const {
     clearScreen();
 
-    for (int y = 0; y < SCREEN_BOUNDARIES::MAX_Y; ++y) {
-        for (int x = 0; x < SCREEN_BOUNDARIES::MAX_X; ++x) {
+    for (int x = 0; x < SCREEN_BOUNDARIES::MAX_X; ++x) {
+        for (int y = 0; y < SCREEN_BOUNDARIES::MAX_Y; ++y) {
             gotoxy(x, y);
 
             if (y == 22 && x == 4 && score != -1) {
