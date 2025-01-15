@@ -648,7 +648,7 @@ void Game::handleGameWin() {
 	currLevel = 0;
 	lives = initLives;
 	resetStage();
-	screen.printWinScreen();
+	screen.printWinScreen(score);
 	Sleep(3500); // Pause to allow the player to see the screen
 	gameState = GameState::MENU;
 	eatBuffer();
@@ -661,7 +661,7 @@ void Game::handleGameWin() {
 void Game::handleGameOver() {
 	currLevel = 0;
 	lives = initLives;
-	screen.printLoseScreen();
+	screen.printLoseScreen(score);
 	Sleep(3500); // Pause to allow the player to see the screen
 	gameState = GameState::MENU;
 	eatBuffer();

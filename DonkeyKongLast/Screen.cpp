@@ -8,17 +8,24 @@
  *
  * @param screen A 2D array of strings representing the screen to print.
  */
-void Screen::printScreen(const char** screen) const {
+void Screen::printScreen(const char** screen, int score) const {
     clearScreen();
 
-    for (int x = 0; x < SCREEN_BOUNDARIES::MAX_X; ++x) {
-        for (int y = 0; y < SCREEN_BOUNDARIES::MAX_Y; ++y) {
-            gotoxy(x,y);
-            std::cout << screen[y][x]; // Access character at row `y`, column `x`
-        }
-        Sleep(1);         // Delay for effect
+    for (int y = 0; y < SCREEN_BOUNDARIES::MAX_Y; ++y) {
+        for (int x = 0; x < SCREEN_BOUNDARIES::MAX_X; ++x) {
+            gotoxy(x, y);
+
+            if (y == 22 && x == 4 && score != -1) {
+                std::cout << std::string(27, ' ') << "Your score is: " << score;
+                break;
+            }
+            else {
+                std::cout << screen[y][x];
+            }
+        }      
+        Sleep(1); 
     }
-    eatBuffer();
+    eatBuffer(); 
 }
 
 

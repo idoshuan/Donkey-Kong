@@ -20,7 +20,7 @@ private:
     static const char* loseScreen[SCREEN_BOUNDARIES::MAX_Y];
 
     // ------------------- Private Functions -------------------
-    void printScreen(const char** screen) const;
+    void printScreen(const char** screen, int score = -1) const;
 
 public:
     // ------------------- Public Functions -------------------
@@ -33,10 +33,10 @@ public:
     void printInstructionsScreen() const {
         printScreen(instructionsScreen);
     }
-    void printWinScreen() const{
-        printScreen(winScreen);
+    void printWinScreen(int score) const{
+        printScreen(winScreen, score);
     }
-    void printLoseScreen() const{
-        printScreen(loseScreen);
+    void printLoseScreen(int score) const{
+        printScreen(loseScreen, score);
     }
 };
