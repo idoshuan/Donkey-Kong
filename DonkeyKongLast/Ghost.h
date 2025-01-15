@@ -5,23 +5,25 @@
 #include <iostream>
 
 
+// ------------------- Class Declaration -------------------
 class Ghost : public Entity {
+	// ------------------- State Variables -------------------
 	bool isActive = true;
 	bool inCollision = false;
 
+	// ------------------- Utility Functions -------------------
 	void setRandDir();
-
 public:
+	// ------------------- Constructors -------------------
 	Ghost() : Entity(ENTITIES_CHARACTERS::GHOST) {}
 	Ghost(Point pos, Board& board) : Entity(ENTITIES_CHARACTERS::GHOST, pos, &board) {
 		setDirX(getRandomDouble() >= 0.5 ? Entity::X_LEFT : Entity::X_RIGHT);
 	}
+
+	// ------------------- Action Functions -------------------
 	void move();
 	void deactivate() {
 		isActive = false;
-	}
-	bool isCurrentlyActive() const {
-		return isActive;
 	}
 	void activate() {
 		isActive = true;
@@ -29,5 +31,10 @@ public:
 	void collision() {
 		turnAround();
 		inCollision = true;
+	}
+
+	// ------------------- State Check Functions -------------------
+	bool isCurrentlyActive() const {
+		return isActive;
 	}
 };

@@ -18,6 +18,7 @@ void Screen::printScreen(const char** screen) const {
         }
         Sleep(1);         // Delay for effect
     }
+    eatBuffer();
 }
 
 

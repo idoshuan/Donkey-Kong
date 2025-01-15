@@ -15,6 +15,9 @@
 
 void gotoxy(int x, int y);
 void ShowConsoleCursor(bool showFlag);
+
+double getRandomDouble(double min = 0.0, double max = 1.0);
+
 inline void clearScreen() {
     system("cls");
 }
@@ -24,9 +27,3 @@ inline void eatBuffer() {
 	}
 }
 
-inline double getRandomDouble(double min = 0.0, double max = 1.0) {
-    static std::random_device rd;
-    static std::mt19937 gen(rd());
-    std::uniform_real_distribution<> dis(min, max);
-    return dis(gen);
-}

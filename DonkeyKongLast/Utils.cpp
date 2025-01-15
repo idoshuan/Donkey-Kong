@@ -25,3 +25,18 @@ void ShowConsoleCursor(bool showFlag) {
     cursorInfo.bVisible = showFlag; // Set the cursor visibility
     SetConsoleCursorInfo(out, &cursorInfo);
 }
+
+/**
+ * @brief Generate random double between min and max
+ * @param min default to 0.0
+ * @param max default to 1.0
+ * Note: Created with the help of ChatGPT.
+ */
+double getRandomDouble(double min, double max) {
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    std::uniform_real_distribution<> dis(min, max);
+    return dis(gen);
+}
+
+

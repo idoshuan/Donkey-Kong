@@ -1,4 +1,3 @@
-// i changed board getchar to return original board and not current. so if problems with board check if this is the reason
 #include "Board.h"
 
 // ------------------- Public Methods -------------------

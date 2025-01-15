@@ -72,7 +72,7 @@ void Game::updateGameLogic() {
 	eraseCharacters();
 	trySpawnBarrel();
 	explodeBarrels();
-	checkGhostsCollision();
+	checkGhostWithGhostCollisions();
 	if (checkMarioDeath()) {
 		lives--;
 		marioBlinkAnimation();
@@ -90,56 +90,6 @@ void Game::updateGameLogic() {
 	moveCharacters();
 }
 
-/**
- * @brief Resets the game to prepare for a new round.
- * Clears barrels, resets Mario, and initializes game state variables.
- */
-void Game::resetStage() {
-	hammer.reset();
-	board.reviveHammer();
-	barrels.clear();
-	for (int i = 0; i < ghosts.size(); i++) {
-		ghosts[i].setPos(board.getGhostsPos()[i]);
-		ghosts[i].activate();
-	}
-	mario = Mario(board);
-	firstBarrelSpawned = false;
-	gameStartTime = clock::now();
-	lastBarrelTime = gameStartTime;
-	displayLives();
-	eatBuffer();
-}
-
-void Game::startNewStage() {
-	board = Board(); 
-
-	if (!tryLoadNextValidBoard()) {
-		std::cout << "No additional valid board found, returning to menu";
-		Sleep(2000);
-		currLevel = 0;
-		gameState = GameState::MENU;
-		return;
-	}
-
-	hammer.reset();
-	gameStartTime = clock::now();
-	ghosts.clear();
-	barrels.clear();
-
-	mario = Mario(board);
-	for (const auto& ghostPos : board.getGhostsPos()) {
-		ghosts.emplace_back(ghostPos, board);
-	}
-
-	auto donkeyPos = board.getDonkeyKongPos();
-	leftBarrelPos = { donkeyPos.getX() - 1, donkeyPos.getY() };
-	rightBarrelPos = { donkeyPos.getX() + 1, donkeyPos.getY() };
-
-	board.reset();
-	board.print();
-	displayLives();
-	displayScore();
-}
 
 
 
@@ -151,8 +101,8 @@ void Game::startNewStage() {
  * Processes ESC to pause the game or sends key input to Mario.
  */
 void Game::checkForKeyPress() {
-	for (int i = 0; i < 8; i++) {
-		Sleep(5);
+	for (int i = 0; i < 5; i++) {
+		Sleep(12);
 		if (_kbhit()) {
 			KEYS key = charToKey(_getch());
 			if (key != KEYS::INVALID) {
@@ -243,6 +193,9 @@ bool Game::checkMarioDeathFromFall() {
 	}
 }
 
+/**
+ * @brief Checks if Mario has died from a ghost collision.
+ */
 bool Game::checkMarioDeathFromGhost() {
 	for (auto& ghost : ghosts) {
 		if (ghost.isCurrentlyActive()) {
@@ -358,7 +311,11 @@ bool Game::hasBarrelExploded(Barrel& barrel) const {
 
 // ------------------- Ghost-Related Functions -------------------
 
-void Game::checkGhostsCollision() {
+/**
+ * @brief Handles collisions between ghosts on the same Y-coordinate.
+ * Activates collision logic if their paths intersect.
+ */
+void Game::checkGhostWithGhostCollisions() {
 	for (int i = 0; i < ghosts.size(); i++) {
 		for (int j = i + 1; j < ghosts.size(); j++) {
 			if (ghosts[i].getY() == ghosts[j].getY()) { 
@@ -379,6 +336,10 @@ void Game::checkGhostsCollision() {
 
 
 // ------------------- Hammer-Related Functions -------------------
+/**
+ * @brief Checks if Mario picks up the hammer.
+ * Activates the hammer if Mario reaches its position.
+ */
 void Game::checkHammerPickUp() {
 	if (mario.getPos() == board.getHammerPos() && !hammer) {
 		hammer.emplace(mario);
@@ -386,6 +347,10 @@ void Game::checkHammerPickUp() {
 	}
 }
 
+/**
+ * @brief Handles entity kills while the hammer is swinging.
+ * Deactivates barrels and ghosts hit by the hammer, awarding points.
+ */
 void Game::checkKill() {
 	if (hammer && hammer->isCurrentlySwinging()) {
 		for (auto& barrel : barrels) {
@@ -412,6 +377,22 @@ void Game::checkKill() {
 // ------------------- Collision and Explosion Checks -------------------
 
 /**
+ * @brief Checks for a direct collision between Mario and a enemy entity.
+ */
+bool Game::isDirectCollision(const Entity& entity) const {
+	return mario.getX() == entity.getX() && mario.getY() == entity.getY();
+}
+
+/**
+ * @brief Checks if Mario narrowly missed a collision with a enemy entity.
+ */
+bool Game::isMissedCollision(const Entity& entity) const {
+	int marioPreviousX = mario.getX() - mario.getDirX();
+	int marioPreviousY = mario.getY() - mario.getDirY();
+	return marioPreviousX == entity.getX() && marioPreviousY == entity.getY();
+}
+
+/**
  * @brief Checks if Mario is within the explosion radius of a barrel.
  */
 bool Game::isInExplosionRadius(const Barrel& barrel) const {
@@ -427,21 +408,6 @@ bool Game::isInExplosionRadius(const Barrel& barrel) const {
 	return (difX <= barrelExplosionRadius && difY >= 0 && difY <= barrelExplosionRadius);
 }
 
-/**
- * @brief Checks for a direct collision between Mario and a barrel.
- */
-bool Game::isDirectCollision(const Entity& entity) const {
-	return mario.getX() == entity.getX() && mario.getY() == entity.getY();
-}
-
-/**
- * @brief Checks if Mario narrowly missed a collision with a barrel.
- */
-bool Game::isMissedCollision(const Entity& entity) const {
-	int marioPreviousX = mario.getX() - mario.getDirX();
-	int marioPreviousY = mario.getY() - mario.getDirY();
-	return marioPreviousX == entity.getX() && marioPreviousY == entity.getY();
-}
 
 /**
  * @brief Checks if a barrel explosion is fatal to Mario.
@@ -541,40 +507,6 @@ void Game::clearEntirePauseScreen() {
 
 // ------------------- Utility Functions -------------------
 
-void Game::getBoardFileNames(std::vector<std::string>& fileNames) {
-	namespace fs = std::filesystem;
-	for (const auto& entry : fs::directory_iterator(fs::current_path())) {
-		auto filename = entry.path().filename();
-		auto filenameStr = filename.string();
-		if (filenameStr.substr(0, 6) == "dkong_" && filename.extension() == ".screen") {
-			fileNames.push_back(filenameStr);
-		}
-	}
-	std::sort(fileNames.begin(), fileNames.end());
-}
-
-bool Game::tryLoadNextValidBoard() {
-	std::string errorMessage;
-
-	while (currLevel < fileNames.size()) {
-		if (!board.load(fileNames[currLevel], &errorMessage)) {
-			board.clearScreen();
-			std::cout << "Board " << fileNames[currLevel] << " is not valid.\n" << errorMessage << std::endl;
-			std::cout << "Press any key to try the next board";
-			_getch(); 
-			eatBuffer();
-			currLevel++;
-		}
-		else {
-			currLevel++;
-			return true; 
-		}
-	}
-
-	board.clearScreen();
-	return false; 
-}
-
 /**
  * @brief Moves Mario and barrels on the game board.
  */
@@ -632,6 +564,83 @@ void Game::eraseCharacters() {
 }
 
 /**
+ * @brief Displays the current number of lives on the game screen.
+ */
+void Game::displayLives() const {
+	int displayX = board.getLegendPos().getX();
+	int displayY = board.getLegendPos().getY();
+
+	gotoxy(displayX, displayY);
+	std::cout << "LIVES: " << lives;
+}
+
+void Game::displayScore() const {
+	int displayX = board.getLegendPos().getX();
+	int displayY = board.getLegendPos().getY() + 1;
+
+	gotoxy(displayX, displayY);
+	std::cout << "SCORE: " << score;
+}
+
+
+
+
+// ------------------- Stage Functions -------------------
+
+/**
+ * @brief Resets the stage for a new round.
+ * Reinitializes barrels, Mario, ghosts, and game state variables.
+ */
+void Game::resetStage() {
+	hammer.reset();
+	board.reviveHammer();
+	barrels.clear();
+	for (int i = 0; i < ghosts.size(); i++) {
+		ghosts[i].setPos(board.getGhostsPos()[i]);
+		ghosts[i].activate();
+	}
+	mario = Mario(board);
+	firstBarrelSpawned = false;
+	gameStartTime = clock::now();
+	lastBarrelTime = gameStartTime;
+	displayLives();
+	eatBuffer();
+}
+
+/**
+ * @brief Starts a new stage by loading the next board.
+ * Initializes Mario, ghosts, barrels, and updates the game display.
+ */
+void Game::startNewStage() {
+	if (!tryLoadNextValidBoard()) {
+		std::cout << "No additional valid board found, returning to menu";
+		Sleep(2000);
+		currLevel = 0;
+		gameState = GameState::MENU;
+		return;
+	}
+
+	hammer.reset();
+	gameStartTime = clock::now();
+	ghosts.clear();
+	barrels.clear();
+
+	mario = Mario(board);
+	for (const auto& ghostPos : board.getGhostsPos()) {
+		ghosts.emplace_back(ghostPos, board);
+	}
+
+	auto donkeyPos = board.getDonkeyKongPos();
+	leftBarrelPos = { donkeyPos.getX() - 1, donkeyPos.getY() };
+	rightBarrelPos = { donkeyPos.getX() + 1, donkeyPos.getY() };
+
+	board.reset();
+	board.print();
+	displayLives();
+	displayScore();
+}
+
+/**
  * @brief Handles the actions when the player wins the game.
  * Resets the game and displays the "You Win" screen.
  */
@@ -658,25 +667,54 @@ void Game::handleGameOver() {
 	eatBuffer();
 }
 
+
+
+
+
+// ------------------- File Management Functions -------------------
+
 /**
- * @brief Displays the current number of lives on the game screen.
+ * @brief Retrieves all valid game board files from the current directory.
+ * Filters files starting with "dkong_" and ending with ".screen", then sorts them lexicographically.
  */
-void Game::displayLives() const {
-	int displayX = board.getLegendPos().getX();
-	int displayY = board.getLegendPos().getY();
-
-	gotoxy(displayX, displayY);
-	std::cout << "LIVES: " << lives;
+void Game::getBoardFileNames(std::vector<std::string>& fileNames) {
+	namespace fs = std::filesystem;
+	for (const auto& entry : fs::directory_iterator(fs::current_path())) {
+		auto filename = entry.path().filename();
+		auto filenameStr = filename.string();
+		if (filenameStr.substr(0, 6) == "dkong_" && filename.extension() == ".screen") {
+			fileNames.push_back(filenameStr);
+		}
+	}
+	std::sort(fileNames.begin(), fileNames.end());
 }
 
-void Game::displayScore() const {
-	int displayX = board.getLegendPos().getX();
-	int displayY = board.getLegendPos().getY() + 1;
+/**
+ * @brief Attempts to load the next valid board from the file list.
+ * Skips invalid boards and returns false if no valid boards remain.
+ */
+bool Game::tryLoadNextValidBoard() {
+	std::string errorMessage;
 
-	gotoxy(displayX, displayY);
-	std::cout << "SCORE: " << score;
+	while (currLevel < fileNames.size()) {
+		board = Board();
+		if (!board.load(fileNames[currLevel], &errorMessage)) {
+			board.clearScreen();
+			std::cout << "Board " << fileNames[currLevel] << " is not valid.\n\n" << errorMessage << std::endl;
+			std::cout << "Press any key to try the next board...";
+			_getch();
+			eatBuffer();
+			currLevel++;
+		}
+		else {
+			currLevel++;
+			return true;
+		}
+	}
+
+	board.clearScreen();
+	return false;
 }
-
 
 
 
@@ -696,21 +734,34 @@ void Game::marioBlinkAnimation() {
 	eraseCharacters();
 }
 
+/**
+ * @brief Displays a visual effect for a hammer hit.
+ * Draws a '*' at the hammer's position for a brief duration.
+ */
 void Game::hammerHitAnimation() {
 	gotoxy(hammer->getX(), hammer->getY());
 	std::cout << '*';
 	Sleep(25);
 }
 
+/**
+ * @brief Animates the display of score points above Mario's position.
+ * Checks valid positions and briefly shows the points before restoring the board.
+ */
 void Game::scoreAnimation(const std::string& points) {
-	if (board.isValidPosition({ mario.getX() - 1, mario.getY() - 1 }) && board.isValidPosition({ mario.getX(), mario.getY() - 1 }) && board.isValidPosition({ mario.getX() + 1, mario.getY() - 1 })) {
+	if (board.isValidPosition({ mario.getX() - 1, mario.getY() - 1 }) &&
+		board.isValidPosition({ mario.getX(), mario.getY() - 1 }) &&
+		board.isValidPosition({ mario.getX() + 1, mario.getY() - 1 })) {
+
 		gotoxy(mario.getX() - 1, mario.getY() - 1);
 		std::cout << points;
 		Sleep(60);
+
 		for (int x = 0; x < points.size(); ++x) {
 			gotoxy(mario.getX() - 1 + x, mario.getY() - 1);
-			std::cout << board.getChar({ mario.getX() - 1 + x,mario.getY() - 1 });
+			std::cout << board.getChar({ mario.getX() - 1 + x, mario.getY() - 1 });
 		}
 	}
 	displayScore();
 }
+

@@ -21,6 +21,14 @@ void Menu::displayInstructions() {
     _getch(); // Wait for user input
 }
 
+
+/**
+ * @brief Displays available board files in a two-column layout.
+ * Clears the screen, centers the title, and dynamically arranges file names
+ * into two columns with proper alignment and separators.
+ *
+ * @param fileNames A vector of available board file names.
+ */
 void Menu::displayBoardFiles(std::vector<std::string>& fileNames) {
     clearScreen();
     constexpr int columnWidth = SCREEN_BOUNDARIES::MAX_X / 2; 
@@ -57,10 +65,6 @@ void Menu::displayBoardFiles(std::vector<std::string>& fileNames) {
 
     std::cout << "\n" << std::string(SCREEN_BOUNDARIES::MAX_X, '=') << "\n";
 }
-
-
-
-
 
 
 /**
