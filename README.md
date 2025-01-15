@@ -15,6 +15,9 @@ Bonus Features Implemented:
 3. Points System with Real-Time Animation:
    - Points are rewarded in real time and are dynamically animated above Mario whenever he performs a scoring action (e.g., killing an enemy or wining stage). This adds a visually engaging element to the gameplay and provides immediate feedback to the player.
 
+4. Menu Screen Animation:
+   - The menu screen includes an animation where the text slides in from the left side of the screen, resembling a curtain being drawn. This feature was added to enhance the visual presentation and provide a smoother user experience.
+
 
 Game Logic Notes:
 1. Mario Falls Horizontally While Barrels Fall Straight Down:
