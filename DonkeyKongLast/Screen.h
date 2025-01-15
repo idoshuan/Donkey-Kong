@@ -34,9 +34,15 @@ public:
         printScreen(instructionsScreen);
     }
     void printWinScreen(int score) const{
-        printScreen(winScreen, score);
+        printScreen(winScreen);
+        printScore(score);
     }
     void printLoseScreen(int score) const{
-        printScreen(loseScreen, score);
+        printScreen(loseScreen);
+        printScore(score);
+    }
+    void printScore(int score) const{
+        gotoxy(31, 22);
+        std::cout << "Your score is: " << score;
     }
 };

@@ -14,14 +14,7 @@ void Screen::printScreen(const char** screen, int score) const {
     for (int x = 0; x < SCREEN_BOUNDARIES::MAX_X; ++x) {
         for (int y = 0; y < SCREEN_BOUNDARIES::MAX_Y; ++y) {
             gotoxy(x, y);
-
-            if (y == 22 && x == 4 && score != -1) {
-                std::cout << std::string(27, ' ') << "Your score is: " << score;
-                break;
-            }
-            else {
-                std::cout << screen[y][x];
-            }
+            std::cout << screen[y][x];
         }      
         Sleep(1); 
     }
@@ -77,10 +70,10 @@ const char* Screen::instructionsScreen[SCREEN_BOUNDARIES::MAX_Y] = {
     R"(                 |___|_||_/__/\__|_|  \_,_\__|\__|_\___/_||_/__/                )",
     "                                                                                ",
     "                                                                                ",
-    "                                                                                ",
     "           Your mission: Save Princess Paulina ($)!                             ",
-    "           But watch out for those pesky barrels!                               ",
-    "           Donkey Kong will throw them at you to stop your heroic rescue.       ",
+    "           But watch out for those pesky barrels and sneaky ghosts!             ",
+    "           Donkey Kong will throw barrels at you, and the ghosts will try       ",
+    "           to block your path to stop your heroic rescue.                       ",
     "                                                                                ",
     "           Controls:                                                            ",
     "           W - Move Up                                                          ",
@@ -88,14 +81,14 @@ const char* Screen::instructionsScreen[SCREEN_BOUNDARIES::MAX_Y] = {
     "           A - Move Left                                                        ",
     "           D - Move Right                                                       ",
     "           S - Stay Put (take a breather!)                                      ",
+    "           P - Swing the hammer to smash barrels and ghosts!                    ",
     "           ESC - Pause the game (but Paulina still needs you!)                  ",
     "                                                                                ",
-    "           Avoid the barrels, climb to the top, and                             ",
-    "           be the hero Paulina needs. Good luck!                                ",
+    "           Use the hammer wisely to clear your path, avoid the barrels,         ",
+    "           climb to the top, and be the hero Paulina needs.                     ",
+    "           Good luck!                                                           ",
+    "                                                                                ",
     "           Press any key to return to the menu....                              ",
-    "                                                                                ",
-    "                                                                                ",
-    "                                                                                ",
 };
 
 

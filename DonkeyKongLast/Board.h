@@ -32,11 +32,6 @@ private:
     char originalBoard[SCREEN_BOUNDARIES::MAX_Y][SCREEN_BOUNDARIES::MAX_X + 1]; // +1 for null terminator
     char currentBoard[SCREEN_BOUNDARIES::MAX_Y][SCREEN_BOUNDARIES::MAX_X + 1]; // +1 for null terminator
 
-    bool isFloorBelowInFile(Point p) {
-        char ch = originalBoard[p.getY()+1][p.getX()];
-        return ch == BOARD_CHARACTERS::FLOOR || ch == BOARD_CHARACTERS::LEFT_FLOOR || ch == BOARD_CHARACTERS::RIGHT_FLOOR || ch == BOARD_CHARACTERS::QFLOOR;
-    }
-
 public:
     /**
      * @brief Initializes the game board by resetting it and setting the locations of Paulina and Donkey Kong.

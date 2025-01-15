@@ -162,8 +162,7 @@ bool Game::checkMarioDeath() {
  * Compares Mario's position with Paulina's position.
  */
 bool Game::checkMarioWon() {
-	Point paulina = board.getPaulinaPos();
-	return mario.getX() + mario.getDirX() == paulina.getX() && mario.getY() == paulina.getY();
+	return mario.getNextPos() == board.getPaulinaPos();
 }
 
 /**

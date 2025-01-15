@@ -31,11 +31,11 @@ void Menu::displayInstructions() {
  */
 void Menu::displayBoardFiles(std::vector<std::string>& fileNames) {
     clearScreen();
-    constexpr int columnWidth = SCREEN_BOUNDARIES::MAX_X / 2; 
-    const int rows = (fileNames.size() + 1) / 2; 
+    size_t columnWidth = SCREEN_BOUNDARIES::MAX_X / 2; 
+    size_t rows = (fileNames.size() + 1) / 2; 
 
     std::string title = "Available Files :";
-    int titlePadding = (SCREEN_BOUNDARIES::MAX_X - title.length()) / 2;
+    size_t titlePadding = (SCREEN_BOUNDARIES::MAX_X - title.length()) / 2;
     std::cout << std::string(titlePadding, ' ') << title << "\n\n\n";
     std::cout << std::string(SCREEN_BOUNDARIES::MAX_X, '=') << "\n\n";
 
