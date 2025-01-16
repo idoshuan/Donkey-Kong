@@ -9,7 +9,6 @@
 #include <vector>
 #include <fstream>
 #include <string>
-#pragma warning(disable : 26495) // Disable warning for uninitialized variables
 
 
 /**
@@ -71,7 +70,6 @@ public:
     int getMinX() const{
         return minX;
     }
-
     Point getPaulinaPos() const{
         return paulinaPos;
     }
