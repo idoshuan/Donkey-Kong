@@ -32,6 +32,18 @@ private:
     char originalBoard[SCREEN_BOUNDARIES::MAX_Y][SCREEN_BOUNDARIES::MAX_X + 1]; // +1 for null terminator
     char currentBoard[SCREEN_BOUNDARIES::MAX_Y][SCREEN_BOUNDARIES::MAX_X + 1]; // +1 for null terminator
 
+    void fillMissingColumns(int currCol, int currRow);
+    void fillBoardBoundaries(int lastRow);
+    void handleUnknownCharacter(char c, int currCol, int currRow, bool& isValid, std::string& errorMessages);
+    void handleMario(char& c, int currCol, int currRow, bool& hasMario, Point& marioPos, bool& isValid, std::string& errorMessages);
+    void handlePaulina(char& c, int currCol, int currRow, bool& hasPaulina, Point& paulinaPos, bool& isValid, std::string& errorMessages);
+    void handleDonkey(char& c, int currCol, int currRow, bool& hasDonkey, Point& donkeyPos, bool& isValid, std::string& errorMessages);
+    void handleGhost(char& c, int currCol, int currRow, std::vector<Point>& ghostsPos);
+    void handleHammer(char& c, int currCol, int currRow, bool& hasHammer, Point& hammerPos, bool& isValid);
+    void handleLegend(char& c, int currCol, int currRow, bool& hasLegend, Point& legendPos, bool& isValid, std::string& errorMessages);
+    void handleBorderCharacter(char& c, int currCol, int currRow, bool& isBounded, bool& isValid, std::string& errorMessages);
+
+
 public:
     /**
      * @brief Initializes the game board by resetting it and setting the locations of Paulina and Donkey Kong.
@@ -39,9 +51,9 @@ public:
      * as defined in the `CHARACTER_POSITIONS` structure.
      */
     void reset();
-    bool load(const std::string& filename, std::string* errors);
     void print() const;
     bool isValidPosition(const Point p) const;
+    bool load(const std::string& filename, std::string* errors);
 
     char getChar(const Point p) const {
         return originalBoard[p.getY()][p.getX()];

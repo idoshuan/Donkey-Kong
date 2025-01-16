@@ -82,8 +82,8 @@ void Game::updateGameLogic() {
 		return;
 	}
 	if (checkMarioWon()) {
-		score += 100;
-		scoreAnimation("+100");
+		score += stageFinishPoints;
+		scoreAnimation(stageFinishPointsString);
 		marioBlinkAnimation();
 		gameState = GameState::LEVEL_WON;
 		return;
@@ -101,8 +101,8 @@ void Game::updateGameLogic() {
  * Processes ESC to pause the game or sends key input to Mario.
  */
 void Game::checkForKeyPress() {
-	for (int i = 0; i < 5; i++) {
-		Sleep(12);
+	for (int i = 0; i < keyPressIterations; i++) {
+		Sleep(gameLoopSleep);
 		if (_kbhit()) {
 			KEYS key = charToKey(_getch());
 			if (key != KEYS::INVALID) {
@@ -359,15 +359,15 @@ void Game::checkKill() {
 		for (auto& barrel : barrels) {
 			if (barrel.isCurrentlyActive() && (barrel.getPos() == hammer->getPos() || barrel.getNextPos() == hammer->getPos())) {
 				barrel.deactivate();
-				score += 10;
-				scoreAnimation("+10");
+				score += barrelKillPoints;
+				scoreAnimation(barrelKillPointsString);
 			}
 		}
 		for (auto& ghost : ghosts) {
 			if (ghost.isCurrentlyActive() && (ghost.getPos() == hammer->getPos() || ghost.getNextPos() == hammer->getPos())) {
 				ghost.deactivate();
-				score += 15;
-				scoreAnimation("+15");
+				score += ghostKillPoints;
+				scoreAnimation(ghostKillPointsString);
 			}
 		}
 		if (hammer && hammer->isCurrentlySwinging()) {
@@ -672,7 +672,7 @@ void Game::handleGameOver() {
 	currLevel = 0;
 	lives = initLives;
 	screen.printLoseScreen(score);
-	Sleep(3500); // Pause to allow the player to see the screen
+	Sleep(3500); 
 	gameState = GameState::MENU;
 	eatBuffer();
 }
@@ -734,7 +734,6 @@ bool Game::tryLoadNextValidBoard() {
  * @brief Makes Mario blink (disappear and reappear) visually.
  */
 void Game::marioBlinkAnimation() {
-	//drawCharacters(); //causing mario to print over killed object
 	for (int i = 0; i < blinkIterations; i++) {
 		mario.draw();
 		Sleep(200);
@@ -746,14 +745,13 @@ void Game::marioBlinkAnimation() {
 
 /**
  * @brief Displays a visual effect for a hammer hit.
- * Draws a '*' at the hammer's position for a brief duration.
  */
 void Game::hammerHitAnimation() {
 	if (board.isValidPosition({ hammer->getX(), hammer->getY() - 1 })) {
 		gotoxy(hammer->getX(), hammer->getY());
-		std::cout << " ";
+		std::cout << static_cast<char>(BOARD_CHARACTERS::AIR);
 		gotoxy(hammer->getX(), hammer->getY()-1);
-		std::cout << 'p';
+		std::cout << static_cast<char>(BOARD_CHARACTERS::HAMMER);
 		Sleep(18);
 		gotoxy(hammer->getX(), hammer->getY() - 1);
 		std::cout << board.getChar({ hammer->getX(), hammer->getY() - 1 });

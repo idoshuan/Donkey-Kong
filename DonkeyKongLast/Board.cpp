@@ -31,6 +31,18 @@ bool Board::isValidPosition(const Point p) const {
 	return(x >= minX && x < maxX && y >= minY && y < maxY && ch != BOARD_CHARACTERS::FLOOR && ch != BOARD_CHARACTERS::LEFT_FLOOR && ch != BOARD_CHARACTERS::RIGHT_FLOOR && ch != BOARD_CHARACTERS::QFLOOR);
 }
 
+
+
+
+// ------------------- Private Methods -------------------
+
+/**
+ * @brief Loads a board configuration from a file and validates its structure.
+ * @param filename The name of the file to load.
+ * @param errors Pointer to a string to store error messages, if any.
+ * @return True if the board is valid, false otherwise.
+ * Note: This function is based on the load function showed to us in class
+ */
 bool Board::load(const std::string& filename, std::string* errors) {
 	std::string errorMessages;
 	std::ifstream screenFile(filename);
@@ -49,8 +61,7 @@ bool Board::load(const std::string& filename, std::string* errors) {
 	while (!screenFile.get(c).eof() && currRow < SCREEN_BOUNDARIES::MAX_Y) {
 		if (c == '\n') {
 			if (currCol < SCREEN_BOUNDARIES::MAX_X) {
-#pragma warning(suppress : 4996) 
-				strcpy(originalBoard[currRow] + currCol, std::string(SCREEN_BOUNDARIES::MAX_X - currCol, ' ').c_str());
+				fillMissingColumns(currCol, currRow);
 			}
 			originalBoard[currRow][SCREEN_BOUNDARIES::MAX_X] = '\n';
 			++currRow;
@@ -60,82 +71,35 @@ bool Board::load(const std::string& filename, std::string* errors) {
 
 		else if (currCol < SCREEN_BOUNDARIES::MAX_X) {
 			if (c == ENTITIES_CHARACTERS::MARIO) {
-				if (hasMario) {
-					errorMessages += "Error: Multiple Mario positions at (" + std::to_string(currCol) + ", " + std::to_string(currRow) + ")\n";
-					isValid = false;
-				}
-				else {
-					marioPos = { currCol, currRow };
-					hasMario = true;
-				}
-				c = ' ';
+				handleMario(c, currCol, currRow, hasMario, marioPos, isValid, errorMessages);
 			}
 			else if (std::tolower(c) == ENTITIES_CHARACTERS::GHOST) {
-				ghostsPos.push_back({ currCol, currRow });
-				c = ' ';
+				handleGhost(c, currCol, currRow, ghostsPos);
 			}
 			else if (c == ENTITIES_CHARACTERS::PAULINA) {
-				if (hasPaulina) {
-					errorMessages += "Error: Multiple Paulina positions at (" + std::to_string(currCol) + ", " + std::to_string(currRow) + ")\n";
-					isValid = false;
-				}
-				else {
-					paulinaPos = { currCol, currRow };
-					hasPaulina = true;
-				}
+				handlePaulina(c, currCol, currRow, hasPaulina, paulinaPos, isValid, errorMessages);
 			}
 			else if (c == ENTITIES_CHARACTERS::DONKEY_KONG) {
-				if (hasDonkey) {
-					errorMessages += "Error: Multiple Donkey positions at (" + std::to_string(currCol) + ", " + std::to_string(currRow) + ")\n";
-					isValid = false;
-				}
-				else {
-					donkeyPos = { currCol, currRow };
-					hasDonkey = true;
-				}
+				handleDonkey(c, currCol, currRow, hasDonkey, donkeyPos, isValid, errorMessages);
 			}
 			else if (std::toupper(c) == BOARD_CHARACTERS::QFLOOR) {
-				if (currCol == SCREEN_BOUNDARIES::MIN_X || currCol == SCREEN_BOUNDARIES::MAX_X - 1 || currRow == SCREEN_BOUNDARIES::MIN_Y || currRow == SCREEN_BOUNDARIES::MAX_Y - 1) {
-					isBounded = true;
-				}
-				else {
-					errorMessages += "Error: Border character in the middle of the screen at (" + std::to_string(currCol) + ", " + std::to_string(currRow) + ")\n";
-					isValid = false;
-				}
+				handleBorderCharacter(c, currCol, currRow, isBounded, isValid, errorMessages);
 			}
 			else if (std::tolower(c) == BOARD_CHARACTERS::HAMMER) {
-				if (!hasHammer) {
-					hammerPos = { currCol, currRow };
-					hasHammer = true;
-				}
-				else {
-					isValid = false;
-				}
+				handleHammer(c, currCol, currRow, hasHammer, hammerPos, isValid);
 			}
 			else if (std::toupper(c) == BOARD_CHARACTERS::LEGEND) {
-				if (hasLegend) {
-					errorMessages += "Error: Multiple Legend positions at (" + std::to_string(currCol) + ", " + std::to_string(currRow) + ")\n";
-					isValid = false;
-				}
-				else {
-					legendPos = { currCol, currRow };
-					c = ' ';
-					hasLegend = true;
-				}
+				handleLegend(c, currCol, currRow, hasLegend, legendPos, isValid, errorMessages);
 			}
 			else if (
-				c == BOARD_CHARACTERS::FLOOR ||
-				c == BOARD_CHARACTERS::RIGHT_FLOOR ||
-				c == BOARD_CHARACTERS::LEFT_FLOOR ||
-				c == BOARD_CHARACTERS::AIR ||
-				std::toupper(c) == BOARD_CHARACTERS::LADDER)
-			{
-				;
+				c != BOARD_CHARACTERS::FLOOR &&
+				c != BOARD_CHARACTERS::RIGHT_FLOOR &&
+				c != BOARD_CHARACTERS::LEFT_FLOOR &&
+				c != BOARD_CHARACTERS::AIR &&
+				std::toupper(c) != BOARD_CHARACTERS::LADDER) {
+				handleUnknownCharacter(c, currCol, currRow, isValid, errorMessages);
 			}
-			else {
-				errorMessages += "Error: Unknown character '" + std::string(1, c) + "' at position (" + std::to_string(currCol) + ", " + std::to_string(currRow) + ")\n";
-				isValid = false;
-			}
+
 			originalBoard[currRow][currCol++] = c;
 		}
 	}
@@ -168,11 +132,7 @@ bool Board::load(const std::string& filename, std::string* errors) {
 		}
 
 		if (isBounded) {
-			memset(originalBoard[0], 'Q', SCREEN_BOUNDARIES::MAX_X);
-			memset(originalBoard[lastRow], 'Q', SCREEN_BOUNDARIES::MAX_X);
-			for (int row = 1; row < lastRow; ++row) {
-				originalBoard[row][0] = originalBoard[row][SCREEN_BOUNDARIES::MAX_X - 1] = 'Q';
-			}
+			fillBoardBoundaries(lastRow);
 		}
 	}
 
@@ -182,4 +142,115 @@ bool Board::load(const std::string& filename, std::string* errors) {
 	*errors = errorMessages;
 	return isValid;
 }
+
+/**
+ * @brief Fills the remaining columns in a row with spaces if the line is shorter than the allowed width.
+ * @param currCol The current column index.
+ * @param currRow The current row index.
+ */
+void Board::fillMissingColumns(int currCol, int currRow) {
+#pragma warning(suppress : 4996) 
+	strcpy(originalBoard[currRow] + currCol, std::string(SCREEN_BOUNDARIES::MAX_X - currCol, ' ').c_str());
+}
+
+/**
+ * @brief Fills the boundaries of the board with a specified character ('Q') to indicate borders.
+ * @param lastRow The index of the last row in the board.
+ */
+void Board::fillBoardBoundaries(int lastRow) {
+	memset(originalBoard[0], 'Q', SCREEN_BOUNDARIES::MAX_X);
+	memset(originalBoard[lastRow], 'Q', SCREEN_BOUNDARIES::MAX_X);
+	for (int row = 1; row < lastRow; ++row) {
+		originalBoard[row][0] = originalBoard[row][SCREEN_BOUNDARIES::MAX_X - 1] = 'Q';
+	}
+}
+
+/**
+ * @brief Processes and validates the placement of a specific entity on the board.
+ * @param c The current character being processed.
+ * @param currCol The current column index.
+ * @param currRow The current row index.
+ * @param hasEntity Reference to a flag indicating if the entity has already been placed (for unique entities).
+ * @param entityPos Reference to the position of the entity (for unique entities).
+ * @param isValid Reference to a flag indicating if the board is valid.
+ * @param errorMessages Reference to a string storing error messages.
+ * @param entityPosList Optional reference to a vector storing positions of multiple instances (e.g., ghosts).
+ */
+
+void Board::handleMario(char& c, int currCol, int currRow, bool& hasMario, Point& marioPos, bool& isValid, std::string& errorMessages) {
+	if (hasMario) {
+		errorMessages += "Error: Multiple Mario positions at (" + std::to_string(currCol) + ", " + std::to_string(currRow) + ")\n";
+		isValid = false;
+	}
+	else {
+		marioPos = { currCol, currRow };
+		hasMario = true;
+	}
+	c = ' ';
+}
+
+void Board::handlePaulina(char& c, int currCol, int currRow, bool& hasPaulina, Point& paulinaPos, bool& isValid, std::string& errorMessages) {
+	if (hasPaulina) {
+		errorMessages += "Error: Multiple Paulina positions at (" + std::to_string(currCol) + ", " + std::to_string(currRow) + ")\n";
+		isValid = false;
+	}
+	else {
+		paulinaPos = { currCol, currRow };
+		hasPaulina = true;
+	}
+}
+
+void Board::handleDonkey(char& c, int currCol, int currRow, bool& hasDonkey, Point& donkeyPos, bool& isValid, std::string& errorMessages) {
+	if (hasDonkey) {
+		errorMessages += "Error: Multiple Donkey positions at (" + std::to_string(currCol) + ", " + std::to_string(currRow) + ")\n";
+		isValid = false;
+	}
+	else {
+		donkeyPos = { currCol, currRow };
+		hasDonkey = true;
+	}
+}
+
+void Board::handleGhost(char& c, int currCol, int currRow, std::vector<Point>& ghostsPos) {
+	ghostsPos.push_back({ currCol, currRow });
+	c = ' ';
+}
+
+void Board::handleHammer(char& c, int currCol, int currRow, bool& hasHammer, Point& hammerPos, bool& isValid) {
+	if (!hasHammer) {
+		hammerPos = { currCol, currRow };
+		hasHammer = true;
+	}
+	else {
+		isValid = false;
+	}
+}
+
+void Board::handleLegend(char& c, int currCol, int currRow, bool& hasLegend, Point& legendPos, bool& isValid, std::string& errorMessages) {
+	if (hasLegend) {
+		errorMessages += "Error: Multiple Legend positions at (" + std::to_string(currCol) + ", " + std::to_string(currRow) + ")\n";
+		isValid = false;
+	}
+	else {
+		legendPos = { currCol, currRow };
+		hasLegend = true;
+	}
+	c = ' ';
+}
+
+void Board::handleBorderCharacter(char& c, int currCol, int currRow, bool& isBounded, bool& isValid, std::string& errorMessages) {
+	if (currCol == SCREEN_BOUNDARIES::MIN_X || currCol == SCREEN_BOUNDARIES::MAX_X - 1 || currRow == SCREEN_BOUNDARIES::MIN_Y || currRow == SCREEN_BOUNDARIES::MAX_Y - 1) {
+		isBounded = true;
+	}
+	else {
+		errorMessages += "Error: Border character in the middle of the screen at (" + std::to_string(currCol) + ", " + std::to_string(currRow) + ")\n";
+		isValid = false;
+	}
+}
+
+void Board::handleUnknownCharacter(char c, int currCol, int currRow, bool& isValid, std::string& errorMessages) {
+	errorMessages += "Error: Unknown character '" + std::string(1, c) + "' at position (" + std::to_string(currCol) + ", " + std::to_string(currRow) + ")\n";
+	isValid = false;
+}
+
 

@@ -41,11 +41,16 @@ enum class GameState {
 class Game {
 private:
     // ------------------- Constants -------------------
+    // Game logic constants
+    static constexpr int keyPressIterations = 5;
+    static constexpr int gameLoopSleep = 12;
+
+
     // Mario-related constants
     static constexpr int marioMaxFallHeight = 5;
     static constexpr int initLives = 3;
     static constexpr int blinkIterations = 6;
-
+    
     // Barrel-related constants
     static constexpr int maxBarrels = 20;
     static constexpr int barrelSpawnInterval = 4000;
@@ -64,6 +69,14 @@ private:
     // Countdown screen constants
     static constexpr int countdownMessageTitleOffset = 6;
     static constexpr int countdownMessageCounterOffset = 12;
+
+    // Animation constants
+    static constexpr int stageFinishPoints = 100;
+    const std::string stageFinishPointsString = "+100";
+    static constexpr int ghostKillPoints = 20;
+    const std::string ghostKillPointsString = "+20";
+    static constexpr int barrelKillPoints = 15;
+    const std::string barrelKillPointsString = "+15";
 
     // Typedefs for time-related operations
     using clock = std::chrono::steady_clock;

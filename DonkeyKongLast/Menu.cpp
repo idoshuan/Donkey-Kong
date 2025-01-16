@@ -67,7 +67,7 @@ int Menu::getBoardChoice(std::vector<std::string>& fileNames) {
 
 		if (std::isdigit(choice)) {
 			int c = choice - '0' - 1;
-			size_t index = page * 9 + c;
+			int index = page * 9 + c;
 			if (c >= 0 && c < 9 && index < fileNames.size()) {
 				return index;
 			}
@@ -98,7 +98,7 @@ void Menu::displayBoardFiles(std::vector<std::string>& fileNames, size_t totalFi
 	size_t startIndex = page * filesPerPage;
 	size_t endIndex = (startIndex + filesPerPage < totalFiles) ? (startIndex + filesPerPage) : totalFiles;
 
-	std::string title = "Files:";
+	std::string title = "Your Boards:";
 	size_t titlePadding = (SCREEN_BOUNDARIES::MAX_X - title.length()) / 2;
 	size_t filesPadding = (SCREEN_BOUNDARIES::MAX_X - fileNames[startIndex].length()) / 2;
 

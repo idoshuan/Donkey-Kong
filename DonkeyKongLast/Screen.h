@@ -16,6 +16,7 @@ private:
     // ------------------- Static Screens -------------------
     static const char* menuScreen[SCREEN_BOUNDARIES::MAX_Y];
     static const char* instructionsScreen[SCREEN_BOUNDARIES::MAX_Y];
+    static const char* instructionsScreen2[SCREEN_BOUNDARIES::MAX_Y];
     static const char* winScreen[SCREEN_BOUNDARIES::MAX_Y];
     static const char* loseScreen[SCREEN_BOUNDARIES::MAX_Y];
 
@@ -32,6 +33,8 @@ public:
     }
     void printInstructionsScreen() const {
         printScreen(instructionsScreen);
+        _getch();
+        printScreen(instructionsScreen2);
     }
     void printWinScreen(int score) const{
         printScreen(winScreen);
