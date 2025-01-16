@@ -75,7 +75,7 @@ public:
     Point getLegendPos() const {
         return legendPos;
     }
-    std::vector<Point> getGhostsPos() const {
+    const std::vector<Point>& getGhostsPos() const {
         return ghostsPos;
     }
     void deleteHammer() {

@@ -73,6 +73,8 @@ void Game::updateGameLogic() {
 	trySpawnBarrel();
 	explodeBarrels();
 	checkGhostWithGhostCollisions();
+	deactivateBarrels();
+	moveCharacters();
 	if (checkMarioDeath()) {
 		lives--;
 		marioBlinkAnimation();
@@ -86,8 +88,6 @@ void Game::updateGameLogic() {
 		gameState = GameState::LEVEL_WON;
 		return;
 	}
-	deactivateBarrels();
-	moveCharacters();
 }
 
 
@@ -115,7 +115,6 @@ void Game::checkForKeyPress() {
 				}
 				else if (hammer && key == KEYS::HAMMER) {
 					hammer->swing();
-					hammerHitAnimation();
 				}
 			}
 		}
@@ -131,9 +130,14 @@ void Game::handleMenuState(MenuAction action) {
 		gameState = GameState::START;
 		break;
 	case MenuAction::SHOW_BOARD_FILES:
-		menu.displayBoardFiles(fileNames);
-		currLevel = menu.getBoardChoice(fileNames.size());
-		gameState = GameState::START;
+		currLevel = menu.getBoardChoice(fileNames);
+		if (currLevel == -1) {
+			currLevel = 0;
+			gameState = GameState::MENU;
+		}
+		else {
+			gameState = GameState::START;
+		}
 		break;
 	case MenuAction::SHOW_INSTRUCTIONS:
 		menu.displayInstructions();
@@ -162,7 +166,7 @@ bool Game::checkMarioDeath() {
  * Compares Mario's position with Paulina's position.
  */
 bool Game::checkMarioWon() {
-	return mario.getNextPos() == board.getPaulinaPos();
+	return mario.getNextPos() == board.getPaulinaPos() || mario.getPos() == board.getPaulinaPos();
 }
 
 /**
@@ -365,6 +369,9 @@ void Game::checkKill() {
 				score += 15;
 				scoreAnimation("+15");
 			}
+		}
+		if (hammer && hammer->isCurrentlySwinging()) {
+			hammerHitAnimation();
 		}
 		hammer->stopSwing();
 	}
@@ -591,8 +598,10 @@ void Game::displayScore() const {
  * Reinitializes barrels, Mario, ghosts, and game state variables.
  */
 void Game::resetStage() {
-	hammer.reset();
-	board.reviveHammer();
+	if (hammer) {
+		hammer.reset();
+		board.reviveHammer();
+	}
 	barrels.clear();
 	for (int i = 0; i < ghosts.size(); i++) {
 		ghosts[i].setPos(board.getGhostsPos()[i]);
@@ -619,7 +628,9 @@ void Game::startNewStage() {
 		return;
 	}
 
-	hammer.reset();
+	if (hammer) {
+		hammer.reset();
+	}
 	gameStartTime = clock::now();
 	ghosts.clear();
 	barrels.clear();
@@ -723,7 +734,7 @@ bool Game::tryLoadNextValidBoard() {
  * @brief Makes Mario blink (disappear and reappear) visually.
  */
 void Game::marioBlinkAnimation() {
-	drawCharacters();
+	//drawCharacters(); //causing mario to print over killed object
 	for (int i = 0; i < blinkIterations; i++) {
 		mario.draw();
 		Sleep(200);
@@ -738,9 +749,15 @@ void Game::marioBlinkAnimation() {
  * Draws a '*' at the hammer's position for a brief duration.
  */
 void Game::hammerHitAnimation() {
-	gotoxy(hammer->getX(), hammer->getY());
-	std::cout << '*';
-	Sleep(25);
+	if (board.isValidPosition({ hammer->getX(), hammer->getY() - 1 })) {
+		gotoxy(hammer->getX(), hammer->getY());
+		std::cout << " ";
+		gotoxy(hammer->getX(), hammer->getY()-1);
+		std::cout << 'p';
+		Sleep(18);
+		gotoxy(hammer->getX(), hammer->getY() - 1);
+		std::cout << board.getChar({ hammer->getX(), hammer->getY() - 1 });
+	}
 }
 
 /**

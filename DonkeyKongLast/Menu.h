@@ -1,6 +1,7 @@
 #pragma once
 #include "Utils.h"
 #include "Screen.h"
+#include "GameConfig.h"
 
 #include <iostream>
 #include <string>
@@ -8,6 +9,8 @@
 #include <vector>
 #include <cctype>
 #include <iomanip>
+#include <algorithm>
+
 
 /**
  * @brief The Menu class handles the game's main menu interface,
@@ -24,12 +27,14 @@ enum class MenuAction {
 
 // ------------------- Class Declaration -------------------
 class Menu : Screen {
+	static constexpr size_t filesPerPage = 9;
 public:
 	void displayMenu();
 	MenuAction getAction();
 	void displayInstructions();
-	void displayBoardFiles(std::vector<std::string>& vec_to_fill);
-	int getBoardChoice(size_t filesSize);
+	void displayBoardFiles(std::vector<std::string>& fileNames, size_t totalFiles, size_t totalPages, size_t page);
+	int getBoardChoice(std::vector<std::string>& fileNames);
+	void printUnknownKeyMessage();
 };
 
 
