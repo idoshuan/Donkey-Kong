@@ -10,7 +10,7 @@ Bonus Features Implemented:
 We added the ability to navigate through file selection pages. Users can easily select a file even if more than 9 are available.
 
 2. Hammer
-   - I implemented a dynamic hammer visualization that moves alongside the character in real-time, enhancing gameplay immersion and providing immediate feedback.
+   - We implemented a dynamic hammer visualization that moves alongside the character in real-time, enhancing gameplay immersion and providing immediate feedback.
    - A hammer animation was introduced to appear every time Mario attacks, adding excitement and visual feedback to the gameplay.
 
 3. Screen and Score Animations
