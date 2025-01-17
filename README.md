@@ -9,8 +9,9 @@ Bonus Features Implemented:
 1. File Selection Navigation
 We added the ability to navigate through file selection pages. Users can easily select a file even if more than 9 are available.
 
-2. Hammer Attack Animation
-A hammer animation was introduced to appear every time Mario attacks, adding excitement and visual feedback to the gameplay.
+2. Hammer
+   - I implemented a dynamic hammer visualization that moves alongside the character in real-time, enhancing gameplay immersion and providing immediate feedback.
+   - A hammer animation was introduced to appear every time Mario attacks, adding excitement and visual feedback to the gameplay.
 
 3. Screen and Score Animations
 Screen transitions now include smooth animations, and every time Mario earns points, an animated score is displayed above his character for better engagement.
