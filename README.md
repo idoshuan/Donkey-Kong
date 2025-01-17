@@ -26,7 +26,7 @@ Game Logic Notes:
    - The "Stop" message during pauses is intentionally printed below the characters, ensuring it does not obstruct game visuals or interfere with gameplay clarity.
   
 4. Invalid File Handling:
-   -We implemented a robust file validation system that checks for any inconsistencies or errors in the game board file. If an invalid file is detected, the program behaves like a compiler, providing detailed feedback to the user.
-   -The system identifies specific issues, such as missing characters, improperly formatted lines, or mismatched dimensions, and prints clear instructions on how to correct the file. This ensures that the user can quickly resolve errors and reload the file.
+   - We implemented a robust file validation system that checks for any inconsistencies or errors in the game board file. If an invalid file is detected, the program behaves like a compiler, providing detailed feedback to the user.
+   - The system identifies specific issues, such as missing characters, improperly formatted lines, or mismatched dimensions, and prints clear instructions on how to correct the file. This ensures that the user can quickly resolve errors and reload the file.
 
 
