@@ -30,4 +30,5 @@ Game Logic Notes:
    - We implemented a robust file validation system that checks for any inconsistencies or errors in the game board file. If an invalid file is detected, the program behaves like a compiler, providing detailed feedback to the user.
    - The system identifies specific issues, such as missing characters, improperly formatted lines, or mismatched dimensions, and prints clear instructions on how to correct the file. This ensures that the user can quickly resolve errors and reload the file.
 
-
+5. Handling Board Boundaries with 'Q':
+   - If a 'Q' character is detected on any edge of the board, the program automatically completes the entire boundary with 'Q', ensuring a consistent and valid border.

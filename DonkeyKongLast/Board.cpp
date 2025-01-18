@@ -108,7 +108,9 @@ bool Board::load(const std::string& filename, std::string* errors) {
 
 	int lastRow =  c == '\n' ? currRow - 1 : currRow;
 
-	originalBoard[lastRow][SCREEN_BOUNDARIES::MAX_X] = '\0';
+	if (lastRow >= 0 && lastRow < SCREEN_BOUNDARIES::MAX_Y) {
+		originalBoard[lastRow][SCREEN_BOUNDARIES::MAX_X] = '\0';
+	}
 
 	
 	if (lastRow < SCREEN_BOUNDARIES::MAX_Y - 1) {
