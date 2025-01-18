@@ -58,7 +58,8 @@ bool Board::load(const std::string& filename, std::string* errors) {
 	int currRow = 0, currCol = 0;
 	char c;
 
-	while (!screenFile.get(c).eof() && currRow < SCREEN_BOUNDARIES::MAX_Y) {
+	while (currRow < SCREEN_BOUNDARIES::MAX_Y&& !screenFile.get(c).eof()) {
+		
 		if (c == '\n') {
 			if (currCol < SCREEN_BOUNDARIES::MAX_X) {
 				fillMissingColumns(currCol, currRow);
@@ -68,6 +69,7 @@ bool Board::load(const std::string& filename, std::string* errors) {
 			currCol = 0;
 			continue;
 		}
+		
 
 		else if (currCol < SCREEN_BOUNDARIES::MAX_X) {
 			if (c == ENTITIES_CHARACTERS::MARIO) {
@@ -104,9 +106,11 @@ bool Board::load(const std::string& filename, std::string* errors) {
 		}
 	}
 
-	int lastRow = currRow - 1;
+	int lastRow =  c == '\n' ? currRow - 1 : currRow;
+
 	originalBoard[lastRow][SCREEN_BOUNDARIES::MAX_X] = '\0';
 
+	
 	if (lastRow < SCREEN_BOUNDARIES::MAX_Y - 1) {
 		errorMessages += "Error: Board should include 25 lines";
 		isValid = false;
