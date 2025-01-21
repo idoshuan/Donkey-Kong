@@ -45,7 +45,7 @@ private:
     // ------------------- Constants -------------------
     // Game logic constants
     static constexpr int keyPressIterations = 5;
-    static constexpr int gameLoopSleep = 100;
+    static constexpr int gameLoopSleep = 12;
 
 
     // Mario-related constants
