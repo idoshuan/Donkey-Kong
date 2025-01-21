@@ -6,6 +6,7 @@
 #include "Barrel.h"
 #include "Ghost.h"
 #include "ClimbingGhost.h"
+#include "GhostBase.h"
 #include "Menu.h"
 #include "Screen.h"
 #include "GameConfig.h"
@@ -19,7 +20,7 @@
 #include <vector>
 #include <filesystem>
 #include <optional>
-
+#include <memory>
 /**
  * @brief The Game class manages the main game loop, state transitions,
  * and interactions between entities like Mario, barrels, and the board.
@@ -44,7 +45,7 @@ private:
     // ------------------- Constants -------------------
     // Game logic constants
     static constexpr int keyPressIterations = 5;
-    static constexpr int gameLoopSleep = 12;
+    static constexpr int gameLoopSleep = 100;
 
 
     // Mario-related constants
@@ -94,9 +95,7 @@ private:
     Mario mario;
     std::optional<Hammer> hammer;
     std::vector<Barrel> barrels;
-    std::vector<Ghost> ghosts;
-    std::vector<ClimbingGhost> climbingGhosts;
-
+    std::vector<std::unique_ptr<GhostBase>> ghostContainer;
     Point leftBarrelPos;
     Point rightBarrelPos;
 

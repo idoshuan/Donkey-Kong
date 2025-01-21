@@ -189,6 +189,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameConfig.h" />
     <ClInclude Include="Ghost.h" />
+    <ClInclude Include="GhostBase.h" />
     <ClInclude Include="Hammer.h" />
     <ClInclude Include="Mario.h" />
     <ClInclude Include="Menu.h" />
@@ -203,6 +204,7 @@
     <ClCompile Include="ClimbingGhost.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Ghost.cpp" />
+    <ClCompile Include="GhostBase.cpp" />
     <ClCompile Include="Hammer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mario.cpp" />

@@ -18,14 +18,5 @@ void Ghost::move() {
 	inCollision = false;
 }
 
-/**
- * @brief Randomly changes the ghost's direction.
- * Introduces a 0.05 probability for the ghost to turn around.
- */
-void Ghost::setRandDir() {
-	if (getRandomDouble() <= turnProbability) {
-		turnAround();
-	}
-}
 
 

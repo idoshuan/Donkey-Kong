@@ -200,16 +200,10 @@ bool Game::checkMarioDeathFromFall() {
  * @brief Checks if Mario has died from a ghost collision.
  */
 bool Game::checkMarioDeathFromGhost() {
-	for (auto& ghost : ghosts) {
-		if (ghost.isCurrentlyActive()) {
-			if (isDirectCollision(ghost) || isMissedCollision(ghost)) {
-				return true;
-			}
-		}
-	}
-	for (auto& ghost : climbingGhosts) {
-		if (ghost.isCurrentlyActive()) {
-			if (isDirectCollision(ghost) || isMissedCollision(ghost)) {
+
+	for (auto& ghost : ghostContainer) {
+		if (ghost->isCurrentlyActive()) {
+			if (isDirectCollision(*ghost) || isMissedCollision(*ghost)) {
 				return true;
 			}
 		}
@@ -326,16 +320,16 @@ bool Game::hasBarrelExploded(Barrel& barrel) const {
  * Activates collision logic if their paths intersect.
  */
 void Game::checkGhostWithGhostCollisions() {
-	for (int i = 0; i < ghosts.size(); i++) {
-		for (int j = i + 1; j < ghosts.size(); j++) {
-			if (ghosts[i].getY() == ghosts[j].getY()) { 
-				int nextX_i = ghosts[i].getX() + ghosts[i].getDirX();
-				int nextX_j = ghosts[j].getX() + ghosts[j].getDirX();
+	for (int i = 0; i < ghostContainer.size(); i++) {
+		for (int j = i + 1; j < ghostContainer.size(); j++) {
+			if (ghostContainer[i]->getY() == ghostContainer[j]->getY()) {
+				int nextX_i = ghostContainer[i]->getX() + ghostContainer[i]->getDirX();
+				int nextX_j = ghostContainer[j]->getX() + ghostContainer[j]->getDirX();
 
 				// Check if they will collide in the next step
-				if ((nextX_i == ghosts[j].getX() || nextX_i == nextX_j) && (ghosts[i].getDirX() != ghosts[j].getDirX())) {
-					ghosts[i].collision(); 
-					ghosts[j].collision(); 
+				if ((nextX_i == ghostContainer[j]->getX() || nextX_i == nextX_j) && (ghostContainer[i]->getDirX() != ghostContainer[j]->getDirX())) {
+					ghostContainer[i]->collision();
+					ghostContainer[j]->collision();
 				}
 			}
 		}
@@ -370,16 +364,9 @@ void Game::checkKill() {
 				scoreAnimation(barrelKillPointsString);
 			}
 		}
-		for (auto& ghost : ghosts) {
-			if (ghost.isCurrentlyActive() && (ghost.getPos() == hammer->getPos() || ghost.getNextPos() == hammer->getPos())) {
-				ghost.deactivate();
-				score += ghostKillPoints;
-				scoreAnimation(ghostKillPointsString);
-			}
-		}
-		for (auto& ghost : climbingGhosts) {
-			if (ghost.isCurrentlyActive() && (ghost.getPos() == hammer->getPos() || ghost.getNextPos() == hammer->getPos())) {
-				ghost.deactivate();
+		for (auto& ghost : ghostContainer) {
+			if (ghost->isCurrentlyActive() && (ghost->getPos() == hammer->getPos() || ghost->getNextPos() == hammer->getPos())) {
+				ghost->deactivate();
 				score += ghostKillPoints;
 				scoreAnimation(ghostKillPointsString);
 			}
@@ -540,14 +527,9 @@ void Game::moveCharacters() {
 			barrel.move();
 		}
 	}
-	for (auto& ghost : ghosts) {
-		if (ghost.isCurrentlyActive()) {
-			ghost.move();
-		}
-	}
-	for (auto& ghost : climbingGhosts) {
-		if (ghost.isCurrentlyActive()) {
-			ghost.move();
+	for (auto& ghost : ghostContainer) {
+		if (ghost->isCurrentlyActive()) {
+			ghost->move();
 		}
 	}
 }
@@ -565,14 +547,9 @@ void Game::drawCharacters() {
 			barrel.draw();
 		}
 	}
-	for (auto& ghost : ghosts) {
-		if (ghost.isCurrentlyActive()) {
-			ghost.draw();
-		}
-	}
-	for (auto& ghost : climbingGhosts) {
-		if (ghost.isCurrentlyActive()) {
-			ghost.draw();
+	for (auto& ghost : ghostContainer) {
+		if (ghost->isCurrentlyActive()) {
+			ghost->draw();
 		}
 	}
 }
@@ -588,11 +565,8 @@ void Game::eraseCharacters() {
 	for (auto& barrel : barrels) {
 		barrel.erase();
 	}
-	for (auto& ghost : ghosts) {
-		ghost.erase();
-	}
-	for (auto& ghost : climbingGhosts) {
-		ghost.erase();
+	for (auto& ghost : ghostContainer) {
+		ghost->erase();
 	}
 }
 
@@ -630,13 +604,14 @@ void Game::resetStage() {
 		board.reviveHammer();
 	}
 	barrels.clear();
-	for (int i = 0; i < ghosts.size(); i++) {
-		ghosts[i].setPos(board.getGhostsPos()[i]);
-		ghosts[i].activate();
+	int i, j;
+	for (i = 0; i < board.getGhostsPos().size(); i++) {
+		ghostContainer[i]->setPos(board.getGhostsPos()[i]);
+		ghostContainer[i]->activate();
 	}
-	for (int i = 0; i < climbingGhosts.size(); i++) {
-		climbingGhosts[i].setPos(board.getGhostsPos()[i]);
-		climbingGhosts[i].activate();
+	for (j = 0; j < board.getClimbingGhostsPos().size(); j++) {
+		ghostContainer[i]->setPos(board.getClimbingGhostsPos()[j]);
+		ghostContainer[i]->activate();
 	}
 	mario = Mario(board);
 	firstBarrelSpawned = false;
@@ -663,16 +638,15 @@ void Game::startNewStage() {
 		hammer.reset();
 	}
 	gameStartTime = clock::now();
-	ghosts.clear();
-	climbingGhosts.clear();
+	ghostContainer.clear();
 	barrels.clear();
 
 	mario = Mario(board);
 	for (const auto& ghostPos : board.getGhostsPos()) {
-		ghosts.emplace_back(ghostPos, board);
+		ghostContainer.push_back(std::make_unique<Ghost>(ghostPos, board));
 	}
 	for (const auto& ghostPos : board.getClimbingGhostsPos()) {
-		climbingGhosts.emplace_back(ghostPos, board);
+		ghostContainer.push_back(std::make_unique<ClimbingGhost>(ghostPos, board));
 	}
 
 	auto donkeyPos = board.getDonkeyKongPos();
@@ -708,7 +682,7 @@ void Game::handleGameOver() {
 	score = 0;
 	lives = initLives;
 	screen.printLoseScreen(score);
-	Sleep(3500); 
+	Sleep(3500);
 	gameState = GameState::MENU;
 	eatBuffer();
 }
@@ -786,7 +760,7 @@ void Game::hammerHitAnimation() {
 	if (board.isValidPosition({ hammer->getX(), hammer->getY() - 1 })) {
 		gotoxy(hammer->getX(), hammer->getY());
 		std::cout << static_cast<char>(BOARD_CHARACTERS::AIR);
-		gotoxy(hammer->getX(), hammer->getY()-1);
+		gotoxy(hammer->getX(), hammer->getY() - 1);
 		std::cout << static_cast<char>(BOARD_CHARACTERS::HAMMER);
 		Sleep(18);
 		gotoxy(hammer->getX(), hammer->getY() - 1);
