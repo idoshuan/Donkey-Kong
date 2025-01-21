@@ -23,7 +23,7 @@ void Ghost::move() {
  * Introduces a 0.05 probability for the ghost to turn around.
  */
 void Ghost::setRandDir() {
-	if (getRandomDouble() <= 0.05) {
+	if (getRandomDouble() <= turnProbability) {
 		turnAround();
 	}
 }

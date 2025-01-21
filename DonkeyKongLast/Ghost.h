@@ -7,7 +7,9 @@
 
 // ------------------- Class Declaration -------------------
 class Ghost : public Entity {
+	
 	// ------------------- State Variables -------------------
+	static constexpr double turnProbability = 0.05;
 	bool isActive = true;
 	bool inCollision = false;
 

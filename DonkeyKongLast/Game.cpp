@@ -131,7 +131,7 @@ void Game::handleMenuState(MenuAction action) {
 		break;
 	case MenuAction::SHOW_BOARD_FILES:
 		currLevel = menu.getBoardChoice(fileNames);
-		if (currLevel == -1) {
+		if (currLevel == ESCAPE) {
 			currLevel = 0;
 			gameState = GameState::MENU;
 		}
@@ -670,6 +670,7 @@ void Game::handleGameWin() {
  */
 void Game::handleGameOver() {
 	currLevel = 0;
+	score = 0;
 	lives = initLives;
 	screen.printLoseScreen(score);
 	Sleep(3500); 
