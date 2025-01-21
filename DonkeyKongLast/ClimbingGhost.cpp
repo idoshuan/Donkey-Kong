@@ -12,21 +12,28 @@ void ClimbingGhost::move() {
 		turnAround();
 	}
 	else if (isOnLadder() && !isClimbingDown && !isClimbingUp) {
-		setDirY(Y_UP);
-		setDirX(X_NONE);
-		isClimbingUp = true;
+		if (getRandomDouble() >= 0.65) {
+			setDirY(Y_UP);
+			setDirX(X_NONE);
+			isClimbingUp = true;
+		}
+		
 	}
 	else if (isClimbingUp && !getBoard()->isLadder(Point(getX(), getY() + getDirY()))) {
 		setY(getY() - 2);
-		setDirX(getRandomDouble() >= 0.5 ? Entity::X_LEFT : Entity::X_RIGHT);
 		setDirY(Y_NONE);
 		isClimbingUp = false;
 	}
 	else if (getBoard()->isLadder(Point(getX(), getY() + 2)) && isOnFloor()) {
-		setY(getY() + 1);
-		setDirY(Y_DOWN);
-		setDirX(X_NONE);
-		isClimbingDown = true;
+		if (getRandomDouble() >= 0.65) {
+			setY(getY() + 1);
+			setDirY(Y_DOWN);
+			setDirX(X_NONE);
+			isClimbingDown = true;
+		}
+		else {
+			setDirX(getRandomDouble() >= 0.5 ? Entity::X_LEFT : Entity::X_RIGHT);
+		}
 	}
 	else if (isClimbingDown && isOnFloor()) {
 		setDirX(getRandomDouble() >= 0.5 ? Entity::X_LEFT : Entity::X_RIGHT);

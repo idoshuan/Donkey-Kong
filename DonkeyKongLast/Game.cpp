@@ -603,15 +603,13 @@ void Game::resetStage() {
 		hammer.reset();
 		board.reviveHammer();
 	}
+	ghostContainer.clear();
 	barrels.clear();
-	int i, j;
-	for (i = 0; i < board.getGhostsPos().size(); i++) {
-		ghostContainer[i]->setPos(board.getGhostsPos()[i]);
-		ghostContainer[i]->activate();
+	for (const auto& ghostPos : board.getGhostsPos()) {
+		ghostContainer.push_back(std::make_unique<Ghost>(ghostPos, board));
 	}
-	for (j = 0; j < board.getClimbingGhostsPos().size(); j++) {
-		ghostContainer[i]->setPos(board.getClimbingGhostsPos()[j]);
-		ghostContainer[i]->activate();
+	for (const auto& ghostPos : board.getClimbingGhostsPos()) {
+		ghostContainer.push_back(std::make_unique<ClimbingGhost>(ghostPos, board));
 	}
 	mario = Mario(board);
 	firstBarrelSpawned = false;
