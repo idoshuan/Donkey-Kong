@@ -24,6 +24,7 @@ private:
     // ------------------- Constants -------------------
     Point paulinaPos, marioPos, donkeyPos,hammerPos, legendPos;
     std::vector<Point> ghostsPos;
+    std::vector<Point> climbingGhostsPos;
 
     int minX = SCREEN_BOUNDARIES::MIN_X, maxX = SCREEN_BOUNDARIES::MAX_X;
     int minY = SCREEN_BOUNDARIES::MIN_Y, maxY = SCREEN_BOUNDARIES::MAX_Y;
@@ -38,6 +39,7 @@ private:
     void handlePaulina(char& c, int currCol, int currRow, bool& hasPaulina, Point& paulinaPos, bool& isValid, std::string& errorMessages);
     void handleDonkey(char& c, int currCol, int currRow, bool& hasDonkey, Point& donkeyPos, bool& isValid, std::string& errorMessages);
     void handleGhost(char& c, int currCol, int currRow, std::vector<Point>& ghostsPos);
+    void handleClimbingGhost(char& c, int currCol, int currRow, std::vector<Point>& ghostsPos);
     void handleHammer(char& c, int currCol, int currRow, bool& hasHammer, Point& hammerPos, bool& isValid);
     void handleLegend(char& c, int currCol, int currRow, bool& hasLegend, Point& legendPos, bool& isValid, std::string& errorMessages);
     void handleBorderCharacter(char& c, int currCol, int currRow, bool& isBounded, bool& isValid, std::string& errorMessages);
@@ -87,6 +89,9 @@ public:
     }
     const std::vector<Point>& getGhostsPos() const {
         return ghostsPos;
+    }
+    const std::vector<Point>& getClimbingGhostsPos() const {
+        return climbingGhostsPos;
     }
     void deleteHammer() {
         gotoxy(hammerPos.getX(), hammerPos.getY());

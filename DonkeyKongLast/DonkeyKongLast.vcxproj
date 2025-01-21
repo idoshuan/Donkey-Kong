@@ -185,6 +185,7 @@
   <ItemGroup>
     <ClInclude Include="Barrel.h" />
     <ClInclude Include="Board.h" />
+    <ClInclude Include="ClimbingGhost.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameConfig.h" />
     <ClInclude Include="Ghost.h" />
@@ -199,6 +200,7 @@
   <ItemGroup>
     <ClCompile Include="Barrel.cpp" />
     <ClCompile Include="Board.cpp" />
+    <ClCompile Include="ClimbingGhost.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Ghost.cpp" />
     <ClCompile Include="Hammer.cpp" />

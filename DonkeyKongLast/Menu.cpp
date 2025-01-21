@@ -82,7 +82,7 @@ int Menu::getBoardChoice(std::vector<std::string>& fileNames) {
 			page > 0 ? --page : refreshDisplay = false;
 		}
 		else if (choice == KEYS::ESC) {
-			return -1;
+			return ESCAPE;
 		}
 		else {
 			printUnknownKeyMessage();

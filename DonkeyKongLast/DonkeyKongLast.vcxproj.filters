@@ -51,6 +51,9 @@
     <ClInclude Include="Hammer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ClimbingGhost.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Board.cpp">
@@ -84,6 +87,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Hammer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ClimbingGhost.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

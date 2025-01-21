@@ -75,8 +75,11 @@ bool Board::load(const std::string& filename, std::string* errors) {
 			if (c == ENTITIES_CHARACTERS::MARIO) {
 				handleMario(c, currCol, currRow, hasMario, marioPos, isValid, errorMessages);
 			}
-			else if (std::tolower(c) == ENTITIES_CHARACTERS::GHOST) {
+			else if (c == ENTITIES_CHARACTERS::GHOST) {
 				handleGhost(c, currCol, currRow, ghostsPos);
+			}
+			else if (c == ENTITIES_CHARACTERS::CLIMBING_GHOST) {
+				handleClimbingGhost(c, currCol, currRow, climbingGhostsPos);
 			}
 			else if (c == ENTITIES_CHARACTERS::PAULINA) {
 				handlePaulina(c, currCol, currRow, hasPaulina, paulinaPos, isValid, errorMessages);
@@ -219,6 +222,11 @@ void Board::handleDonkey(char& c, int currCol, int currRow, bool& hasDonkey, Poi
 
 void Board::handleGhost(char& c, int currCol, int currRow, std::vector<Point>& ghostsPos) {
 	ghostsPos.push_back({ currCol, currRow });
+	c = ' ';
+}
+
+void Board::handleClimbingGhost(char& c, int currCol, int currRow, std::vector<Point>& ghostsPos) {
+	climbingGhostsPos.push_back({ currCol, currRow });
 	c = ' ';
 }
 
