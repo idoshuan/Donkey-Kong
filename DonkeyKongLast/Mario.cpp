@@ -75,12 +75,12 @@ void Mario::handleDown() {
 		setDir(Entity::DOWN);
 		isClimbingUp = false;
 
-		if (getBoard()->isLadder(Point(getX(), getY() + 2)) && isOnFloor()) {
-			this->erase();
-			setY(getY() + 1);
-		}
-		isClimbingDown = true;
-	}
+        if (getBoard()->isLadder(Point(getX(), getY() + 2)) && isOnFloor()) {
+            this->erase();
+            setY(getY() + 1);
+        }
+        isClimbingDown = true;
+    }
 }
 
 /**

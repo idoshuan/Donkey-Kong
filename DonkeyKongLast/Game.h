@@ -5,6 +5,7 @@
 #include "Entity.h"
 #include "Barrel.h"
 #include "Ghost.h"
+#include "ClimbingGhost.h"
 #include "Menu.h"
 #include "Screen.h"
 #include "GameConfig.h"
@@ -94,6 +95,7 @@ private:
     std::optional<Hammer> hammer;
     std::vector<Barrel> barrels;
     std::vector<Ghost> ghosts;
+    std::vector<ClimbingGhost> climbingGhosts;
 
     Point leftBarrelPos;
     Point rightBarrelPos;

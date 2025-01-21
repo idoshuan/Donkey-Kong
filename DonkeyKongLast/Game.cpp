@@ -207,6 +207,13 @@ bool Game::checkMarioDeathFromGhost() {
 			}
 		}
 	}
+	for (auto& ghost : climbingGhosts) {
+		if (ghost.isCurrentlyActive()) {
+			if (isDirectCollision(ghost) || isMissedCollision(ghost)) {
+				return true;
+			}
+		}
+	}
 	return false;
 }
 
@@ -364,6 +371,13 @@ void Game::checkKill() {
 			}
 		}
 		for (auto& ghost : ghosts) {
+			if (ghost.isCurrentlyActive() && (ghost.getPos() == hammer->getPos() || ghost.getNextPos() == hammer->getPos())) {
+				ghost.deactivate();
+				score += ghostKillPoints;
+				scoreAnimation(ghostKillPointsString);
+			}
+		}
+		for (auto& ghost : climbingGhosts) {
 			if (ghost.isCurrentlyActive() && (ghost.getPos() == hammer->getPos() || ghost.getNextPos() == hammer->getPos())) {
 				ghost.deactivate();
 				score += ghostKillPoints;
@@ -531,6 +545,11 @@ void Game::moveCharacters() {
 			ghost.move();
 		}
 	}
+	for (auto& ghost : climbingGhosts) {
+		if (ghost.isCurrentlyActive()) {
+			ghost.move();
+		}
+	}
 }
 
 /**
@@ -551,6 +570,11 @@ void Game::drawCharacters() {
 			ghost.draw();
 		}
 	}
+	for (auto& ghost : climbingGhosts) {
+		if (ghost.isCurrentlyActive()) {
+			ghost.draw();
+		}
+	}
 }
 
 /**
@@ -565,6 +589,9 @@ void Game::eraseCharacters() {
 		barrel.erase();
 	}
 	for (auto& ghost : ghosts) {
+		ghost.erase();
+	}
+	for (auto& ghost : climbingGhosts) {
 		ghost.erase();
 	}
 }
@@ -607,6 +634,10 @@ void Game::resetStage() {
 		ghosts[i].setPos(board.getGhostsPos()[i]);
 		ghosts[i].activate();
 	}
+	for (int i = 0; i < climbingGhosts.size(); i++) {
+		climbingGhosts[i].setPos(board.getGhostsPos()[i]);
+		climbingGhosts[i].activate();
+	}
 	mario = Mario(board);
 	firstBarrelSpawned = false;
 	gameStartTime = clock::now();
@@ -633,11 +664,15 @@ void Game::startNewStage() {
 	}
 	gameStartTime = clock::now();
 	ghosts.clear();
+	climbingGhosts.clear();
 	barrels.clear();
 
 	mario = Mario(board);
 	for (const auto& ghostPos : board.getGhostsPos()) {
 		ghosts.emplace_back(ghostPos, board);
+	}
+	for (const auto& ghostPos : board.getClimbingGhostsPos()) {
+		climbingGhosts.emplace_back(ghostPos, board);
 	}
 
 	auto donkeyPos = board.getDonkeyKongPos();
