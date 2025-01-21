@@ -15,5 +15,6 @@ public:
 
 	// ------------------- Action Functions -------------------
 	void move() override;
-	
+	void startClimbingUp();
+	void startClimbingDown();
 };

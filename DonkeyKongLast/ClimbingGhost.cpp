@@ -40,3 +40,5 @@ void ClimbingGhost::move() {
 	inCollision = false;
 }
 
+
+
