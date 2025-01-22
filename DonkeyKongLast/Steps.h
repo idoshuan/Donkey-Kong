@@ -14,7 +14,7 @@ class Steps {
 	long randomSeed = 0;
 	std::list<Step> steps; // pair: iteration, entity ,step
 public:
-	//static Steps loadSteps(const std::string& filename);
+	static Steps loadSteps(const std::string& filename);
 	void saveSteps(const std::string& filename) const;
 	long getRandomSeed() const {
 		return randomSeed;

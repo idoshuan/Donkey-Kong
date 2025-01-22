@@ -737,6 +737,7 @@ bool Game::tryLoadNextValidBoard() {
 		}
 		else {
 			iteration = 0;
+
 			long random_seed;
 
 			std::string filename_prefix = fileNames[currLevel].substr(0, fileNames[currLevel].find_last_of('.'));
