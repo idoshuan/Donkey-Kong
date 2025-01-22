@@ -45,7 +45,7 @@ private:
     // ------------------- Constants -------------------
     // Game logic constants
     static constexpr int keyPressIterations = 5;
-    static constexpr int gameLoopSleep = 12;
+    static constexpr int gameLoopSleep = 13;
 
 
     // Mario-related constants
@@ -54,7 +54,6 @@ private:
     static constexpr int blinkIterations = 6;
     
     // Barrel-related constants
-    static constexpr int maxBarrels = 20;
     static constexpr int barrelSpawnInterval = 4000;
     static constexpr int barrelInitialSpawnDelay = 3000;
     static constexpr int barrelMaxFallHeight = 8;

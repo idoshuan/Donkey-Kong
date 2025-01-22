@@ -108,7 +108,12 @@ public:
 	bool isOnLadder() const {
 		return pBoard->getChar(point) == BOARD_CHARACTERS::LADDER;
 	}
-
+	bool isLadderBelow() const {
+		return pBoard->isLadder(Point(getX(), getY() + 2));
+	}
+	bool isLadderAbove() const {
+		return pBoard->isLadder(Point(getX(), getY() - 1));
+	}
 	bool isNextPositionValid() const {
 		return pBoard->isValidPosition(Point(getX() + dir.x, getY() + dir.y));
 	}

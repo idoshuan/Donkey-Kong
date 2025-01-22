@@ -27,15 +27,13 @@ public:
 
 	// ------------------- Action Functions -------------------
 	virtual void move() = 0;
+	virtual void collision() = 0;
+
 	void deactivate() {
 		isActive = false;
 	}
 	void activate() {
 		isActive = true;
-	}
-	void collision() {
-		turnAround();
-		inCollision = true;
 	}
 
 	

@@ -16,5 +16,8 @@ public:
 
 	// ------------------- Action Functions -------------------
 	void move() override;
-	
+	void collision() override{
+		turnAround();
+		inCollision = true;
+	}
 };

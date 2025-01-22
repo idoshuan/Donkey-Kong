@@ -322,15 +322,16 @@ bool Game::hasBarrelExploded(Barrel& barrel) const {
 void Game::checkGhostWithGhostCollisions() {
 	for (int i = 0; i < ghostContainer.size(); i++) {
 		for (int j = i + 1; j < ghostContainer.size(); j++) {
-			if (ghostContainer[i]->getY() == ghostContainer[j]->getY()) {
-				int nextX_i = ghostContainer[i]->getX() + ghostContainer[i]->getDirX();
-				int nextX_j = ghostContainer[j]->getX() + ghostContainer[j]->getDirX();
+			
+			bool isAtSamePositionOrNext = (ghostContainer[i]->getNextPos() == ghostContainer[j]->getPos()) ||
+				(ghostContainer[i]->getNextPos() == ghostContainer[j]->getNextPos());
 
-				// Check if they will collide in the next step
-				if ((nextX_i == ghostContainer[j]->getX() || nextX_i == nextX_j) && (ghostContainer[i]->getDirX() != ghostContainer[j]->getDirX())) {
-					ghostContainer[i]->collision();
-					ghostContainer[j]->collision();
-				}
+			bool areDirectionsDifferent = (ghostContainer[i]->getDirX() != ghostContainer[j]->getDirX()) &&
+				(ghostContainer[i]->getDirY() != ghostContainer[j]->getDirY());
+
+			if (isAtSamePositionOrNext && areDirectionsDifferent) {
+				ghostContainer[i]->collision();
+				ghostContainer[j]->collision();
 			}
 		}
 	}

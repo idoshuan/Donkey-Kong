@@ -1,5 +1,6 @@
 #pragma once
 #include "GhostBase.h"
+#include "Point.h"
 
 class ClimbingGhost : public GhostBase {
 	// ------------------- State Variables -------------------
@@ -15,6 +16,12 @@ public:
 
 	// ------------------- Action Functions -------------------
 	void move() override;
+	bool shouldTurnAround();
+	bool canStartClimbingUp();
 	void startClimbingUp();
+	void stopClimbingUp();
+	bool shouldStartClimbingDown();
 	void startClimbingDown();
+	bool finishedClimbing();
+	void changeDirectionRandomly();
 };
