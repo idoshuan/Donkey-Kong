@@ -30,7 +30,7 @@
  */
 
  // ------------------- Enums -------------------
-enum class GameState {
+enum class FileGameState {
     MENU,
     START,
     PLAYING,
@@ -41,7 +41,7 @@ enum class GameState {
 };
 
 // ------------------- Class Declaration -------------------
-class Game {
+class GameFromFile {
 private:
     // ------------------- Constants -------------------
     // Game logic constants
@@ -87,10 +87,9 @@ private:
 
     // ------------------- Game State Variables -------------------
     bool isRunning = true;
-    GameState gameState = GameState::MENU;
+    FileGameState gameState = FileGameState::START;
     std::vector<std::string> fileNames;
     Screen screen;
-    Menu menu;
     Board board;
     Mario mario;
     std::optional<Hammer> hammer;
@@ -100,7 +99,7 @@ private:
     Point rightBarrelPos;
 
     Steps steps;
-    std::string stepsFilename;
+    std::vector<std::string> stepsFileNames;
     size_t iteration = 0; // we need iteration to be outside the loop
 
     int currLevel = 0;
@@ -120,8 +119,7 @@ private:
     void updateGameLogic();
 
     // Input Handling
-    void checkForKeyPress();
-    void handleMenuState(MenuAction action);
+    void checkForKeyPress(size_t iteration);
 
     // Mario
     bool checkMarioDeath();
@@ -166,16 +164,9 @@ private:
     void handleGameWin();
     void handleGameOver();
 
-    // Pause
-    void handlePause();
-    void displayPauseScreen();
-    void clearMessageInsideBorders();
-    void clearEntirePauseScreen();
-    void displayCountdown();
-
     // File Management
     void getBoardFileNames(std::vector<std::string>& fileNames);
-    bool tryLoadNextValidBoard();
+    void LoadNextBoard();
 
     // Animation
     void marioBlinkAnimation();
@@ -183,7 +174,7 @@ private:
     void scoreAnimation(const std::string& points);
 
 public:
-    Game() {
+    GameFromFile() {
         startGame();
     }
 };

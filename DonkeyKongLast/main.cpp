@@ -1,5 +1,7 @@
 ﻿#include "Game.h"
+#include "GameFromFile.h"
 
 int main() {
-	Game();
+	GameFromFile();
 }
+

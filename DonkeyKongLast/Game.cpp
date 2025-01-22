@@ -40,6 +40,7 @@ void Game::handleGameState() {
 		handlePause();
 		break;
 	case GameState::LEVEL_WON:
+		steps.saveSteps(stepsFilename);
 		if (currLevel == fileNames.size()) {
 			gameState = GameState::WON;
 		}
@@ -736,23 +737,19 @@ bool Game::tryLoadNextValidBoard() {
 			currLevel++;
 		}
 		else {
-			iteration = 0;
-
-			long random_seed;
-
 			std::string filename_prefix = fileNames[currLevel].substr(0, fileNames[currLevel].find_last_of('.'));
 			stepsFilename = filename_prefix + ".steps";
 
-			random_seed = static_cast<long>(std::chrono::system_clock::now().time_since_epoch().count());
+			long random_seed = static_cast<long>(std::chrono::system_clock::now().time_since_epoch().count());
+			steps.clearSteps();
 			steps.setRandomSeed(random_seed);
-
 			srand(random_seed);
 
+			iteration = 0;
 			currLevel++;
 			return true;
 		}
 	}
-
 
 	board.clearScreen();
 	return false;
