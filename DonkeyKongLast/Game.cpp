@@ -327,7 +327,7 @@ void Game::checkGhostWithGhostCollisions() {
 				(ghostContainer[i]->getNextPos() == ghostContainer[j]->getNextPos());
 
 			bool areDirectionsDifferent = (ghostContainer[i]->getDirX() != ghostContainer[j]->getDirX()) &&
-				(ghostContainer[i]->getDirY() != ghostContainer[j]->getDirY());
+				(ghostContainer[i]->getDirY() == -ghostContainer[j]->getDirY());
 
 			if (isAtSamePositionOrNext && areDirectionsDifferent) {
 				ghostContainer[i]->collision();

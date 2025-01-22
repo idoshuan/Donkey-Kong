@@ -16,6 +16,7 @@ public:
 
 	// ------------------- Action Functions -------------------
 	void move() override;
+	void collision() override;
 	bool shouldTurnAround();
 	bool canStartClimbingUp();
 	void startClimbingUp();
