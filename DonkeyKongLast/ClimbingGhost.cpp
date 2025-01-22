@@ -55,9 +55,11 @@ bool ClimbingGhost::canStartClimbingUp() {
 }
 
 void ClimbingGhost::startClimbingUp() {
-	setDirY(Y_UP);
-	setDirX(X_NONE);
-	isClimbingUp = true;
+	if (getRandomDouble() >= 0.5) {
+		setDirY(Y_UP);
+		setDirX(X_NONE);
+		isClimbingUp = true;
+	}
 }
 
 void ClimbingGhost::stopClimbingUp() {
@@ -71,10 +73,12 @@ bool ClimbingGhost::shouldStartClimbingDown() {
 }
 
 void ClimbingGhost::startClimbingDown() {
-	setY(getY() + 1);
-	setDirY(Y_DOWN);
-	setDirX(X_NONE);
-	isClimbingDown = true;
+	if (getRandomDouble() >= 0.5) {
+		setY(getY() + 1);
+		setDirY(Y_DOWN);
+		setDirX(X_NONE);
+		isClimbingDown = true;
+	}
 }
 
 bool ClimbingGhost::finishedClimbing() {

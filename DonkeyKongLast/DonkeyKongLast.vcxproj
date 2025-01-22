@@ -196,6 +196,7 @@
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Point.h" />
     <ClInclude Include="Screen.h" />
+    <ClInclude Include="Steps.h" />
     <ClInclude Include="Utils.h" />
   </ItemGroup>
   <ItemGroup>
@@ -211,6 +212,7 @@
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Screen.cpp" />
+    <ClCompile Include="Steps.cpp" />
     <ClCompile Include="Utils.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

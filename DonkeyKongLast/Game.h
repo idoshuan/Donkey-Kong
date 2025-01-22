@@ -11,6 +11,7 @@
 #include "Screen.h"
 #include "GameConfig.h"
 #include "Hammer.h"
+#include "Steps.h"
 
 #include <iostream>
 #include <windows.h>
@@ -97,6 +98,10 @@ private:
     std::vector<std::unique_ptr<GhostBase>> ghostContainer;
     Point leftBarrelPos;
     Point rightBarrelPos;
+
+    Steps steps;
+    std::string stepsFilename;
+    size_t iteration = 0; // we need iteration to be outside the loop
 
     int currLevel = 0;
     int score = 0;

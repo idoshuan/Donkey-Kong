@@ -54,6 +54,12 @@
     <ClInclude Include="ClimbingGhost.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GhostBase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Steps.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Board.cpp">
@@ -90,6 +96,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ClimbingGhost.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GhostBase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Steps.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

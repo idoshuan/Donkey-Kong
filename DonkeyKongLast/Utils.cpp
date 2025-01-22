@@ -27,16 +27,12 @@ void ShowConsoleCursor(bool showFlag) {
 }
 
 /**
- * @brief Generate random double between min and max
- * @param min default to 0.0
- * @param max default to 1.0
+ * @brief Generate random double between 0 and 1
  * Note: Created with the help of ChatGPT.
  */
-double getRandomDouble(double min, double max) {
-    static std::random_device rd;
-    static std::mt19937 gen(rd());
-    std::uniform_real_distribution<> dis(min, max);
-    return dis(gen);
+double getRandomDouble() {
+    return static_cast<double>(rand()) / static_cast<double>(RAND_MAX);
 }
+
 
 

@@ -16,7 +16,7 @@
 void gotoxy(int x, int y);
 void ShowConsoleCursor(bool showFlag);
 
-double getRandomDouble(double min = 0.0, double max = 1.0);
+double getRandomDouble();
 
 inline void clearScreen() {
     system("cls");

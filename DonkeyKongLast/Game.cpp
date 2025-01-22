@@ -29,7 +29,7 @@ void Game::handleGameState() {
 		startNewStage();
 		break;
 	case GameState::PLAYING:
-		if (lives > 0) {
+		if (lives > 2) {
 			updateGameLogic();
 		}
 		else {
@@ -49,6 +49,7 @@ void Game::handleGameState() {
 		}
 		break;
 	case GameState::GAME_OVER:
+		steps.saveSteps(stepsFilename);
 		handleGameOver();
 		break;
 	case GameState::WON:
@@ -65,6 +66,7 @@ void Game::handleGameState() {
  * Handles input, updates Mario and barrels, and checks for game-ending conditions.
  */
 void Game::updateGameLogic() {
+	iteration++;
 	checkHammerPickUp();
 	drawCharacters();
 	checkForKeyPress();
@@ -101,6 +103,9 @@ void Game::updateGameLogic() {
  * Processes ESC to pause the game or sends key input to Mario.
  */
 void Game::checkForKeyPress() {
+	bool marioKeyPressed = false;
+	bool hammerKeyPressed = false;
+
 	for (int i = 0; i < keyPressIterations; i++) {
 		Sleep(gameLoopSleep);
 		if (_kbhit()) {
@@ -110,10 +115,14 @@ void Game::checkForKeyPress() {
 					gameState = GameState::PAUSED;
 					return;
 				}
-				else if (key != KEYS::HAMMER) {
+				else if (key != KEYS::HAMMER && !marioKeyPressed) {
+					marioKeyPressed = true;
+					steps.addStep({ iteration,ENTITIES_CHARACTERS::MARIO,key });
 					mario.keyPressed(key);
 				}
-				else if (hammer && key == KEYS::HAMMER) {
+				else if (hammer && key == KEYS::HAMMER && !hammerKeyPressed) {
+					hammerKeyPressed = true;
+					steps.addStep({ iteration,ENTITIES_CHARACTERS::HAMMER,key });
 					hammer->swing();
 				}
 			}
@@ -322,7 +331,7 @@ bool Game::hasBarrelExploded(Barrel& barrel) const {
 void Game::checkGhostWithGhostCollisions() {
 	for (int i = 0; i < ghostContainer.size(); i++) {
 		for (int j = i + 1; j < ghostContainer.size(); j++) {
-			
+
 			bool isAtSamePositionOrNext = (ghostContainer[i]->getNextPos() == ghostContainer[j]->getPos()) ||
 				(ghostContainer[i]->getNextPos() == ghostContainer[j]->getNextPos());
 
@@ -625,6 +634,7 @@ void Game::resetStage() {
  * Initializes Mario, ghosts, barrels, and updates the game display.
  */
 void Game::startNewStage() {
+
 	if (!tryLoadNextValidBoard()) {
 		std::cout << "No additional valid board found, returning to menu";
 		Sleep(2000);
@@ -726,10 +736,22 @@ bool Game::tryLoadNextValidBoard() {
 			currLevel++;
 		}
 		else {
+			iteration = 0;
+			long random_seed;
+
+			std::string filename_prefix = fileNames[currLevel].substr(0, fileNames[currLevel].find_last_of('.'));
+			stepsFilename = filename_prefix + ".steps";
+
+			random_seed = static_cast<long>(std::chrono::system_clock::now().time_since_epoch().count());
+			steps.setRandomSeed(random_seed);
+
+			srand(random_seed);
+
 			currLevel++;
 			return true;
 		}
 	}
+
 
 	board.clearScreen();
 	return false;
