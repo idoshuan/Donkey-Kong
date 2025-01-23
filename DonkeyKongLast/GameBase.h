@@ -29,48 +29,34 @@
  * through different game states.
  */
 
- // ------------------- Enums -------------------
-enum class GameState {
-    MENU,
-    START,
-    PLAYING,
-    PAUSED,
-    LEVEL_WON,
-    GAME_OVER,
-    WON
-};
+
 
 // ------------------- Class Declaration -------------------
-class Game {
-private:
-    // ------------------- Constants -------------------
-    // Game logic constants
-    static constexpr int keyPressIterations = 5;
-    static constexpr int gameLoopSleep = 12;
+class GameBase {
+protected:
+    // ------------------- Enums -------------------
+    enum class GameState {
+        MENU,
+        START,
+        PLAYING,
+        PAUSED,
+        LEVEL_WON,
+        GAME_OVER,
+        WON
+    };
 
+    // ------------------- Constants -------------------
 
     // Mario-related constants
     static constexpr int marioMaxFallHeight = 5;
     static constexpr int initLives = 3;
     static constexpr int blinkIterations = 6;
-    
+
     // Barrel-related constants
     static constexpr int barrelSpawnInterval = 4000;
     static constexpr int barrelInitialSpawnDelay = 3000;
     static constexpr int barrelMaxFallHeight = 8;
     static constexpr int barrelExplosionRadius = 2;
-
-    // Pause screen constants
-    static constexpr int pauseMessageX = 26;
-    static constexpr int pauseMessageY = 12;
-    static constexpr int pauseMessageWidth = 28;
-    static constexpr int pauseMessageHeight = 5;
-    static constexpr int pauseMessageTitleOffset = 8;
-    static constexpr int pauseMessageContinueOffset = 1;
-
-    // Countdown screen constants
-    static constexpr int countdownMessageTitleOffset = 6;
-    static constexpr int countdownMessageCounterOffset = 12;
 
     // Animation constants
     static constexpr int stageFinishPoints = 100;
@@ -88,10 +74,10 @@ private:
     // ------------------- Game State Variables -------------------
     bool isRunning = true;
 
-    GameState gameState = GameState::MENU;
-    std::vector<std::string> fileNames;
+    GameState gameState;
     Screen screen;
     Menu menu;
+    std::vector<std::string> fileNames;
 
     Board board;
     Mario mario;
@@ -102,13 +88,11 @@ private:
     Point rightBarrelPos;
 
     Steps steps;
-    std::string stepsFilename;
-    size_t iteration = 0; // we need iteration to be outside the loop
+    size_t iteration = 0; 
 
     int currLevel = 0;
     int score = 0;
     int lives = initLives;
-    bool isAlreadyPaused = false;
     bool firstBarrelSpawned = false;
 
     time lastBarrelTime;
@@ -118,12 +102,11 @@ private:
 
     // Game Loop
     void startGame();
-    void handleGameState();
+    virtual void handleGameState() = 0;
     void updateGameLogic();
 
     // Input Handling
-    void checkForKeyPress();
-    void handleMenuState(MenuAction action);
+    virtual void checkForKeyPress() = 0;
 
     // Mario
     bool checkMarioDeath();
@@ -164,28 +147,16 @@ private:
 
     // Stage 
     void resetStage();
-    void startNewStage();
+    virtual void startNewStage() = 0;
     void handleGameWin();
     void handleGameOver();
 
-    // Pause
-    void handlePause();
-    void displayPauseScreen();
-    void clearMessageInsideBorders();
-    void clearEntirePauseScreen();
-    void displayCountdown();
-
     // File Management
-    void getBoardFileNames(std::vector<std::string>& fileNames);
-    bool tryLoadNextValidBoard();
+    virtual void getBoardFileNames() = 0;
 
     // Animation
     void marioBlinkAnimation();
     void hammerHitAnimation();
     void scoreAnimation(const std::string& points);
 
-public:
-    Game() {
-        startGame();
-    }
 };

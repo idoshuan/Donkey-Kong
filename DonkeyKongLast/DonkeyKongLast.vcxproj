@@ -186,9 +186,10 @@
     <ClInclude Include="Barrel.h" />
     <ClInclude Include="Board.h" />
     <ClInclude Include="ClimbingGhost.h" />
-    <ClInclude Include="Game.h" />
+    <ClInclude Include="GameBase.h" />
     <ClInclude Include="GameConfig.h" />
     <ClInclude Include="GameFromFile.h" />
+    <ClInclude Include="GameFromInput.h" />
     <ClInclude Include="Ghost.h" />
     <ClInclude Include="GhostBase.h" />
     <ClInclude Include="Hammer.h" />
@@ -204,8 +205,9 @@
     <ClCompile Include="Barrel.cpp" />
     <ClCompile Include="Board.cpp" />
     <ClCompile Include="ClimbingGhost.cpp" />
-    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GameBase.cpp" />
     <ClCompile Include="GameFromFile.cpp" />
+    <ClCompile Include="GameFromInput.cpp" />
     <ClCompile Include="Ghost.cpp" />
     <ClCompile Include="GhostBase.cpp" />
     <ClCompile Include="Hammer.cpp" />
