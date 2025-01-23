@@ -107,7 +107,6 @@ void GameFromInput::startNewStage() {
 	if (hammer) {
 		hammer.reset();
 	}
-	gameStartTime = clock::now();
 	ghostContainer.clear();
 	barrels.clear();
 

@@ -16,7 +16,6 @@
 #include <iostream>
 #include <windows.h>
 #include <conio.h>
-#include <chrono>
 #include <thread>
 #include <vector>
 #include <filesystem>
@@ -54,7 +53,6 @@ protected:
 
     // Barrel-related constants
     static constexpr int barrelSpawnInterval = 4000;
-    static constexpr int barrelInitialSpawnDelay = 3000;
     static constexpr int barrelMaxFallHeight = 8;
     static constexpr int barrelExplosionRadius = 2;
 
@@ -65,11 +63,6 @@ protected:
     const std::string ghostKillPointsString = "+20";
     static constexpr int barrelKillPoints = 15;
     const std::string barrelKillPointsString = "+15";
-
-    // Typedefs for time-related operations
-    using clock = std::chrono::steady_clock;
-    using milliseconds = std::chrono::milliseconds;
-    using time = std::chrono::time_point<clock>;
 
     // ------------------- Game State Variables -------------------
     bool isRunning = true;
@@ -93,10 +86,6 @@ protected:
     int currLevel = 0;
     int score = 0;
     int lives = initLives;
-    bool firstBarrelSpawned = false;
-
-    time lastBarrelTime;
-    time gameStartTime;
 
     // ------------------- Private Functions -------------------
 
@@ -118,8 +107,6 @@ protected:
     // Barrel
     void trySpawnBarrel();
     void spawnBarrel();
-    bool shouldSpawnFirstBarrel(const time& now) const;
-    bool canSpawnBarrel(const time& now) const;
     bool hasBarrelExploded(Barrel& barrel) const;
     bool shouldDeactivateBarrel(Barrel& barrel) const;
     void deactivateBarrels();

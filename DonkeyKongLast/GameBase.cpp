@@ -116,39 +116,9 @@ bool GameBase::checkMarioDeathFromGhost() {
  * Note: The time management logic in these functions was created with the help of ChatGPT.
  */
 void GameBase::trySpawnBarrel() {
-	/*auto now = clock::now();
-
-	if (shouldSpawnFirstBarrel(now)) {
-		firstBarrelSpawned = true;
-	}
-
-	if (canSpawnBarrel(now)) {
-		spawnBarrel();
-		lastBarrelTime = now;
-	}*/
 	if (iteration % 40 == 0) {
 		spawnBarrel();
 	}
-}
-
-/**
- * @brief Determines if the first barrel should be spawned.
- * Compares the elapsed game time to the initial spawn delay.
- */
-bool GameBase::shouldSpawnFirstBarrel(const time& now) const {
-	if (firstBarrelSpawned) return false;
-	auto gameElapsedTime = std::chrono::duration_cast<milliseconds>(now - gameStartTime).count();
-	return gameElapsedTime > barrelInitialSpawnDelay;
-}
-
-/**
- * @brief Checks if additional barrels can be spawned.
- * Ensures conditions like timing and barrel count are met.
- */
-bool GameBase::canSpawnBarrel(const time& now) const {
-	if (!firstBarrelSpawned) return false;
-	auto timeSinceLastBarrelSpawn = std::chrono::duration_cast<milliseconds>(now - lastBarrelTime).count();
-	return timeSinceLastBarrelSpawn >= barrelSpawnInterval;
 }
 
 /**
@@ -424,9 +394,6 @@ void GameBase::resetStage() {
 		ghostContainer.push_back(std::make_unique<ClimbingGhost>(ghostPos, board));
 	}
 	mario = Mario(board);
-	firstBarrelSpawned = false;
-	gameStartTime = clock::now();
-	lastBarrelTime = gameStartTime;
 	displayLives();
 	eatBuffer();
 }
