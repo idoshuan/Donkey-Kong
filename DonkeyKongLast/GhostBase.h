@@ -7,14 +7,13 @@
 
 // ------------------- Class Declaration -------------------
 class GhostBase : public Entity {
-
-	// ------------------- State Variables -------------------
+private:
 	static constexpr double turnProbability = 0.05;
-	bool isActive = true;
 
 protected:
-
+	bool isActive = true;
 	bool inCollision = false;
+	
 	// ------------------- Utility Functions -------------------
 	void setRandDir();
 
@@ -23,6 +22,7 @@ public:
 	GhostBase(ENTITIES_CHARACTERS ch,Point pos, Board& board) : Entity(ch, pos, &board) {
 		setDirX(getRandomDouble() >= 0.5 ? Entity::X_LEFT : Entity::X_RIGHT);
 	}
+	virtual ~GhostBase() {};
 
 
 	// ------------------- Action Functions -------------------
