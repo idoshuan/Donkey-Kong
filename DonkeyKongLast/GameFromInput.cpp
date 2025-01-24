@@ -74,12 +74,12 @@ void GameFromInput::checkForKeyPress() {
 				}
 				else if (key != KEYS::HAMMER && !marioKeyPressed) {
 					marioKeyPressed = true;
-					steps.addStep({ iteration,ENTITIES_CHARACTERS::MARIO,key });
+					steps.addStep({ iteration, key });
 					mario.keyPressed(key);
 				}
 				else if (hammer && key == KEYS::HAMMER && !hammerKeyPressed) {
 					hammerKeyPressed = true;
-					steps.addStep({ iteration,ENTITIES_CHARACTERS::HAMMER,key });
+					steps.addStep({ iteration, key });
 					hammer->swing();
 				}
 			}

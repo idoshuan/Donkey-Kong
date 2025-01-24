@@ -5,12 +5,11 @@
 #include "GameConfig.h"
 struct Step {
 	size_t iteration;
-	ENTITIES_CHARACTERS entity;
 	KEYS key;
 };
 class Steps {
 	long randomSeed = 0;
-	std::list<Step> steps; // pair: iteration, entity ,step
+	std::list<Step> steps; // pair: iteration ,step
 public:
 	static Steps loadSteps(const std::string& filename);
 	void saveSteps(const std::string& filename) const;
@@ -26,10 +25,10 @@ public:
 	bool isNextStepOnIteration(size_t iteration) const {
 		return !steps.empty() && steps.front().iteration == iteration;
 	}
-	Step popStep(size_t iteration) {
+	KEYS popStep(size_t iteration) {
 		Step step = steps.front();
 		steps.pop_front();
-		return step;
+		return step.key;
 	}
 	void clearSteps() {
 		steps.clear();

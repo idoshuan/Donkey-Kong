@@ -45,12 +45,12 @@ void GameFromFile::handleGameState() {
 
 void GameFromFile::checkForKeyPress() {
 	if (steps.isNextStepOnIteration(iteration)) {
-		Step step = steps.popStep(iteration);
-		if (step.entity == ENTITIES_CHARACTERS::MARIO) {
-			mario.keyPressed(step.key);
-		}
-		else if (step.entity == ENTITIES_CHARACTERS::HAMMER) {
+		KEYS key = steps.popStep(iteration);
+		if (key == KEYS::HAMMER) {
 			hammer->swing();
+		}
+		else {
+			mario.keyPressed(key);
 		}
 	}
 	Sleep(30);

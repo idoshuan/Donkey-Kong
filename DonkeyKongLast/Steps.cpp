@@ -7,7 +7,7 @@ void Steps::saveSteps(const std::string& filename) const {
 	std::ofstream steps_file(filename);
 	steps_file << randomSeed << '\n' << steps.size();
 	for (const auto& step : steps) {
-		steps_file << '\n' << step.iteration << ' ' << (char)step.entity << ' ' << (char)step.key;
+		steps_file << '\n' << step.iteration << ' ' << (char)step.key;
 	}
 	steps_file.close();
 }
@@ -20,15 +20,13 @@ Steps Steps::loadSteps(const std::string& filename) {
 	steps_file >> size;
 	while (!steps_file.eof() && size-- != 0) {
 		size_t iteration;
-		char entityChar; 
 		char keyChar; 
 
-		steps_file >> iteration >> entityChar >> keyChar;
+		steps_file >> iteration >> keyChar;
 
-		ENTITIES_CHARACTERS entity = static_cast<ENTITIES_CHARACTERS>(entityChar);
 		KEYS key = static_cast<KEYS>(keyChar);
 
-		steps.addStep({ iteration, entity, key });
+		steps.addStep({ iteration, key });
 	}
 	steps_file.close();
 	return steps;
