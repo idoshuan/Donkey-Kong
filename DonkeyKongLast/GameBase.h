@@ -65,7 +65,11 @@ protected:
 	const std::string barrelKillPointsString = "+15";
 
 	// ------------------- Game State Variables -------------------
+
 	bool isRunning = true;
+	int currLevel = 0;
+	int score = 0;
+	int lives = initLives;
 
 	GameState gameState;
 	Screen screen;
@@ -84,10 +88,7 @@ protected:
 	Steps steps;
 	size_t iteration = 0;
 
-	int currLevel = 0;
-	int score = 0;
-	int lives = initLives;
-
+	
 	// ------------------- Private Functions -------------------
 
 	// Game Loop

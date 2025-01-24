@@ -51,7 +51,8 @@ void GameFromFile::handleGameState() {
 
 /**
  * @brief Updates the game logic during the PLAYING state.
- * Handles input, updates Mario and barrels, and checks for game-ending conditions.
+ * Manages Mario's actions, barrels, ghost movements, and game-ending conditions.
+ * Includes silent mode handling to skip unnecessary animations.
  */
 void GameFromFile::updateGameLogic() {
 	iteration++;
@@ -81,7 +82,10 @@ void GameFromFile::updateGameLogic() {
 		return;
 	}
 }
-
+/**
+*@brief Processes input from the steps file and updates Mario's or Hammer's state accordingly.
+* Includes timing - based pauses for silent and loaded modes.
+*/
 void GameFromFile::checkForKeyPress() {
 	if (steps.isNextStepOnIteration(iteration)) {
 		KEYS key = steps.popStep(iteration);
@@ -92,7 +96,7 @@ void GameFromFile::checkForKeyPress() {
 			mario.keyPressed(key);
 		}
 	}
-	Sleep(isSilent ? 0 : 30);
+	Sleep(isSilent ? sleepForSilent : sleepForLoad);
 }
 
 
@@ -152,7 +156,8 @@ bool GameFromFile::checkMarioWon() {
 
 /**
  * @brief Starts a new stage by loading the next board.
- * Initializes Mario, ghosts, barrels, and updates the game display.
+ * Resets Mario, barrels, and ghost positions, and initializes all necessary objects.
+ * Updates the display in non-silent mode.
  */
 void GameFromFile::startNewStage() {
 	LoadNextBoard();
@@ -187,8 +192,8 @@ void GameFromFile::startNewStage() {
 // ------------------- File Management Functions -------------------
 
 /**
- * @brief Retrieves all valid game board files from the current directory.
- * Filters files starting with "dkong_" and ending with ".screen", then sorts them lexicographically.
+ * @brief Retrieves and sorts all valid game board files from the current directory.
+ * Ensures that each `.screen` file has corresponding `.steps` and `.result` files.
  */
 void GameFromFile::getBoardFileNames() {
 	namespace fs = std::filesystem;
@@ -212,12 +217,20 @@ void GameFromFile::getBoardFileNames() {
 	std::sort(resultsFileNames.begin(), resultsFileNames.end());
 }
 
+/**
+ * @brief Handles the GAME_OVER state by clearing the screen and showing a "Test pass. You lose" message.
+ * Ends the game loop.
+ */
 void GameFromFile::handleGameOver() {
 	clearScreen();
 	std::cout << "Test pass. You lose" << std::endl;
 	isRunning = false;
 }
 
+/**
+ * @brief Handles the WON state by clearing the screen and showing a "Test pass. You Won" message.
+ * Ends the game loop.
+ */
 void GameFromFile::handleGameWin() {
 	clearScreen();
 	std::cout << "Test pass. You Won" << std::endl;
@@ -225,9 +238,11 @@ void GameFromFile::handleGameWin() {
 }
 
 
+
 /**
- * @brief Attempts to load the next valid board from the file list.
- * Skips invalid boards and returns false if no valid boards remain.
+ * @brief Attempts to load the next valid board from the list of files.
+ * Skips invalid boards and sets up the game for the next level.
+ * Initializes random seed based on the steps file.
  */
 void GameFromFile::LoadNextBoard() {
 	std::string stam;
@@ -247,7 +262,8 @@ void GameFromFile::LoadNextBoard() {
 }
 
 /**
- * @brief Displays the current number of lives on the game screen.
+ * @brief Displays the current number of lives on the game screen in the legend area.
+ * Skips this step in silent mode.
  */
 void GameFromFile::displayLives() const{
 	if (!isSilent) {

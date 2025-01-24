@@ -3,6 +3,8 @@
 
 class GameFromInput :public GameBase {
 private:
+    // ------------------- Constants -------------------
+
     // Game logic constants
     static constexpr int keyPressIterations = 5;
     static constexpr int gameLoopSleep = 12;
@@ -18,28 +20,40 @@ private:
     // Countdown screen constants
     static constexpr int countdownMessageTitleOffset = 6;
     static constexpr int countdownMessageCounterOffset = 12;
-    
+
+    // ------------------- Game State Variables -------------------
+
     int prevStagesScore = 0;
     bool isAlreadyPaused = false;
 
     std::string stepsFilename;
     std::string resultsFilename;
 
+    // ------------------- Private Functions -------------------
+
+    // Game Loop
     void handleGameState() override;
     void updateGameLogic() override;
-    void checkForKeyPress() override;
-    void startNewStage() override;
-    void getBoardFileNames() override;
-    void displayLives() const override;
-    void handleGameWin() override;
-    void handleGameOver() override;
 
     // Input Handling
+    void checkForKeyPress() override;
     void handleMenuState(MenuAction action);
 
+    // Mario
     bool checkMarioDeath() override;
     bool checkMarioWon() override;
 
+    // Utility
+    void displayLives() const override;
+
+    // Stage 
+    void startNewStage() override;
+    void handleGameWin() override;
+    void handleGameOver() override;
+
+    // File Management
+    void getBoardFileNames() override;
+    bool tryLoadNextValidBoard();
 
     // Pause
     void handlePause();
@@ -48,8 +62,6 @@ private:
     void clearEntirePauseScreen();
     void displayCountdown();
 
-    // File Management
-    bool tryLoadNextValidBoard();
 
 public:
     GameFromInput() { 
