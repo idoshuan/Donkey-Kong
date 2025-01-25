@@ -6,6 +6,15 @@
 
 
 int main(int argc, const char** argv) {
-	std::cout << "aa";
-    return 0;
-}								
+	bool isLoad = argc > 1 && std::string(argv[1]) == "-load";
+	bool isSilent = isLoad && argc > 2 && std::string(argv[2]) == "-silent";
+	GameBase* game;
+	if (isLoad) {
+		GameFromFile a = GameFromFile(isSilent);
+		game = &a;
+	}
+	else {
+		GameFromInput b = GameFromInput();
+		game = &b;
+	}
+}

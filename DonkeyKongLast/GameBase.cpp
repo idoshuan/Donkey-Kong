@@ -14,55 +14,8 @@ void GameBase::startGame() {
 	}
 }
 
-/**
- * @brief Updates the game logic during the PLAYING state.
- * Handles input, updates Mario and barrels, and checks for game-ending conditions.
- */
-void GameBase::updateGameLogic() {
-	iteration++;
-	checkHammerPickUp();
-	drawCharacters();
-	checkForKeyPress();
-	checkKill();
-	eraseCharacters();
-	trySpawnBarrel();
-	explodeBarrels();
-	checkGhostWithGhostCollisions();
-	deactivateBarrels();
-	moveCharacters();
-	if (checkMarioDeath()) {
-		lives--;
-		marioBlinkAnimation();
-		resetStage();
-		return;
-	}
-	if (checkMarioWon()) {
-		score += stageFinishPoints;
-		scoreAnimation(stageFinishPointsString);
-		marioBlinkAnimation();
-		gameState = GameState::LEVEL_WON;
-		return;
-	}
-}
-
 
 // ------------------- Mario-Related Functions -------------------
-
-/**
- * @brief Checks if Mario has died due to a barrel or falling.
- * Combines checks for barrel collisions and falling beyond the maximum height.
- */
-bool GameBase::checkMarioDeath() {
-	return checkMarioDeathFromBarrel() || checkMarioDeathFromFall() || checkMarioDeathFromGhost();
-}
-
-/**
- * @brief Checks if Mario has reached the goal (Paulina).
- * Compares Mario's position with Paulina's position.
- */
-bool GameBase::checkMarioWon() {
-	return mario.getNextPos() == board.getPaulinaPos() || mario.getPos() == board.getPaulinaPos();
-}
 
 /**
  * @brief Checks if Mario has died from a barrel collision.
@@ -352,17 +305,6 @@ void GameBase::eraseCharacters() {
 	}
 }
 
-/**
- * @brief Displays the current number of lives on the game screen.
- */
-void GameBase::displayLives() const {
-	int displayX = board.getLegendPos().getX();
-	int displayY = board.getLegendPos().getY();
-
-	gotoxy(displayX, displayY);
-	std::cout << "LIVES: " << lives;
-}
-
 void GameBase::displayScore() const {
 	int displayX = board.getLegendPos().getX();
 	int displayY = board.getLegendPos().getY() + 1;
@@ -397,37 +339,6 @@ void GameBase::resetStage() {
 	displayLives();
 	eatBuffer();
 }
-
-
-/**
- * @brief Handles the actions when the player wins the game.
- * Resets the game and displays the "You Win" screen.
- */
-void GameBase::handleGameWin() {
-	currLevel = 0;
-	lives = initLives;
-	resetStage();
-	screen.printWinScreen(score);
-	Sleep(3500); // Pause to allow the player to see the screen
-	gameState = GameState::MENU;
-	eatBuffer();
-}
-
-/**
- * @brief Handles the actions when the player loses the game.
- * Resets the game and displays the "Game Over" screen.
- */
-void GameBase::handleGameOver() {
-	currLevel = 0;
-	score = 0;
-	lives = initLives;
-	screen.printLoseScreen(score);
-	Sleep(3500);
-	gameState = GameState::MENU;
-	eatBuffer();
-}
-
-
 
 
 // ------------------- Animation Functions -------------------

@@ -1,7 +1,7 @@
 #pragma once
 #include "GameBase.h"
 
-class GameFromInput : GameBase {
+class GameFromInput :public GameBase {
 private:
     // Game logic constants
     static constexpr int keyPressIterations = 5;
@@ -18,18 +18,28 @@ private:
     // Countdown screen constants
     static constexpr int countdownMessageTitleOffset = 6;
     static constexpr int countdownMessageCounterOffset = 12;
-
+    
+    int prevStagesScore = 0;
     bool isAlreadyPaused = false;
 
     std::string stepsFilename;
+    std::string resultsFilename;
 
     void handleGameState() override;
+    void updateGameLogic() override;
     void checkForKeyPress() override;
     void startNewStage() override;
     void getBoardFileNames() override;
+    void displayLives() const override;
+    void handleGameWin() override;
+    void handleGameOver() override;
 
     // Input Handling
     void handleMenuState(MenuAction action);
+
+    bool checkMarioDeath() override;
+    bool checkMarioWon() override;
+
 
     // Pause
     void handlePause();

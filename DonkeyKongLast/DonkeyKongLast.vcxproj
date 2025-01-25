@@ -197,6 +197,7 @@
     <ClInclude Include="Menu.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Point.h" />
+    <ClInclude Include="Results.h" />
     <ClInclude Include="Screen.h" />
     <ClInclude Include="Steps.h" />
     <ClInclude Include="Utils.h" />
@@ -215,6 +216,7 @@
     <ClCompile Include="Mario.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="Results.cpp" />
     <ClCompile Include="Screen.cpp" />
     <ClCompile Include="Steps.cpp" />
     <ClCompile Include="Utils.cpp" />

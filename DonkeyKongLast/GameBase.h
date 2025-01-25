@@ -12,7 +12,7 @@
 #include "GameConfig.h"
 #include "Hammer.h"
 #include "Steps.h"
-
+#include "Results.h"
 #include <iostream>
 #include <windows.h>
 #include <conio.h>
@@ -30,120 +30,121 @@
 
 
 
-// ------------------- Class Declaration -------------------
+ // ------------------- Class Declaration -------------------
 class GameBase {
 protected:
-    // ------------------- Enums -------------------
-    enum class GameState {
-        MENU,
-        START,
-        PLAYING,
-        PAUSED,
-        LEVEL_WON,
-        GAME_OVER,
-        WON
-    };
+	// ------------------- Enums -------------------
+	enum class GameState {
+		MENU,
+		START,
+		PLAYING,
+		PAUSED,
+		LEVEL_WON,
+		GAME_OVER,
+		WON
+	};
 
-    // ------------------- Constants -------------------
+	// ------------------- Constants -------------------
 
-    // Mario-related constants
-    static constexpr int marioMaxFallHeight = 5;
-    static constexpr int initLives = 3;
-    static constexpr int blinkIterations = 6;
+	// Mario-related constants
+	static constexpr int marioMaxFallHeight = 5;
+	static constexpr int initLives = 3;
+	static constexpr int blinkIterations = 6;
 
-    // Barrel-related constants
-    static constexpr int barrelSpawnInterval = 4000;
-    static constexpr int barrelMaxFallHeight = 8;
-    static constexpr int barrelExplosionRadius = 2;
+	// Barrel-related constants
+	static constexpr int barrelSpawnInterval = 4000;
+	static constexpr int barrelMaxFallHeight = 8;
+	static constexpr int barrelExplosionRadius = 2;
 
-    // Animation constants
-    static constexpr int stageFinishPoints = 100;
-    const std::string stageFinishPointsString = "+100";
-    static constexpr int ghostKillPoints = 20;
-    const std::string ghostKillPointsString = "+20";
-    static constexpr int barrelKillPoints = 15;
-    const std::string barrelKillPointsString = "+15";
+	// Animation constants
+	static constexpr int stageFinishPoints = 100;
+	const std::string stageFinishPointsString = "+100";
+	static constexpr int ghostKillPoints = 20;
+	const std::string ghostKillPointsString = "+20";
+	static constexpr int barrelKillPoints = 15;
+	const std::string barrelKillPointsString = "+15";
 
-    // ------------------- Game State Variables -------------------
-    bool isRunning = true;
+	// ------------------- Game State Variables -------------------
+	bool isRunning = true;
 
-    GameState gameState;
-    Screen screen;
-    Menu menu;
-    std::vector<std::string> fileNames;
+	GameState gameState;
+	Screen screen;
+	Menu menu;
+	std::vector<std::string> fileNames;
 
-    Board board;
-    Mario mario;
-    std::optional<Hammer> hammer;
-    std::vector<Barrel> barrels;
-    std::vector<std::unique_ptr<GhostBase>> ghostContainer;
-    Point leftBarrelPos;
-    Point rightBarrelPos;
+	Board board;
+	Mario mario;
+	std::optional<Hammer> hammer;
+	std::vector<Barrel> barrels;
+	std::vector<std::unique_ptr<GhostBase>> ghostContainer;
+	Point leftBarrelPos;
+	Point rightBarrelPos;
 
-    Steps steps;
-    size_t iteration = 0; 
+	Results results;
+	Steps steps;
+	size_t iteration = 0;
 
-    int currLevel = 0;
-    int score = 0;
-    int lives = initLives;
+	int currLevel = 0;
+	int score = 0;
+	int lives = initLives;
 
-    // ------------------- Private Functions -------------------
+	// ------------------- Private Functions -------------------
 
-    // Game Loop
-    void startGame();
-    virtual void handleGameState() = 0;
-    void updateGameLogic();
+	// Game Loop
+	void startGame();
+	virtual void handleGameState() = 0;
+	virtual void updateGameLogic() = 0;
 
-    // Input Handling
-    virtual void checkForKeyPress() = 0;
+	// Input Handling
+	virtual void checkForKeyPress() = 0;
 
-    // Mario
-    bool checkMarioDeath();
-    bool checkMarioWon();
-    bool checkMarioDeathFromBarrel();
-    bool checkMarioDeathFromFall();
-    bool checkMarioDeathFromGhost();
+	// Mario
+	virtual bool checkMarioDeath() = 0;
+	virtual bool checkMarioWon() = 0;
+	bool checkMarioDeathFromBarrel();
+	bool checkMarioDeathFromFall();
+	bool checkMarioDeathFromGhost();
 
-    // Barrel
-    void trySpawnBarrel();
-    void spawnBarrel();
-    bool hasBarrelExploded(Barrel& barrel) const;
-    bool shouldDeactivateBarrel(Barrel& barrel) const;
-    void deactivateBarrels();
-    void explodeBarrels();
+	// Barrel
+	void trySpawnBarrel();
+	void spawnBarrel();
+	bool hasBarrelExploded(Barrel& barrel) const;
+	bool shouldDeactivateBarrel(Barrel& barrel) const;
+	void deactivateBarrels();
+	void explodeBarrels();
 
-    // Ghost
-    void checkGhostWithGhostCollisions();
+	// Ghost
+	void checkGhostWithGhostCollisions();
 
-    // Hammer
-    void checkHammerPickUp();
-    void checkKill();
+	// Hammer
+	void checkHammerPickUp();
+	void checkKill();
 
-    // Collision
-    bool isDirectCollision(const Entity& entity) const;
-    bool isMissedCollision(const Entity& entity) const;
-    bool isExplosionFatal(const Barrel& barrel) const;
-    bool isInExplosionRadius(const Barrel& barrel) const;
+	// Collision
+	bool isDirectCollision(const Entity& entity) const;
+	bool isMissedCollision(const Entity& entity) const;
+	bool isExplosionFatal(const Barrel& barrel) const;
+	bool isInExplosionRadius(const Barrel& barrel) const;
 
-    // Utility
-    void eraseCharacters();
-    void moveCharacters();
-    void drawCharacters();
-    void displayLives() const;
-    void displayScore() const;
+	// Utility
+	virtual void displayLives() const = 0;
+	void eraseCharacters();
+	void moveCharacters();
+	void drawCharacters();
+	void displayScore() const;
 
-    // Stage 
-    void resetStage();
-    virtual void startNewStage() = 0;
-    void handleGameWin();
-    void handleGameOver();
+	// Stage 
+	virtual void handleGameWin() = 0;
+	virtual void handleGameOver() = 0;
+	virtual void startNewStage() = 0;
+	void resetStage();
 
-    // File Management
-    virtual void getBoardFileNames() = 0;
+	// File Management
+	virtual void getBoardFileNames() = 0;
 
-    // Animation
-    void marioBlinkAnimation();
-    void hammerHitAnimation();
-    void scoreAnimation(const std::string& points);
+	// Animation
+	void marioBlinkAnimation();
+	void hammerHitAnimation();
+	void scoreAnimation(const std::string& points);
 
 };

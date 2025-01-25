@@ -15,7 +15,14 @@ void GameFromFile::handleGameState() {
 		break;
 	case GameState::PLAYING:
 		if (lives > 2) {
-			updateGameLogic();
+			try {
+				updateGameLogic();
+			}
+			catch (const std::string& e) {
+				clearScreen();
+				std::cout << e << std::endl;
+				isRunning = false;
+			}
 		}
 		else {
 			gameState = GameState::GAME_OVER;
@@ -33,7 +40,7 @@ void GameFromFile::handleGameState() {
 	case GameState::GAME_OVER:
 		handleGameOver();
 		break;
-	case GameState::WON:
+	case GameState::WON:			
 		handleGameWin();
 		break;
 	default:
@@ -42,6 +49,38 @@ void GameFromFile::handleGameState() {
 	}
 }
 
+/**
+ * @brief Updates the game logic during the PLAYING state.
+ * Handles input, updates Mario and barrels, and checks for game-ending conditions.
+ */
+void GameFromFile::updateGameLogic() {
+	iteration++;
+	checkHammerPickUp();
+	if (!isSilent)drawCharacters();
+	checkForKeyPress();
+	checkKill();
+	if (!isSilent)eraseCharacters();
+	trySpawnBarrel();
+	explodeBarrels();
+	checkGhostWithGhostCollisions();
+	deactivateBarrels();
+	moveCharacters();
+	if (checkMarioDeath()) {
+		lives--;
+		if (!isSilent)marioBlinkAnimation();
+		resetStage();
+		return;
+	}
+	if (checkMarioWon()) {
+		score += stageFinishPoints;
+		if (!isSilent) {
+			scoreAnimation(stageFinishPointsString);
+			marioBlinkAnimation();
+		}
+		gameState = GameState::LEVEL_WON;
+		return;
+	}
+}
 
 void GameFromFile::checkForKeyPress() {
 	if (steps.isNextStepOnIteration(iteration)) {
@@ -53,12 +92,61 @@ void GameFromFile::checkForKeyPress() {
 			mario.keyPressed(key);
 		}
 	}
-	Sleep(30);
+	Sleep(isSilent ? 0 : 30);
 }
 
 
 
+/**
+ * @brief Checks if Mario has died due to a barrel or falling.
+ * Combines checks for barrel collisions and falling beyond the maximum height.
+ */
+bool GameFromFile::checkMarioDeath() {
+	if (checkMarioDeathFromBarrel() || checkMarioDeathFromFall() || checkMarioDeathFromGhost()) {
+		if (results.getNextDeathIteration() != iteration) {
+			std::ostringstream error;
+			error << "Error: Mario's death occurred at the wrong iteration. "
+				<< "Expected iteration: " << results.getNextDeathIteration()
+				<< ", but got: " << iteration << ".";
+			throw error.str();
+		}
+		results.popResult();
+		return true;
+	}
+	else if (results.getNextDeathIteration() == iteration) {
+		std::ostringstream error;
+		error << "Error: Mario was expected to die in this iteration ("
+			<< iteration << ") but did not.";
+		throw error.str();
+	}
+	return false;
+}
 
+
+/**
+ * @brief Checks if Mario has reached the goal (Paulina).
+ * Compares Mario's position with Paulina's position.
+ */
+bool GameFromFile::checkMarioWon() {
+	if (mario.getNextPos() == board.getPaulinaPos() || mario.getPos() == board.getPaulinaPos()) {
+		if (results.getFinishedIteration() != iteration) {
+			std::ostringstream error;
+			error << "Error: Mario's finish stage occurred at the wrong iteration. "
+				<< "Expected iteration: " << results.getFinishedIteration()
+				<< ", but got: " << iteration << ".";
+			throw error.str();
+		}
+		results.popResult();
+		return true;
+	}
+	else if (results.getFinishedIteration() == iteration) {
+		std::ostringstream error;
+		error << "Error: Mario was expected to finish the stage in this iteration ("
+			<< iteration << ") but did not.";
+		throw error.str();
+	}
+	return false;
+}
 
 // ------------------- Stage Functions -------------------
 
@@ -86,13 +174,13 @@ void GameFromFile::startNewStage() {
 	auto donkeyPos = board.getDonkeyKongPos();
 	leftBarrelPos = { donkeyPos.getX() - 1, donkeyPos.getY() };
 	rightBarrelPos = { donkeyPos.getX() + 1, donkeyPos.getY() };
-
 	board.reset();
-	board.print();
-	displayLives();
-	displayScore();
+	if (!isSilent) {
+		board.print();
+		displayScore();
+		displayLives();
+	}
 }
-
 
 
 
@@ -109,16 +197,33 @@ void GameFromFile::getBoardFileNames() {
 		auto filenameStr = filename.string();
 		if (filenameStr.substr(0, 6) == "dkong_" && filename.extension() == ".screen") {
 			std::string stepsFile = filenameStr.substr(0, filenameStr.find_last_of('.')) + ".steps";
+			std::string resultsFile = filenameStr.substr(0, filenameStr.find_last_of('.')) + ".result";
 
-			if (fs::exists(stepsFile)) {
+			if (fs::exists(stepsFile) && fs::exists(resultsFile)) {
 				fileNames.push_back(filenameStr); // Add the .screen file if .steps exists
 				stepsFileNames.push_back(stepsFile);
+				resultsFileNames.push_back(resultsFile);
 			}
+
 		}
 	}
 	std::sort(fileNames.begin(), fileNames.end());
 	std::sort(stepsFileNames.begin(), stepsFileNames.end());
+	std::sort(resultsFileNames.begin(), resultsFileNames.end());
 }
+
+void GameFromFile::handleGameOver() {
+	clearScreen();
+	std::cout << "Test pass. You lose" << std::endl;
+	isRunning = false;
+}
+
+void GameFromFile::handleGameWin() {
+	clearScreen();
+	std::cout << "Test pass. You Won" << std::endl;
+	isRunning = false;
+}
+
 
 /**
  * @brief Attempts to load the next valid board from the file list.
@@ -128,11 +233,29 @@ void GameFromFile::LoadNextBoard() {
 	std::string stam;
 
 	if (currLevel < fileNames.size()) {
+		board = Board();
 		std::string filename_prefix = fileNames[currLevel].substr(0, fileNames[currLevel].find_last_of('.'));
 		board.load(fileNames[currLevel], &stam);
 		steps = Steps::loadSteps(stepsFileNames[currLevel]);
+		results = Results::loadResults(resultsFileNames[currLevel]);
 		long random_seed = steps.getRandomSeed();
+		srand(random_seed);
+
 		currLevel++;
 		iteration = 0;
 	}
 }
+
+/**
+ * @brief Displays the current number of lives on the game screen.
+ */
+void GameFromFile::displayLives() const{
+	if (!isSilent) {
+		int displayX = board.getLegendPos().getX();
+		int displayY = board.getLegendPos().getY();
+		gotoxy(displayX, displayY);
+		std::cout << "LIVES: " << lives;
+	}
+}
+
+

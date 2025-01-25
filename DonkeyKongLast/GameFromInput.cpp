@@ -28,7 +28,9 @@ void GameFromInput::handleGameState() {
 		handlePause();
 		break;
 	case GameState::LEVEL_WON:
+		results.addResult(iteration, Results::finished);
 		steps.saveSteps(stepsFilename);
+		results.saveResults(resultsFilename, score - prevStagesScore);
 		if (currLevel == fileNames.size()) {
 			gameState = GameState::WON;
 		}
@@ -39,6 +41,7 @@ void GameFromInput::handleGameState() {
 		break;
 	case GameState::GAME_OVER:
 		steps.saveSteps(stepsFilename);
+		results.saveResults(resultsFilename, score - prevStagesScore);
 		handleGameOver();
 		break;
 	case GameState::WON:
@@ -51,6 +54,36 @@ void GameFromInput::handleGameState() {
 }
 
 
+/**
+ * @brief Updates the game logic during the PLAYING state.
+ * Handles input, updates Mario and barrels, and checks for game-ending conditions.
+ */
+void GameFromInput::updateGameLogic() {
+	iteration++;
+	checkHammerPickUp();
+	drawCharacters();
+	checkForKeyPress();
+	checkKill();
+	eraseCharacters();
+	trySpawnBarrel();
+	explodeBarrels();
+	checkGhostWithGhostCollisions();
+	deactivateBarrels();
+	moveCharacters();
+	if (checkMarioDeath()) {
+		lives--;
+		marioBlinkAnimation();
+		resetStage();
+		return;
+	}
+	if (checkMarioWon()) {
+		score += stageFinishPoints;
+		scoreAnimation(stageFinishPointsString);
+		marioBlinkAnimation();
+		gameState = GameState::LEVEL_WON;
+		return;
+	}
+}
 
 
 // ------------------- Input Handling -------------------
@@ -95,7 +128,6 @@ void GameFromInput::checkForKeyPress() {
  * Initializes Mario, ghosts, barrels, and updates the game display.
  */
 void GameFromInput::startNewStage() {
-
 	if (!tryLoadNextValidBoard()) {
 		std::cout << "No additional valid board found, returning to menu";
 		Sleep(2000);
@@ -126,9 +158,16 @@ void GameFromInput::startNewStage() {
 	board.print();
 	displayLives();
 	displayScore();
+	prevStagesScore = score;
 }
 
 
+void GameFromInput::displayLives() const {
+		int displayX = board.getLegendPos().getX();
+		int displayY = board.getLegendPos().getY();
+		gotoxy(displayX, displayY);
+		std::cout << "LIVES: " << lives;
+}
 
 
 // ------------------- File Management Functions -------------------
@@ -177,7 +216,27 @@ void GameFromInput::handleMenuState(MenuAction action) {
 }
 
 
+/**
+ * @brief Checks if Mario has died due to a barrel or falling.
+ * Combines checks for barrel collisions and falling beyond the maximum height.
+ */
+bool GameFromInput::checkMarioDeath() {
+	if (checkMarioDeathFromBarrel() || checkMarioDeathFromFall() || checkMarioDeathFromGhost()) {
+		results.addResult(iteration, Results::death);
+		return true;
+	}
+	else {
+		return false;
+	}
+}
 
+/**
+ * @brief Checks if Mario has reached the goal (Paulina).
+ * Compares Mario's position with Paulina's position.
+ */
+bool GameFromInput::checkMarioWon() {
+	return mario.getNextPos() == board.getPaulinaPos() || mario.getPos() == board.getPaulinaPos();
+}
 
 // ------------------- Pause Handling -------------------
 
@@ -263,6 +322,34 @@ void GameFromInput::displayCountdown() {
 }
 
 /**
+ * @brief Handles the actions when the player wins the game.
+ * Resets the game and displays the "You Win" screen.
+ */
+void GameFromInput::handleGameWin() {
+	currLevel = 0;
+	lives = initLives;
+	resetStage();
+	screen.printWinScreen(score);
+	Sleep(3500); // Pause to allow the player to see the screen
+	gameState = GameState::MENU;
+	eatBuffer();
+	score = 0;
+}
+
+/**
+ * @brief Handles the actions when the player loses the game.
+ * Resets the game and displays the "Game Over" screen.
+ */
+void GameFromInput::handleGameOver() {
+	currLevel = 0;
+	lives = initLives;
+	screen.printLoseScreen(score);
+	Sleep(3500);
+	gameState = GameState::MENU;
+	eatBuffer();
+}
+
+/**
  * @brief Attempts to load the next valid board from the file list.
  * Skips invalid boards and returns false if no valid boards remain.
  */
@@ -282,14 +369,16 @@ bool GameFromInput::tryLoadNextValidBoard() {
 		else {
 			std::string filename_prefix = fileNames[currLevel].substr(0, fileNames[currLevel].find_last_of('.'));
 			stepsFilename = filename_prefix + ".steps";
+			resultsFilename = filename_prefix + ".result";
 
-			long random_seed = static_cast<long>(std::chrono::system_clock::now().time_since_epoch().count());
 			steps.clearSteps();
+			results.clearResults();
+			long random_seed = static_cast<long>(std::chrono::system_clock::now().time_since_epoch().count());
 			steps.setRandomSeed(random_seed);
 			srand(random_seed);
 
-			iteration = 0;
 			currLevel++;
+			iteration = 0;
 			return true;
 		}
 	}
