@@ -305,6 +305,9 @@ void GameBase::eraseCharacters() {
 	}
 }
 
+/**
+ * @brief Displays the current score on the game screen.
+ */
 void GameBase::displayScore() const {
 	int displayX = board.getLegendPos().getX();
 	int displayY = board.getLegendPos().getY() + 1;

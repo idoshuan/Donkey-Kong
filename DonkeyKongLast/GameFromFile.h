@@ -10,24 +10,42 @@
 class GameFromFile :public GameBase {
 private:
 
+	// ------------------- Constants -------------------
+	
+	// Load/Silent constants
+	static constexpr int sleepForLoad = 30;
+	static constexpr int sleepForSilent = 0;
+	bool isSilent;
+
+	// ------------------- Game Files -------------------
+
 	std::vector<std::string> stepsFileNames;
 	std::vector<std::string> resultsFileNames;
 
-	bool isSilent;
 	// ------------------- Private Functions -------------------
+	
+	// Game Loop
 	void handleGameState() override;
 	void updateGameLogic() override;
+
+	// Input Handling
 	void checkForKeyPress() override;
+
+	// Mario
 	bool checkMarioDeath() override;
 	bool checkMarioWon() override;
+
+	// Utility
+	void displayLives() const override;
+	
+	// Stage 
 	void startNewStage() override;
-	void getBoardFileNames() override;
 	void handleGameWin() override;
 	void handleGameOver() override;
 
 	// File Management
 	void LoadNextBoard();
-	void displayLives() const override;
+	void getBoardFileNames() override;
 
 public:
 	GameFromFile(bool silent = false) :isSilent(silent) {
