@@ -77,12 +77,12 @@ void GameFromInput::checkForKeyPress() {
 				}
 				else if (key != KEYS::HAMMER && !marioKeyPressed) {
 					marioKeyPressed = true;
-					steps.addStep({ iteration, key });
+					if(save)steps.addStep({ iteration, key });
 					mario.keyPressed(key);
 				}
 				else if (hammer && key == KEYS::HAMMER && !hammerKeyPressed) {
 					hammerKeyPressed = true;
-					steps.addStep({ iteration, key });
+					if(save)steps.addStep({ iteration, key });
 					hammer->swing();
 				}
 			}
@@ -329,16 +329,18 @@ bool GameFromInput::tryLoadNextValidBoard() {
 			currLevel++;
 		}
 		else {
-			std::string filename_prefix = fileNames[currLevel].substr(0, fileNames[currLevel].find_last_of('.'));
-			stepsFilename = filename_prefix + ".steps";
-			resultsFilename = filename_prefix + ".result";
+			if (save) {
+				std::string filename_prefix = fileNames[currLevel].substr(0, fileNames[currLevel].find_last_of('.'));
+				stepsFilename = filename_prefix + ".steps";
+				resultsFilename = filename_prefix + ".result";
 
-			steps.clearSteps();
-			results.clearResults();
-			long random_seed = static_cast<long>(std::chrono::system_clock::now().time_since_epoch().count());
-			steps.setRandomSeed(random_seed);
-			srand(random_seed);
-
+				steps.clearSteps();
+				results.clearResults();
+				long random_seed = static_cast<long>(std::chrono::system_clock::now().time_since_epoch().count());
+				steps.setRandomSeed(random_seed);
+				srand(random_seed);
+			}
+			
 			currLevel++;
 			iteration = 0;
 			return true;

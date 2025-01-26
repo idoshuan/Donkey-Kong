@@ -3,66 +3,66 @@
 
 class GameFromInput :public GameBase {
 private:
-    // ------------------- Constants -------------------
+	// ------------------- Constants -------------------
 
-    // Game logic constants
-    static constexpr int keyPressIterations = 5;
-    static constexpr int gameLoopSleep = 12;
+	// Game logic constants
+	static constexpr int keyPressIterations = 5;
+	static constexpr int gameLoopSleep = 12;
 
-    // Pause screen constants
-    static constexpr int pauseMessageX = 26;
-    static constexpr int pauseMessageY = 12;
-    static constexpr int pauseMessageWidth = 28;
-    static constexpr int pauseMessageHeight = 5;
-    static constexpr int pauseMessageTitleOffset = 8;
-    static constexpr int pauseMessageContinueOffset = 1;
+	// Pause screen constants
+	static constexpr int pauseMessageX = 26;
+	static constexpr int pauseMessageY = 12;
+	static constexpr int pauseMessageWidth = 28;
+	static constexpr int pauseMessageHeight = 5;
+	static constexpr int pauseMessageTitleOffset = 8;
+	static constexpr int pauseMessageContinueOffset = 1;
 
-    // Countdown screen constants
-    static constexpr int countdownMessageTitleOffset = 6;
-    static constexpr int countdownMessageCounterOffset = 12;
+	// Countdown screen constants
+	static constexpr int countdownMessageTitleOffset = 6;
+	static constexpr int countdownMessageCounterOffset = 12;
 
-    // ------------------- Game State Variables -------------------
+	// ------------------- Game State Variables -------------------
 
-    int prevStagesScore = 0;
-    bool isAlreadyPaused = false;
+	int prevStagesScore = 0;
+	bool isAlreadyPaused = false;
 
-    std::string stepsFilename;
-    std::string resultsFilename;
+	std::string stepsFilename;
+	std::string resultsFilename;
 
-    // ------------------- Private Functions -------------------
+	// ------------------- Private Functions -------------------
 
-    // Game Loop
-    void handleGameState() override;
+	// Game Loop
+	void handleGameState() override;
 
-    // Input Handling
-    void checkForKeyPress() override;
-    void handleMenuState(MenuAction action);
+	// Input Handling
+	void checkForKeyPress() override;
+	void handleMenuState(MenuAction action);
 
-    // Mario
-    bool checkMarioDeath() override;
-    bool checkMarioWon() override;
+	// Mario
+	bool checkMarioDeath() override;
+	bool checkMarioWon() override;
 
-    // Stage 
-    void startNewStage() override;
-    void handleGameWin() override;
-    void handleGameOver() override;
+	// Stage 
+	void startNewStage() override;
+	void handleGameWin() override;
+	void handleGameOver() override;
 
-    // File Management
-    void getBoardFileNames() override;
-    bool tryLoadNextValidBoard();
+	// File Management
+	void getBoardFileNames() override;
+	bool tryLoadNextValidBoard();
 
-    // Pause
-    void handlePause();
-    void displayPauseScreen();
-    void clearMessageInsideBorders();
-    void clearEntirePauseScreen();
-    void displayCountdown();
+	// Pause
+	void handlePause();
+	void displayPauseScreen();
+	void clearMessageInsideBorders();
+	void clearEntirePauseScreen();
+	void displayCountdown();
 
-
+	bool save = false;
 public:
-    GameFromInput() { 
-        gameState = GameState::MENU;
-        startGame(); 
-    };
+	GameFromInput(bool save = false) :save(save) {
+		gameState = GameState::MENU;
+		startGame();
+	};
 };
 
