@@ -4,7 +4,7 @@
 #include <sstream> 
 
 #include "GameBase.h"
-
+#include "Results.h"
 
 // ------------------- Class Declaration -------------------
 class GameFromFile :public GameBase {
@@ -15,7 +15,6 @@ private:
 	// Load/Silent constants
 	static constexpr int sleepForLoad = 30;
 	static constexpr int sleepForSilent = 0;
-	bool isSilent;
 
 	// ------------------- Game Files -------------------
 
@@ -26,7 +25,6 @@ private:
 	
 	// Game Loop
 	void handleGameState() override;
-	void updateGameLogic() override;
 
 	// Input Handling
 	void checkForKeyPress() override;
@@ -35,8 +33,6 @@ private:
 	bool checkMarioDeath() override;
 	bool checkMarioWon() override;
 
-	// Utility
-	void displayLives() const override;
 	
 	// Stage 
 	void startNewStage() override;
@@ -48,7 +44,7 @@ private:
 	void getBoardFileNames() override;
 
 public:
-	GameFromFile(bool silent = false) :isSilent(silent) {
+	GameFromFile(bool silent = false) : GameBase(silent) {
 		gameState = GameState::START;
 		startGame();
 	}

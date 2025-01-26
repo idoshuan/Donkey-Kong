@@ -67,6 +67,7 @@ protected:
 	// ------------------- Game State Variables -------------------
 
 	bool isRunning = true;
+	bool silent;
 	int currLevel = 0;
 	int score = 0;
 	int lives = initLives;
@@ -93,8 +94,8 @@ protected:
 
 	// Game Loop
 	void startGame();
+	void updateGameLogic();
 	virtual void handleGameState() = 0;
-	virtual void updateGameLogic() = 0;
 
 	// Input Handling
 	virtual void checkForKeyPress() = 0;
@@ -128,7 +129,7 @@ protected:
 	bool isInExplosionRadius(const Barrel& barrel) const;
 
 	// Utility
-	virtual void displayLives() const = 0;
+	void displayLives();
 	void eraseCharacters();
 	void moveCharacters();
 	void drawCharacters();
@@ -148,4 +149,6 @@ protected:
 	void hammerHitAnimation();
 	void scoreAnimation(const std::string& points);
 
+	GameBase(bool silent = false) : silent(silent) {};
+	virtual ~GameBase() = default;
 };

@@ -14,6 +14,39 @@ void GameBase::startGame() {
 	}
 }
 
+/**
+ * @brief Updates the game logic during the PLAYING state.
+ * Handles input, updates Mario and barrels, and checks for game-ending conditions.
+ */
+void GameBase::updateGameLogic() {
+	iteration++;
+	checkHammerPickUp();
+	drawCharacters();
+	checkForKeyPress();
+	checkKill();
+	eraseCharacters();
+	trySpawnBarrel();
+	explodeBarrels();
+	checkGhostWithGhostCollisions();
+	deactivateBarrels();
+	moveCharacters();
+	if (checkMarioDeath()) {
+		lives--;
+		marioBlinkAnimation();
+		resetStage();
+		return;
+	}
+	if (checkMarioWon()) {
+		score += stageFinishPoints;
+		scoreAnimation(stageFinishPointsString);
+		marioBlinkAnimation();
+		gameState = GameState::LEVEL_WON;
+		return;
+	}
+}
+
+
+
 
 // ------------------- Mario-Related Functions -------------------
 
@@ -273,19 +306,33 @@ void GameBase::moveCharacters() {
  * @brief Draws Mario and barrels on the game board.
  */
 void GameBase::drawCharacters() {
-	mario.draw();
-	if (hammer) {
-		hammer->draw();
-	}
-	for (auto& barrel : barrels) {
-		if (barrel.isCurrentlyActive()) {
-			barrel.draw();
+	if (!silent) {
+		mario.draw();
+		if (hammer) {
+			hammer->draw();
+		}
+		for (auto& barrel : barrels) {
+			if (barrel.isCurrentlyActive()) {
+				barrel.draw();
+			}
+		}
+		for (auto& ghost : ghostContainer) {
+			if (ghost->isCurrentlyActive()) {
+				ghost->draw();
+			}
 		}
 	}
-	for (auto& ghost : ghostContainer) {
-		if (ghost->isCurrentlyActive()) {
-			ghost->draw();
-		}
+}
+
+/**
+ * @brief Displays Marios remaining lives.
+ */
+void GameBase::displayLives() {
+	if (!silent) {
+		int displayX = board.getLegendPos().getX();
+		int displayY = board.getLegendPos().getY();
+		gotoxy(displayX, displayY);
+		std::cout << "LIVES: " << lives;
 	}
 }
 
@@ -293,15 +340,17 @@ void GameBase::drawCharacters() {
  * @brief Erases Mario and barrels from the game board.
  */
 void GameBase::eraseCharacters() {
-	mario.erase();
-	if (hammer) {
-		hammer->erase();
-	}
-	for (auto& barrel : barrels) {
-		barrel.erase();
-	}
-	for (auto& ghost : ghostContainer) {
-		ghost->erase();
+	if (!silent) {
+		mario.erase();
+		if (hammer) {
+			hammer->erase();
+		}
+		for (auto& barrel : barrels) {
+			barrel.erase();
+		}
+		for (auto& ghost : ghostContainer) {
+			ghost->erase();
+		}
 	}
 }
 
@@ -309,11 +358,13 @@ void GameBase::eraseCharacters() {
  * @brief Displays the current score on the game screen.
  */
 void GameBase::displayScore() const {
-	int displayX = board.getLegendPos().getX();
-	int displayY = board.getLegendPos().getY() + 1;
+	if (!silent) {
+		int displayX = board.getLegendPos().getX();
+		int displayY = board.getLegendPos().getY() + 1;
 
-	gotoxy(displayX, displayY);
-	std::cout << "SCORE: " << score;
+		gotoxy(displayX, displayY);
+		std::cout << "SCORE: " << score;
+	}
 }
 
 
@@ -350,27 +401,31 @@ void GameBase::resetStage() {
  * @brief Makes Mario blink (disappear and reappear) visually.
  */
 void GameBase::marioBlinkAnimation() {
-	for (int i = 0; i < blinkIterations; i++) {
-		mario.draw();
-		Sleep(200);
-		mario.erase();
-		Sleep(200);
+	if (!silent) {
+		for (int i = 0; i < blinkIterations; i++) {
+			mario.draw();
+			Sleep(200);
+			mario.erase();
+			Sleep(200);
+		}
+		eraseCharacters();
 	}
-	eraseCharacters();
 }
 
 /**
  * @brief Displays a visual effect for a hammer hit.
  */
 void GameBase::hammerHitAnimation() {
-	if (board.isValidPosition({ hammer->getX(), hammer->getY() - 1 })) {
-		gotoxy(hammer->getX(), hammer->getY());
-		std::cout << static_cast<char>(BOARD_CHARACTERS::AIR);
-		gotoxy(hammer->getX(), hammer->getY() - 1);
-		std::cout << static_cast<char>(BOARD_CHARACTERS::HAMMER);
-		Sleep(18);
-		gotoxy(hammer->getX(), hammer->getY() - 1);
-		std::cout << board.getChar({ hammer->getX(), hammer->getY() - 1 });
+	if (!silent) {
+		if (board.isValidPosition({ hammer->getX(), hammer->getY() - 1 })) {
+			gotoxy(hammer->getX(), hammer->getY());
+			std::cout << static_cast<char>(BOARD_CHARACTERS::AIR);
+			gotoxy(hammer->getX(), hammer->getY() - 1);
+			std::cout << static_cast<char>(BOARD_CHARACTERS::HAMMER);
+			Sleep(18);
+			gotoxy(hammer->getX(), hammer->getY() - 1);
+			std::cout << board.getChar({ hammer->getX(), hammer->getY() - 1 });
+		}
 	}
 }
 
@@ -379,19 +434,21 @@ void GameBase::hammerHitAnimation() {
  * Checks valid positions and briefly shows the points before restoring the board.
  */
 void GameBase::scoreAnimation(const std::string& points) {
-	if (board.isValidPosition({ mario.getX() - 1, mario.getY() - 1 }) &&
-		board.isValidPosition({ mario.getX(), mario.getY() - 1 }) &&
-		board.isValidPosition({ mario.getX() + 1, mario.getY() - 1 })) {
+	if (!silent) {
+		if (board.isValidPosition({ mario.getX() - 1, mario.getY() - 1 }) &&
+			board.isValidPosition({ mario.getX(), mario.getY() - 1 }) &&
+			board.isValidPosition({ mario.getX() + 1, mario.getY() - 1 })) {
 
-		gotoxy(mario.getX() - 1, mario.getY() - 1);
-		std::cout << points;
-		Sleep(60);
+			gotoxy(mario.getX() - 1, mario.getY() - 1);
+			std::cout << points;
+			Sleep(60);
 
-		for (int x = 0; x < points.size(); ++x) {
-			gotoxy(mario.getX() - 1 + x, mario.getY() - 1);
-			std::cout << board.getChar({ mario.getX() - 1 + x, mario.getY() - 1 });
+			for (int x = 0; x < points.size(); ++x) {
+				gotoxy(mario.getX() - 1 + x, mario.getY() - 1);
+				std::cout << board.getChar({ mario.getX() - 1 + x, mario.getY() - 1 });
+			}
 		}
+		displayScore();
 	}
-	displayScore();
 }
 

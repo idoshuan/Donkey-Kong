@@ -31,15 +31,13 @@ size_t Results::getNextDeathIteration() const {
 	if (!results.empty() && results.front().second == death) {
 		return results.front().first;
 	}
-	else return 0;
-	// we use the fact that on iteration zero we cannot hit a bomb
-	// to indicate that there isn't any result left with a hit bomb event
+	else return NO_DEATH;
 }
 
 size_t Results::getFinishedIteration() const {
 	if (!results.empty() && results.front().second == finished) {
 		return results.front().first;
 	}
-	else return 0;
+	else return NO_FINISH;
 }
 

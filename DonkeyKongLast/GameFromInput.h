@@ -33,7 +33,6 @@ private:
 
     // Game Loop
     void handleGameState() override;
-    void updateGameLogic() override;
 
     // Input Handling
     void checkForKeyPress() override;
@@ -42,9 +41,6 @@ private:
     // Mario
     bool checkMarioDeath() override;
     bool checkMarioWon() override;
-
-    // Utility
-    void displayLives() const override;
 
     // Stage 
     void startNewStage() override;

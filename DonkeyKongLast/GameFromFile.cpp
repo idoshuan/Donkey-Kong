@@ -14,13 +14,13 @@ void GameFromFile::handleGameState() {
 		startNewStage();
 		break;
 	case GameState::PLAYING:
-		if (lives > 2) {
+		if (lives > 0) {
 			try {
 				updateGameLogic();
 			}
-			catch (const std::string& e) {
+			catch (const std::runtime_error& e) {
 				clearScreen();
-				std::cout << e << std::endl;
+				std::cout << e.what() << std::endl;
 				isRunning = false;
 			}
 		}
@@ -40,7 +40,7 @@ void GameFromFile::handleGameState() {
 	case GameState::GAME_OVER:
 		handleGameOver();
 		break;
-	case GameState::WON:			
+	case GameState::WON:
 		handleGameWin();
 		break;
 	default:
@@ -49,39 +49,7 @@ void GameFromFile::handleGameState() {
 	}
 }
 
-/**
- * @brief Updates the game logic during the PLAYING state.
- * Manages Mario's actions, barrels, ghost movements, and game-ending conditions.
- * Includes silent mode handling to skip unnecessary animations.
- */
-void GameFromFile::updateGameLogic() {
-	iteration++;
-	checkHammerPickUp();
-	if (!isSilent)drawCharacters();
-	checkForKeyPress();
-	checkKill();
-	if (!isSilent)eraseCharacters();
-	trySpawnBarrel();
-	explodeBarrels();
-	checkGhostWithGhostCollisions();
-	deactivateBarrels();
-	moveCharacters();
-	if (checkMarioDeath()) {
-		lives--;
-		if (!isSilent)marioBlinkAnimation();
-		resetStage();
-		return;
-	}
-	if (checkMarioWon()) {
-		score += stageFinishPoints;
-		if (!isSilent) {
-			scoreAnimation(stageFinishPointsString);
-			marioBlinkAnimation();
-		}
-		gameState = GameState::LEVEL_WON;
-		return;
-	}
-}
+
 /**
 *@brief Processes input from the steps file and updates Mario's or Hammer's state accordingly.
 * Includes timing - based pauses for silent and loaded modes.
@@ -96,7 +64,7 @@ void GameFromFile::checkForKeyPress() {
 			mario.keyPressed(key);
 		}
 	}
-	Sleep(isSilent ? sleepForSilent : sleepForLoad);
+	Sleep(silent ? sleepForSilent : sleepForLoad);
 }
 
 
@@ -107,21 +75,31 @@ void GameFromFile::checkForKeyPress() {
  */
 bool GameFromFile::checkMarioDeath() {
 	if (checkMarioDeathFromBarrel() || checkMarioDeathFromFall() || checkMarioDeathFromGhost()) {
-		if (results.getNextDeathIteration() != iteration) {
-			std::ostringstream error;
-			error << "Error: Mario's death occurred at the wrong iteration. "
-				<< "Expected iteration: " << results.getNextDeathIteration()
-				<< ", but got: " << iteration << ".";
-			throw error.str();
+		int nextDeathIteration = results.getNextDeathIteration();
+
+		if (nextDeathIteration == Results::NO_DEATH) {
+			throw std::runtime_error(
+				"Error: Mario died unexpectedly. No death was expected at iteration " +
+				std::to_string(iteration) + "."
+			);
 		}
+
+		if (nextDeathIteration != iteration) {
+			throw std::runtime_error(
+				"Error: Mario's death occurred at the wrong iteration. "
+				"Expected iteration: " + std::to_string(nextDeathIteration) +
+				", but got: " + std::to_string(iteration) + "."
+			);
+		}
+
 		results.popResult();
 		return true;
 	}
 	else if (results.getNextDeathIteration() == iteration) {
-		std::ostringstream error;
-		error << "Error: Mario was expected to die in this iteration ("
-			<< iteration << ") but did not.";
-		throw error.str();
+		throw std::runtime_error(
+			"Error: Mario was expected to die in this iteration (" +
+			std::to_string(iteration) + ") but did not."
+		);
 	}
 	return false;
 }
@@ -133,22 +111,33 @@ bool GameFromFile::checkMarioDeath() {
  */
 bool GameFromFile::checkMarioWon() {
 	if (mario.getNextPos() == board.getPaulinaPos() || mario.getPos() == board.getPaulinaPos()) {
-		if (results.getFinishedIteration() != iteration) {
-			std::ostringstream error;
-			error << "Error: Mario's finish stage occurred at the wrong iteration. "
-				<< "Expected iteration: " << results.getFinishedIteration()
-				<< ", but got: " << iteration << ".";
-			throw error.str();
+		int finishedIteration = results.getFinishedIteration();
+
+		if (finishedIteration == Results::NO_FINISH) {
+			throw std::runtime_error(
+				"Error: Mario finished unexpectedly. No finish was expected at iteration " +
+				std::to_string(iteration) + "."
+			);
 		}
+
+		if (finishedIteration != iteration) {
+			throw std::runtime_error(
+				"Error: Mario's finish stage occurred at the wrong iteration. "
+				"Expected iteration: " + std::to_string(finishedIteration) +
+				", but got: " + std::to_string(iteration) + "."
+			);
+		}
+
 		results.popResult();
 		return true;
 	}
 	else if (results.getFinishedIteration() == iteration) {
-		std::ostringstream error;
-		error << "Error: Mario was expected to finish the stage in this iteration ("
-			<< iteration << ") but did not.";
-		throw error.str();
+		throw std::runtime_error(
+			"Error: Mario was expected to finish the stage in this iteration (" +
+			std::to_string(iteration) + ") but did not."
+		);
 	}
+
 	return false;
 }
 
@@ -180,11 +169,9 @@ void GameFromFile::startNewStage() {
 	leftBarrelPos = { donkeyPos.getX() - 1, donkeyPos.getY() };
 	rightBarrelPos = { donkeyPos.getX() + 1, donkeyPos.getY() };
 	board.reset();
-	if (!isSilent) {
-		board.print();
-		displayScore();
-		displayLives();
-	}
+	if (!silent)board.print();
+	displayScore();
+	displayLives();
 }
 
 
@@ -260,18 +247,3 @@ void GameFromFile::LoadNextBoard() {
 		iteration = 0;
 	}
 }
-
-/**
- * @brief Displays the current number of lives on the game screen in the legend area.
- * Skips this step in silent mode.
- */
-void GameFromFile::displayLives() const{
-	if (!isSilent) {
-		int displayX = board.getLegendPos().getX();
-		int displayY = board.getLegendPos().getY();
-		gotoxy(displayX, displayY);
-		std::cout << "LIVES: " << lives;
-	}
-}
-
-

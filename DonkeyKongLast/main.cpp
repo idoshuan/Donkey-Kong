@@ -15,11 +15,9 @@ int main(int argc, const char** argv) {
 
     // Create game instance based on mode
     if (isLoad) {
-        GameFromFile a = GameFromFile(isSilent);  // Load game from file
-        game = &a;
+        game = new GameFromFile(isSilent);
     }
     else {
-        GameFromInput b = GameFromInput();  // Start game from user input
-        game = &b;
+        game = new GameFromInput();
     }
 }

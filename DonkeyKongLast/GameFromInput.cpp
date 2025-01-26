@@ -17,7 +17,7 @@ void GameFromInput::handleGameState() {
 		startNewStage();
 		break;
 	case GameState::PLAYING:
-		if (lives > 2) {
+		if (lives > 0) {
 			updateGameLogic();
 		}
 		else {
@@ -54,36 +54,6 @@ void GameFromInput::handleGameState() {
 }
 
 
-/**
- * @brief Updates the game logic during the PLAYING state.
- * Handles input, updates Mario and barrels, and checks for game-ending conditions.
- */
-void GameFromInput::updateGameLogic() {
-	iteration++;
-	checkHammerPickUp();
-	drawCharacters();
-	checkForKeyPress();
-	checkKill();
-	eraseCharacters();
-	trySpawnBarrel();
-	explodeBarrels();
-	checkGhostWithGhostCollisions();
-	deactivateBarrels();
-	moveCharacters();
-	if (checkMarioDeath()) {
-		lives--;
-		marioBlinkAnimation();
-		resetStage();
-		return;
-	}
-	if (checkMarioWon()) {
-		score += stageFinishPoints;
-		scoreAnimation(stageFinishPointsString);
-		marioBlinkAnimation();
-		gameState = GameState::LEVEL_WON;
-		return;
-	}
-}
 
 
 // ------------------- Input Handling -------------------
@@ -159,14 +129,6 @@ void GameFromInput::startNewStage() {
 	displayLives();
 	displayScore();
 	prevStagesScore = score;
-}
-
-
-void GameFromInput::displayLives() const {
-		int displayX = board.getLegendPos().getX();
-		int displayY = board.getLegendPos().getY();
-		gotoxy(displayX, displayY);
-		std::cout << "LIVES: " << lives;
 }
 
 

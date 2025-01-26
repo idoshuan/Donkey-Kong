@@ -1,17 +1,17 @@
 QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ 0
 Q   L               = $ =                                                      Q 1
-Q                   =====                  &                                   Q 2
+Q                   =====               =  &  =                                Q 2
 Q                     H               <<<<<=>>>>>                              Q 3
 Q                     H                                                        Q 4
-Q                     H         x                     x                        Q 5
+Q                     H                               x                        Q 5
 Q                <<<<<<<<<<<<<<<<<<<<<<<      >>>>>>>>>>>>>>>>>>>              Q 6
 Q                 H                                  H                         Q 7
 Q                 H                                  H                         Q 8
 Q                 H                 >>>>>>>>>>>>>>>>>>>>>>>>>>>                Q 9
-Q       x         H                   H                       H                Q 11
+Q                 H                   H                       H                Q 11
 Q >>>>>>>>>>>>>>>>>>>>                H                     <<<<<<<<<<<<<<<<<<<Q 11
 Q                   H                 H                           H            Q 12
-Q                   H        x        H         x           x     H            Q 13
+Q                   H                 H         x                 H            Q 13
 Q            =======================================  =========================Q 14
 Q                                                        H                H    Q 15
 Q                                          x             H                H    Q 16
@@ -21,6 +21,6 @@ Q >>>>>>>>>>>>>>>>>>              H                H                      H    Q
 Q                                 H                H                      H    Q 20
 Q                                 H     >>>>>>>>>>>>>>           <<<<<<<<<<<<<<Q 21
 Q                                 H       H                           H        Q 22
-Q                           x     H   x   H               @    p      H        Q 23
+Q                           x     H       H                @   p      H        Q 23
 QQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ 24
 01234567890123456789012345678901234567890123456789012345678901234567890123456789                                                                          

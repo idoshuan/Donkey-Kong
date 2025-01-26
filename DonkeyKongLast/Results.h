@@ -5,6 +5,7 @@
 class Results {
 public:
 	enum ResultValue { death, finished ,noResult };
+	enum ErrorValue {NO_DEATH = 0, NO_FINISH = 0};
 private:
 	std::list<std::pair<size_t, ResultValue>> results; // pair: iteration, result
 public:
