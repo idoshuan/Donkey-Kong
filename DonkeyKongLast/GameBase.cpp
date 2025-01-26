@@ -6,7 +6,7 @@
  * @brief Starts the main game loop.
  * Continuously runs while the game is active (`isRunning`) and delegates control to `handleGameState()`.
  */
-void GameBase::startGame() {
+void GameBase::run() {
 	ShowConsoleCursor(false);
 	getBoardFileNames();
 	while (isRunning) {

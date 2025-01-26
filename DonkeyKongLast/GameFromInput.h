@@ -35,8 +35,9 @@ private:
 	void handleGameState() override;
 
 	// Input Handling
-	void checkForKeyPress() override;
 	void handleMenuState(MenuAction action);
+	void checkForKeyPress() override;
+	bool shouldSaveStep(const KEYS key);
 
 	// Mario
 	bool checkMarioDeath() override;
@@ -62,7 +63,6 @@ private:
 public:
 	GameFromInput(bool save = false) :save(save) {
 		gameState = GameState::MENU;
-		startGame();
 	};
 };
 

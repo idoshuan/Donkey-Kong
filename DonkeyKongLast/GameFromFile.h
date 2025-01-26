@@ -13,7 +13,7 @@ private:
 	// ------------------- Constants -------------------
 	
 	// Load/Silent constants
-	static constexpr int sleepForLoad = 30;
+	static constexpr int sleepForLoad = 10;
 	static constexpr int sleepForSilent = 0;
 
 	// ------------------- Game Files -------------------
@@ -46,6 +46,5 @@ private:
 public:
 	GameFromFile(bool silent = false) : GameBase(silent) {
 		gameState = GameState::START;
-		startGame();
 	}
 };

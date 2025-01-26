@@ -168,6 +168,7 @@ void GameFromFile::startNewStage() {
 	auto donkeyPos = board.getDonkeyKongPos();
 	leftBarrelPos = { donkeyPos.getX() - 1, donkeyPos.getY() };
 	rightBarrelPos = { donkeyPos.getX() + 1, donkeyPos.getY() };
+
 	board.reset();
 	if (!silent)board.print();
 	displayScore();

@@ -1,24 +1,29 @@
 #pragma once
+
 #include <list>
 #include <fstream>
 
 #include "GameConfig.h"
-struct Step {
-	size_t iteration;
-	KEYS key;
-};
+
+/**
+ * @brief Manages a list of game steps, including iterations and key actions.
+ */
 class Steps {
+	// ------------------- Internal Structures -------------------
+	struct Step {
+		size_t iteration;
+		KEYS key;
+	};
 	long randomSeed = 0;
-	std::list<Step> steps; // pair: iteration ,step
+	std::list<Step> steps; 
+
 public:
+
+	// ------------------- Step Management -------------------
+
 	static Steps loadSteps(const std::string& filename);
 	void saveSteps(const std::string& filename) const;
-	long getRandomSeed() const {
-		return randomSeed;
-	}
-	void setRandomSeed(long seed) {
-		randomSeed = seed;
-	}
+
 	void addStep(Step step) {
 		steps.push_back(step);
 	}
@@ -30,7 +35,25 @@ public:
 		steps.pop_front();
 		return step.key;
 	}
+	KEYS lastKey() {
+		return (!steps.empty() ? steps.back().key : KEYS::INVALID);
+	}
+	size_t lastKeyIteration() {
+		return (!steps.empty() ? steps.back().iteration : 0);
+	}
 	void clearSteps() {
 		steps.clear();
 	}
+	
+
+	// ------------------- Getters & Setters -------------------
+
+	long getRandomSeed() const {
+		return randomSeed;
+	}
+	void setRandomSeed(long seed) {
+		randomSeed = seed;
+	}
+
+	
 };

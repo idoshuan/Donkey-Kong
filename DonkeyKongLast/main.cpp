@@ -20,4 +20,10 @@ int main(int argc, const char** argv) {
 	else {
 		game = new GameFromInput(isSave);
 	}
+
+	game->run();
+	
+	delete game;
+
+	return 0;
 }

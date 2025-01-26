@@ -1,8 +1,9 @@
 #include "Steps.h"
 
-
-
-
+/**
+ * @brief Saves the steps to a file, including the random seed and step details.
+ * @param filename The file to save steps to.
+ */
 void Steps::saveSteps(const std::string& filename) const {
 	std::ofstream steps_file(filename);
 	steps_file << randomSeed << '\n' << steps.size();
@@ -12,6 +13,11 @@ void Steps::saveSteps(const std::string& filename) const {
 	steps_file.close();
 }
 
+/**
+ * @brief Loads the steps from a file, including the random seed and step details.
+ * @param filename The file to load steps from.
+ * @return A Steps object with the loaded data.
+ */
 Steps Steps::loadSteps(const std::string& filename) {
 	Steps steps;
 	std::ifstream steps_file(filename);

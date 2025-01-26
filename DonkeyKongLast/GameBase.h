@@ -32,6 +32,10 @@
 
  // ------------------- Class Declaration -------------------
 class GameBase {
+public:
+	void run();
+	virtual ~GameBase() = default;
+
 protected:
 	// ------------------- Enums -------------------
 	enum class GameState {
@@ -93,7 +97,6 @@ protected:
 	// ------------------- Private Functions -------------------
 
 	// Game Loop
-	void startGame();
 	void updateGameLogic();
 	virtual void handleGameState() = 0;
 
@@ -150,5 +153,4 @@ protected:
 	void scoreAnimation(const std::string& points);
 
 	GameBase(bool silent = false) : silent(silent) {};
-	virtual ~GameBase() = default;
 };

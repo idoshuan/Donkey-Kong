@@ -60,6 +60,7 @@ void GameFromInput::handleGameState() {
 
 /**
  * @brief Checks for user input during gameplay.
+ * Saves steps for load mode, skips duplicate and redundant information.
  * Processes ESC to pause the game or sends key input to Mario.
  */
 void GameFromInput::checkForKeyPress() {
@@ -77,12 +78,16 @@ void GameFromInput::checkForKeyPress() {
 				}
 				else if (key != KEYS::HAMMER && !marioKeyPressed) {
 					marioKeyPressed = true;
-					if(save)steps.addStep({ iteration, key });
+					if (save) {
+						steps.addStep({ iteration, key });
+					}
 					mario.keyPressed(key);
 				}
 				else if (hammer && key == KEYS::HAMMER && !hammerKeyPressed) {
 					hammerKeyPressed = true;
-					if(save)steps.addStep({ iteration, key });
+					if (save) {
+						steps.addStep({ iteration, key });
+					}
 					hammer->swing();
 				}
 			}
@@ -90,7 +95,12 @@ void GameFromInput::checkForKeyPress() {
 	}
 }
 
-
+/**
+ * @brief Checks if step is necessary for restoring game
+ */
+//bool GameFromInput::shouldSaveStep(const KEYS key) {
+//	return key != steps.lastKey() || steps.lastKeyIteration() <= results.lastEventIteration() || key == KEYS::UP || key == KEYS::DOWN;
+//}
 
 
 /**
