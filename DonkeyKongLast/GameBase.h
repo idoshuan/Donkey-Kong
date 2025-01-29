@@ -13,6 +13,7 @@
 #include "Hammer.h"
 #include "Steps.h"
 #include "Results.h"
+
 #include <iostream>
 #include <windows.h>
 #include <conio.h>
@@ -21,14 +22,11 @@
 #include <filesystem>
 #include <optional>
 #include <memory>
+
 /**
- * @brief The Game class manages the main game loop, state transitions,
- * and interactions between entities like Mario, barrels, and the board.
- * It handles input, updates gameplay mechanics, and ensures smooth progression
- * through different game states.
+ * @brief Initializes the base game structure, setting up the board,
+ * entities, and initial game parameters.
  */
-
-
 
  // ------------------- Class Declaration -------------------
 class GameBase {

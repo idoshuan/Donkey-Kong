@@ -95,13 +95,6 @@ void GameFromInput::checkForKeyPress() {
 	}
 }
 
-/**
- * @brief Checks if step is necessary for restoring game
- */
-//bool GameFromInput::shouldSaveStep(const KEYS key) {
-//	return key != steps.lastKey() || steps.lastKeyIteration() <= results.lastEventIteration() || key == KEYS::UP || key == KEYS::DOWN;
-//}
-
 
 /**
  * @brief Starts a new stage by loading the next board.

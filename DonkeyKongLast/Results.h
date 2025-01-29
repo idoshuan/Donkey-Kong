@@ -34,8 +34,4 @@ public:
 	bool isFinishedBy(size_t iteration) const {
 		return results.empty() || results.back().first <= iteration;
 	}
-	size_t lastEventIteration() const{
-		return(!results.empty() ? results.back().first : 0);
-	}
-	
 };

@@ -35,12 +35,6 @@ public:
 		steps.pop_front();
 		return step.key;
 	}
-	KEYS lastKey() {
-		return (!steps.empty() ? steps.back().key : KEYS::INVALID);
-	}
-	size_t lastKeyIteration() {
-		return (!steps.empty() ? steps.back().iteration : 0);
-	}
 	void clearSteps() {
 		steps.clear();
 	}

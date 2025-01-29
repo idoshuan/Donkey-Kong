@@ -6,6 +6,11 @@
 #include "GameBase.h"
 #include "Results.h"
 
+/**
+ * @brief Loads a game state from a file, reconstructing the board,
+ * player positions, and other necessary data from a saved file.
+ */
+
 // ------------------- Class Declaration -------------------
 class GameFromFile :public GameBase {
 private:

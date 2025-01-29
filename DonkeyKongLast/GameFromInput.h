@@ -1,7 +1,13 @@
 #pragma once
 #include "GameBase.h"
 
+/**
+ * @brief Starts a new game by taking input from the user to configure
+ * the initial game state, such as board setup and entity placement.
+ */
+
 class GameFromInput :public GameBase {
+
 private:
 	// ------------------- Constants -------------------
 
@@ -37,7 +43,6 @@ private:
 	// Input Handling
 	void handleMenuState(MenuAction action);
 	void checkForKeyPress() override;
-	bool shouldSaveStep(const KEYS key);
 
 	// Mario
 	bool checkMarioDeath() override;
@@ -60,6 +65,7 @@ private:
 	void displayCountdown();
 
 	bool save = false;
+
 public:
 	GameFromInput(bool save = false) :save(save) {
 		gameState = GameState::MENU;
