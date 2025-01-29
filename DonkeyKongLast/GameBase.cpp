@@ -8,7 +8,13 @@
  */
 void GameBase::run() {
 	ShowConsoleCursor(false);
-	getBoardFileNames();
+	try {
+		getBoardFileNames();
+	}
+	catch (const std::runtime_error& e) {
+		std::cout << e.what() << std::endl;
+		isRunning = false;
+	}
 	while (isRunning) {
 		handleGameState();
 	}

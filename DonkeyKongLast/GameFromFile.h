@@ -47,6 +47,7 @@ private:
 	// File Management
 	void LoadNextBoard();
 	void getBoardFileNames() override;
+	void checkResultError();
 
 public:
 	GameFromFile(bool silent = false) : GameBase(silent) {

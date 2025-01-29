@@ -29,8 +29,7 @@ void GameFromInput::handleGameState() {
 		break;
 	case GameState::LEVEL_WON:
 		results.addResult(iteration, Results::finished);
-		steps.saveSteps(stepsFilename);
-		results.saveResults(resultsFilename, score - prevStagesScore);
+		saveStepsAndResults();
 		if (currLevel == fileNames.size()) {
 			gameState = GameState::WON;
 		}
@@ -40,8 +39,7 @@ void GameFromInput::handleGameState() {
 		}
 		break;
 	case GameState::GAME_OVER:
-		steps.saveSteps(stepsFilename);
-		results.saveResults(resultsFilename, score - prevStagesScore);
+		saveStepsAndResults();
 		handleGameOver();
 		break;
 	case GameState::WON:
@@ -150,6 +148,11 @@ void GameFromInput::getBoardFileNames() {
 			fileNames.push_back(filenameStr);
 		}
 	}
+
+	if (fileNames.size() == 0) {
+		throw std::runtime_error("No screens to play. Please create one & return!");
+	}
+
 	std::sort(fileNames.begin(), fileNames.end());
 }
 
@@ -349,4 +352,9 @@ bool GameFromInput::tryLoadNextValidBoard() {
 			return true;
 		}
 	}
+}
+
+void GameFromInput::saveStepsAndResults() {
+	steps.saveSteps(stepsFilename);
+	results.saveResults(resultsFilename, score - prevStagesScore);
 }

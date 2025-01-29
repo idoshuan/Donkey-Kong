@@ -56,6 +56,7 @@ private:
 	// File Management
 	void getBoardFileNames() override;
 	bool tryLoadNextValidBoard();
+	void saveStepsAndResults();
 
 	// Pause
 	void handlePause();

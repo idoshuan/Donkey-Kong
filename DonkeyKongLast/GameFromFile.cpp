@@ -16,6 +16,7 @@ void GameFromFile::handleGameState() {
 	case GameState::PLAYING:
 		if (lives > 0) {
 			try {
+				checkResultError();
 				updateGameLogic();
 			}
 			catch (const std::runtime_error& e) {
@@ -55,7 +56,7 @@ void GameFromFile::handleGameState() {
 * Includes timing - based pauses for silent and loaded modes.
 */
 void GameFromFile::checkForKeyPress() {
-	if (steps.isNextStepOnIteration(iteration)) {
+	while (steps.isNextStepOnIteration(iteration)) {
 		KEYS key = steps.popStep(iteration);
 		if (key == KEYS::HAMMER) {
 			hammer->swing();
@@ -79,14 +80,14 @@ bool GameFromFile::checkMarioDeath() {
 
 		if (nextDeathIteration == Results::NO_DEATH) {
 			throw std::runtime_error(
-				"Error: Mario died unexpectedly. No death was expected at iteration " +
+				"Error on screen " + fileNames[currLevel-1] + ":\nMario died unexpectedly. No death was expected at iteration " +
 				std::to_string(iteration) + "."
 			);
 		}
 
 		if (nextDeathIteration != iteration) {
 			throw std::runtime_error(
-				"Error: Mario's death occurred at the wrong iteration. "
+				"Error on screen " + fileNames[currLevel-1] + ":\nMario's death occurred at the wrong iteration. "
 				"Expected iteration: " + std::to_string(nextDeathIteration) +
 				", but got: " + std::to_string(iteration) + "."
 			);
@@ -97,7 +98,7 @@ bool GameFromFile::checkMarioDeath() {
 	}
 	else if (results.getNextDeathIteration() == iteration) {
 		throw std::runtime_error(
-			"Error: Mario was expected to die in this iteration (" +
+			"Error on screen " + fileNames[currLevel-1] + ":\nMario was expected to die in this iteration (" +
 			std::to_string(iteration) + ") but did not."
 		);
 	}
@@ -115,14 +116,14 @@ bool GameFromFile::checkMarioWon() {
 
 		if (finishedIteration == Results::NO_FINISH) {
 			throw std::runtime_error(
-				"Error: Mario finished unexpectedly. No finish was expected at iteration " +
+				"Error on screen " + fileNames[currLevel-1] + ":\nMario finished unexpectedly.No finish was expected at iteration " +
 				std::to_string(iteration) + "."
 			);
 		}
 
 		if (finishedIteration != iteration) {
 			throw std::runtime_error(
-				"Error: Mario's finish stage occurred at the wrong iteration. "
+				"Error on screen " + fileNames[currLevel-1] + ":\nMario's finish stage occurred at the wrong iteration. "
 				"Expected iteration: " + std::to_string(finishedIteration) +
 				", but got: " + std::to_string(iteration) + "."
 			);
@@ -133,7 +134,7 @@ bool GameFromFile::checkMarioWon() {
 	}
 	else if (results.getFinishedIteration() == iteration) {
 		throw std::runtime_error(
-			"Error: Mario was expected to finish the stage in this iteration (" +
+			"Error on screen " + fileNames[currLevel-1] + ":\nMario was expected to finish the stage in this iteration (" +
 			std::to_string(iteration) + ") but did not."
 		);
 	}
@@ -200,9 +201,24 @@ void GameFromFile::getBoardFileNames() {
 
 		}
 	}
+	if (fileNames.size() == 0) {
+		throw std::runtime_error("No files to load from. Please play a game on save mode...");
+	}
+
 	std::sort(fileNames.begin(), fileNames.end());
 	std::sort(stepsFileNames.begin(), stepsFileNames.end());
 	std::sort(resultsFileNames.begin(), resultsFileNames.end());
+}
+
+/**
+ * @brief Checks if results file hasn't ended prematurely
+ */
+void GameFromFile::checkResultError() {
+	if (results.isFinishedBy(iteration)) {
+		throw std::runtime_error(
+			"Error on screen " + fileNames[currLevel - 1] + ":\nResults file finished but steps hasn't"
+		);
+	}
 }
 
 /**
@@ -211,7 +227,7 @@ void GameFromFile::getBoardFileNames() {
  */
 void GameFromFile::handleGameOver() {
 	clearScreen();
-	std::cout << "Test pass. You lose" << std::endl;
+	std::cout << "Mario lost but at least the test passed :)" << std::endl;
 	isRunning = false;
 }
 
@@ -221,7 +237,7 @@ void GameFromFile::handleGameOver() {
  */
 void GameFromFile::handleGameWin() {
 	clearScreen();
-	std::cout << "Test pass. You Won" << std::endl;
+	std::cout << "Test passed, mario survived through all screens." << std::endl;
 	isRunning = false;
 }
 
